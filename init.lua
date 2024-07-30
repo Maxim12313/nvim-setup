@@ -1,6 +1,6 @@
 require("config.lazy")
 
--- Vim options
+-- must have options
 vim.o.hlsearch = true
 vim.o.incsearch = true
 vim.o.clipboard = 'unnamed'
@@ -13,7 +13,14 @@ vim.o.guifont = 'Input Mono 13'
 vim.o.swapfile = false
 vim.o.cursorline = true
 
-vim.api.nvim_set_keymap('i', '<C-c>', '<ESC>', { noremap = true, silent =true })
+-- recent options
+vim.o.splitbelow = true
+vim.o.splitright = true
+
+-- misc
+vim.api.nvim_set_keymap('i', '<C-c>', '<ESC>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>e', '<Cmd>Exp<CR>', { noremap = true, silent = true })
+
 
 -- emacs mappings
 vim.api.nvim_set_keymap('i', '<C-f>', '<Right>', {noremap = true, silent = true})

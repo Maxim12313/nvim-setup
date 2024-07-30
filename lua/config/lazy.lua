@@ -23,6 +23,15 @@ require("lazy").setup({
 	spec = {
 		-- themes
 		{ "catppuccin/nvim", name = "catppuccin" },
+		{
+		  'sainnhe/sonokai',
+		  lazy = false,
+		  config = function()
+			vim.g.gonokai_style = 'atlantis'
+			vim.g.sonokai_enable_italic = false
+		  end
+		},
+		{ 'sainnhe/gruvbox-material' },
 
 
 		-- lsp manager
@@ -49,11 +58,12 @@ require("lazy").setup({
 		{ 'numToStr/Comment.nvim', opts = {}},
 
 		-- playtime
+		{ "Aityz/usage.nvim" },
+
+		-- fuzzy finder
 		{
-			"Aityz/usage.nvim",
-			config = function()
-				require('usage').setup()
-			end
+			'nvim-telescope/telescope.nvim', tag = '0.1.8',
+		  	dependencies = { 'nvim-lua/plenary.nvim' }
 		}
 
 	},
@@ -131,3 +141,16 @@ require("usage").setup({
     mode = "float" -- One of "float", "notify", or "print"
 })
 
+-------------------------------------------fuzzy finder setup--------------------------------------------
+require("telescope").setup({
+  defaults = {
+    layout_config = {
+      horizontal = {
+        preview_cutoff = 0,
+      },
+    },
+  },
+})
+
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
