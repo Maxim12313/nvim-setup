@@ -4,10 +4,11 @@ require("config.lazy")
 vim.o.hlsearch = true
 vim.o.incsearch = true
 vim.o.clipboard = 'unnamed'
-vim.o.tabstop = 4 vim.o.shiftwidth = 4
+vim.o.tabstop = 4 
+vim.o.shiftwidth = 4
 vim.o.smartindent = true
 vim.o.autoindent = true
-vim.o.relativenumber = true
+vim.o.number = true
 vim.o.scrolloff = 8
 vim.o.guifont = 'Input Mono 13'
 vim.o.swapfile = false
