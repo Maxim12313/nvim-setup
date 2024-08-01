@@ -18,10 +18,10 @@ vim.o.cursorline = true
 vim.o.splitbelow = true
 vim.o.splitright = true
 
--- misc
+-- misc binds
 vim.api.nvim_set_keymap('i', '<C-c>', '<ESC>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>e', '<Cmd>Exp<CR>', { noremap = true, silent = true })
-
+vim.api.nvim_set_keymap('v', '<leader>p', "_dP", { noremap = true, silent = true })
 
 -- emacs mappings
 vim.api.nvim_set_keymap('i', '<C-f>', '<Right>', {noremap = true, silent = true})

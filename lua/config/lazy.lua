@@ -111,6 +111,7 @@ require("mason-lspconfig").setup({
 
 ----------------------------------------------suggestion setup--------------------------------------------------
 local cmp = require("cmp")
+
 cmp.setup({
 	mapping = {
 		["<C-n>"] = {
@@ -122,16 +123,11 @@ cmp.setup({
 		["<C-e>"] = {
 			c = cmp.config.disable,
 		},
-		["<TAB>"] = {
-			i = cmp.mapping.confirm({ select = true }),
-		},
-		["<C-Space>"] = {
-			i = cmp.mapping.complete(),
-		},
+		["<C-Space>"] = cmp.mapping.complete(),
 	},
-	-- completion = {
-	-- 	autocomplete = false,
-	-- },
+	completion = {
+		autocomplete = false,
+	},
 	performance = {
 		debounce = 60,
 		throttle = 30,
@@ -148,6 +144,7 @@ cmp.setup({
 		},
 	},
 })
+
 
 require("lsp_signature").setup({
 	hint_enable = false,
