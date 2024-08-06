@@ -13,6 +13,7 @@ vim.o.scrolloff = 8
 vim.o.guifont = 'Input Mono 13'
 vim.o.swapfile = false
 vim.o.cursorline = true
+vim.o.termguicolors = true
 
 -- recent options
 vim.o.splitbelow = true
@@ -26,8 +27,8 @@ vim.api.nvim_set_keymap('v', '<leader>p', "_dP", { noremap = true, silent = true
 -- emacs mappings
 vim.api.nvim_set_keymap('i', '<C-f>', '<Right>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-b>', '<Left>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('i', '<C-n>', '<Down>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('i', '<C-p>', '<Up>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('i', '<C-j>', '<Down>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('i', '<C-k>', '<Up>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-a>', '<ESC>I', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-e>', '<ESC>A', {noremap = true, silent = true})
 

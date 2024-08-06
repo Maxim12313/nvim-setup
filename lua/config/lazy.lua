@@ -51,13 +51,12 @@ require("lazy").setup({
 		{ "hrsh7th/nvim-cmp" },
 		{ "L3MON4D3/LuaSnip" },
 		{
-			"ray-x/lsp_signature.nvim",
-			event = "VeryLazy",
-			opts = {},
-			config = function(_, opts)
-				require("lsp_signature").setup(opts)
-			end,
+		  "ray-x/lsp_signature.nvim",
+		  event = "VeryLazy",
+		  opts = {},
+		  config = function(_, opts) require'lsp_signature'.setup(opts) end
 		},
+
 
 		-- formatter
 		{ "stevearc/conform.nvim", opts = {} },
@@ -78,6 +77,9 @@ require("lazy").setup({
 			tag = "0.1.8",
 			dependencies = { "nvim-lua/plenary.nvim" },
 		},
+		
+		-- folder
+		{'kevinhwang91/nvim-ufo', dependencies = 'kevinhwang91/promise-async'},
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -113,42 +115,34 @@ require("mason-lspconfig").setup({
 local cmp = require("cmp")
 
 cmp.setup({
-	mapping = {
-		["<C-n>"] = {
-			c = cmp.config.disable,
-		},
-		["<C-p>"] = {
-			c = cmp.config.disable,
-		},
-		["<C-e>"] = {
-			c = cmp.config.disable,
-		},
-		["<C-Space>"] = cmp.mapping.complete(),
+	snippet = {
+		expand = function(args)
+			require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
+		end,
 	},
-	completion = {
-		autocomplete = false,
+	window = {
+		completion = cmp.config.window.bordered(),
 	},
 	performance = {
 		debounce = 60,
 		throttle = 30,
 		fetching_timeout = 200,
-		max_view_entries = 3, -- Show only the first 5 suggestions
+		max_view_entries = 3,
 	},
-	sources = {
-		{
-			name = "nvim_lsp",
-			entry_filter = function(entry, ctx)
-				local res = require("cmp.types").lsp.CompletionItemKind[entry:get_kind()]
-				return res == "Function" or res == "Text"
-			end,
-		},
-	},
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "luasnip" }, -- For luasnip users.
+	}, {
+		{ name = "buffer" },
+	}),
 })
-
 
 require("lsp_signature").setup({
+	max_height = 3,
+	floating_window_off_y = -3,
 	hint_enable = false,
 })
+
 
 -------------------------------------------tree-sitter setup--------------------------------------------------
 require("nvim-treesitter.configs").setup({
@@ -159,6 +153,7 @@ require("nvim-treesitter.configs").setup({
 		enable = true,
 	},
 })
+
 
 vim.keymap.set("n", "[c", function()
 	require("treesitter-context").go_to_context(vim.v.count1)
@@ -211,3 +206,35 @@ require("telescope").setup({
 
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+
+
+-------------------------------------------folder setup--------------------------------------------
+vim.keymap.set('n', '-', 'za', { noremap = true, silent = true })
+vim.keymap.set('v', '-', 'zf', { noremap = true, silent = true })
+vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.o.fillchars = [[eob: ,fold: ,foldopen:-,foldsep: ,foldclose:+]]
+vim.o.foldcolumn = '0' -- '0' is not bad
+
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true
+}
+local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
+for _, ls in ipairs(language_servers) do
+    require('lspconfig')[ls].setup({
+        capabilities = capabilities
+        -- you can add other fields for setting up lsp server in this table
+    })
+end
+require('ufo').setup({
+	open_fold_hl_timeout = 0,
+})
