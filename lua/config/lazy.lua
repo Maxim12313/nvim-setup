@@ -108,9 +108,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.diagnostic.config({
 	virtual_text = false,
 	virtual_lines = true,
-	signs = true,
+	signs = false,
 	underline = true,
 	update_in_insert = false,
+ 	float = { border = "rounded" },
 })
 
 
@@ -229,7 +230,7 @@ require("telescope").setup({
 })
 
 local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+vim.keymap.set("n", "<leader>f", builtin.find_files, {})
 
 
 -------------------------------------------folder setup--------------------------------------------
@@ -261,4 +262,15 @@ for _, ls in ipairs(language_servers) do
 end
 require('ufo').setup({
 	open_fold_hl_timeout = 0,
+})
+
+-------------------------------------------theme setup--------------------------------------------
+require("tokyonight").setup({
+	style = "storm", -- "night" or "storm"
+	on_highlights = function(hl, c)
+		hl.DiagnosticUnderlineWarn.undercurl = nil
+        hl.DiagnosticUnderlineWarn.underline = true
+		hl.DiagnosticUnderlineError.undercurl = nil
+        hl.DiagnosticUnderlineError.underline = true
+	end,
 })
