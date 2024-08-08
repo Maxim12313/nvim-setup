@@ -31,12 +31,15 @@ require("lazy").setup({
 				vim.g.sonokai_enable_italic = false
 			end,
 		},
-		{ "sainnhe/gruvbox-material" },
 		{ "Mofiqul/dracula.nvim" },
 		{ "projekt0n/github-nvim-theme" },
 		{ "rose-pine/neovim" },
 		{ "folke/tokyonight.nvim" },
-		{ "rebelot/kanagawa.nvim" },
+		{ "ribru17/bamboo.nvim" },
+		{ "navarasu/onedark.nvim" },
+		{ "Mofiqul/vscode.nvim" },
+		{ "wilmanbarrios/palenight.nvim" },
+
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -76,9 +79,12 @@ require("lazy").setup({
 			tag = "0.1.8",
 			dependencies = { "nvim-lua/plenary.nvim" },
 		},
-		
+
 		-- folder
 		{'kevinhwang91/nvim-ufo', dependencies = 'kevinhwang91/promise-async'},
+
+		-- todo comments
+		{ "folke/todo-comments.nvim" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -111,7 +117,7 @@ vim.diagnostic.config({
 	signs = false,
 	underline = true,
 	update_in_insert = false,
- 	float = { border = "rounded" },
+	float = { border = "rounded" },
 })
 
 
@@ -160,7 +166,8 @@ cmp.setup({
 })
 
 require("lsp_signature").setup({
-	max_height = 3,
+	floating_window_above_cur_line = true,
+	max_height = 2,
 	floating_window_off_y = -3,
 	hint_enable = false,
 })
@@ -264,6 +271,19 @@ require('ufo').setup({
 	open_fold_hl_timeout = 0,
 })
 
+-------------------------------------------todo setup--------------------------------------------
+local todo = require("todo-comments").setup({
+	signs = false,
+})
+
+vim.keymap.set("n", "]t", function()
+  todo.jump_next()
+end, { desc = "Next todo comment" })
+
+vim.keymap.set("n", "[t", function()
+  todo.jump_prev()
+end, { desc = "Previous todo comment" })
+
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
 	style = "storm", -- "night" or "storm"
@@ -272,5 +292,10 @@ require("tokyonight").setup({
         hl.DiagnosticUnderlineWarn.underline = true
 		hl.DiagnosticUnderlineError.undercurl = nil
         hl.DiagnosticUnderlineError.underline = true
+		hl.DiagnosticUnderlineHint.undercurl = nil
+        hl.DiagnosticUnderlineHint.underline = true
 	end,
 })
+-- require("everforest").setup({
+-- 	
+-- })

@@ -4,7 +4,7 @@ require("config.lazy")
 vim.o.hlsearch = true
 vim.o.incsearch = true
 vim.o.clipboard = 'unnamed'
-vim.o.tabstop = 4 
+vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.smartindent = true
 vim.o.autoindent = true
@@ -14,6 +14,7 @@ vim.o.guifont = 'Input Mono 13'
 vim.o.swapfile = false
 vim.o.cursorline = true
 vim.o.termguicolors = true
+vim.o.signcolumn = "yes"
 
 -- windows
 vim.o.splitbelow = true
@@ -38,6 +39,7 @@ vim.api.nvim_set_keymap('i', '<C-n>', '<Down>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-p>', '<Up>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-a>', '<ESC>I', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-e>', '<ESC>A', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('i', '<C-k>', '<ESC>C', { noremap = true, silent = true })
 
 -- pairing mapping
 vim.api.nvim_set_keymap('i', '"', '""<left>', {noremap = true, silent = true})
@@ -59,5 +61,5 @@ vim.api.nvim_set_keymap('n', '<C-d>', 'L6j', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'H', '4k', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'L', '4j', { noremap = true, silent = true })
 
-vim.cmd.colorscheme "tokyonight"
+vim.cmd.colorscheme "sonokai"
 
