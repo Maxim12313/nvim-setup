@@ -37,8 +37,8 @@ require("lazy").setup({
 		{ "folke/tokyonight.nvim" },
 		{ "ribru17/bamboo.nvim" },
 		{ "navarasu/onedark.nvim" },
-		{ "Mofiqul/vscode.nvim" },
 		{ "wilmanbarrios/palenight.nvim" },
+		{ "askfiy/visual_studio_code" },
 
 
 		-- lsp manager
@@ -112,14 +112,26 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 vim.diagnostic.config({
-	virtual_text = false,
+	virtual_text = {
+		prefix = '▲',
+		severity = { 
+			min = vim.diagnostic.severity.ERROR,
+			max = vim.diagnostic.severity.ERROR,
+		}
+	},
+	signs = {
+		severity = { 
+			min = vim.diagnostic.severity.ERROR,
+			max = vim.diagnostic.severity.ERROR,
+		}
+	},
 	virtual_lines = true,
-	signs = false,
 	underline = true,
 	update_in_insert = false,
 	float = { border = "rounded" },
 })
 
+vim.fn.sign_define('DiagnosticSignError', { text = '●', texthl = 'DiagnosticSignError' })
 
 ----------------------------------------------mason setup--------------------------------------------------
 require("mason").setup({})
@@ -296,6 +308,3 @@ require("tokyonight").setup({
         hl.DiagnosticUnderlineHint.underline = true
 	end,
 })
--- require("everforest").setup({
--- 	
--- })

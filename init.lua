@@ -49,6 +49,7 @@ vim.api.nvim_set_keymap('i', '[', '[]<left>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '{', '{}<left>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '{<CR>', '{<CR>}<ESC>O', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '{;<CR>', '{<CR>};<ESC>O', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('i', '{,<CR>', '{<CR>},<ESC>O', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '{ ', '{}<Left><Space><Left><Space>', {noremap = true, silent = true})
 
 -- vertical movement
@@ -61,5 +62,5 @@ vim.api.nvim_set_keymap('n', '<C-d>', 'L6j', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'H', '4k', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'L', '4j', { noremap = true, silent = true })
 
-vim.cmd.colorscheme "sonokai"
+vim.cmd.colorscheme "visual_studio_code"
 
