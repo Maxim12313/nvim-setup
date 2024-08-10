@@ -39,6 +39,8 @@ require("lazy").setup({
 		{ "navarasu/onedark.nvim" },
 		{ "wilmanbarrios/palenight.nvim" },
 		{ "askfiy/visual_studio_code" },
+		{ "loctvl842/monokai-pro.nvim" },
+		{ "jacoborus/tender.vim" },
 
 
 		-- lsp manager
@@ -95,7 +97,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP actions',
   callback = function(event)
     local opts = {buffer = event.buf}
-    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    -- vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
     vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
     vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
     vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
@@ -307,4 +309,10 @@ require("tokyonight").setup({
 		hl.DiagnosticUnderlineHint.undercurl = nil
         hl.DiagnosticUnderlineHint.underline = true
 	end,
+})
+require("monokai-pro").setup({
+  	filter = "classic", -- classic | octagon | pro | machine | ristretto | spectrum
+})
+require("visual_studio_code").setup({
+	mode = "dark", -- light | dark
 })

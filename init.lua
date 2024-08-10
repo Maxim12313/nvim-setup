@@ -32,14 +32,20 @@ vim.api.nvim_set_keymap('v', '<leader>c', '"_c', { noremap = true, silent = true
 vim.api.nvim_set_keymap('n', '<leader>d', '"_d', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<leader>d', '"_d', { noremap = true, silent = true })
 
--- emacs mappings
+
+
+--emacs bindings
 vim.api.nvim_set_keymap('i', '<C-f>', '<Right>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-b>', '<Left>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-n>', '<Down>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-p>', '<Up>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-a>', '<ESC>I', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-e>', '<ESC>A', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('i', '<C-k>', '<ESC>C', { noremap = true, silent = true })
+
+--deletion keybinds
+vim.api.nvim_set_keymap('i', '<C-k>', '<Right><ESC>cw', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-l>', '<Delete>', { noremap = true, silent = true })
+
 
 -- pairing mapping
 vim.api.nvim_set_keymap('i', '"', '""<left>', {noremap = true, silent = true})
@@ -53,14 +59,16 @@ vim.api.nvim_set_keymap('i', '{,<CR>', '{<CR>},<ESC>O', {noremap = true, silent 
 vim.api.nvim_set_keymap('i', '{ ', '{}<Left><Space><Left><Space>', {noremap = true, silent = true})
 
 -- vertical movement
-vim.api.nvim_set_keymap('n', 'H', '4k', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'L', '4j', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'K', '4k', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'J', '4j', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-u>', 'H6k', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-d>', 'L6j', { noremap = true, silent = true })
 
--- vertical movement
-vim.api.nvim_set_keymap('v', 'H', '4k', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', 'L', '4j', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'K', '4k', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'J', '4j', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<C-u>', 'H6k', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<C-d>', 'L6j', { noremap = true, silent = true })
 
+--color
 vim.cmd.colorscheme "visual_studio_code"
 
