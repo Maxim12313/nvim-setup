@@ -19,6 +19,7 @@ vim.o.signcolumn = "yes"
 -- windows
 vim.o.splitbelow = true
 vim.o.splitright = true
+vim.o.equalalways = true
 
 -- file navigation
 vim.keymap.set('i', '<C-c>', '<ESC>', { noremap = true, silent = true })
@@ -51,6 +52,12 @@ vim.keymap.set('n', 'K', '4k', { noremap = true, silent = true })
 vim.keymap.set('n', 'J', '4j', { noremap = true, silent = true })
 vim.keymap.set('v', 'K', '4k', { noremap = true, silent = true })
 vim.keymap.set('v', 'J', '4j', { noremap = true, silent = true })
+
+-- indent
+vim.keymap.set('n', "<Tab>", ">>", { noremap = true, silent = true })
+vim.keymap.set('n', "<S-Tab>", "<<", { noremap = true, silent = true })
+vim.keymap.set('v', "<Tab>", ">gv", { noremap = true, silent = true })
+vim.keymap.set('v', "<S-Tab>", "<gv", { noremap = true, silent = true })
 
 --color
 vim.cmd.colorscheme "tender"

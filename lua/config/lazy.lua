@@ -242,7 +242,7 @@ require("conform").setup({
 --
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 
-vim.api.nvim_set_keymap("n", "==", "gq", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "==", "gqq", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "=", "gq", { noremap = true, silent = true })
 
 -------------------------------------------comment setup--------------------------------------------------
@@ -313,8 +313,8 @@ vim.keymap.set('n', '<leader>t', '<cmd>Trouble diagnostics toggle<CR>')
 
 
 -------------------------------------------folder setup--------------------------------------------
-vim.keymap.set('n', '<leader>e', 'za', { noremap = true, silent = true })
-vim.keymap.set('v', '<leader>e', 'zf', { noremap = true, silent = true })
+vim.keymap.set('n', '\\', 'za', { noremap = true, silent = true })
+vim.keymap.set('v', '\\', 'zf', { noremap = true, silent = true })
 vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
 vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 
