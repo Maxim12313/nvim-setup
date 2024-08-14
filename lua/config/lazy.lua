@@ -358,26 +358,27 @@ end, { desc = "Previous todo comment" })
 
 -------------------------------------------scrolling setup--------------------------------------------
 
-require('neoscroll').setup({
+neoscroll = require('neoscroll')
+
+neoscroll.setup({
   easing = 'linear',          
   cursor_scrolls_alone = false,
 })
 
-neoscroll = require('neoscroll')
 local keymap = {
 	["<C-u>"] = function()
 		vim.cmd("normal!H")
-		neoscroll.ctrl_u({ duration = 50 })
+		neoscroll.ctrl_u({ duration = 100 })
 	end,
 	["<C-d>"] = function()
 		vim.cmd("normal!L")
-		neoscroll.ctrl_d({ duration = 50 })
+		neoscroll.ctrl_d({ duration = 100 })
 	end,
 	["<C-b>"] = function()
-		neoscroll.ctrl_b({ duration = 200 })
+		neoscroll.ctrl_b({ duration = 300 })
 	end,
 	["<C-f>"] = function()
-		neoscroll.ctrl_f({ duration = 200 })
+		neoscroll.ctrl_f({ duration = 300 })
 	end,
 }
 local modes = { 'n', 'v', 'x' }
