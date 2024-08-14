@@ -37,9 +37,8 @@ require("lazy").setup({
 		{ "folke/tokyonight.nvim" },
 		{ "ribru17/bamboo.nvim" },
 		{ "navarasu/onedark.nvim" },
-		{ "wilmanbarrios/palenight.nvim" },
 		{ "askfiy/visual_studio_code" },
-		{ "loctvl842/monokai-pro.nvim" },
+		{ "tanvirtin/monokai.nvim" },
 		{ "jacoborus/tender.vim" },
 
 
@@ -72,21 +71,34 @@ require("lazy").setup({
 		-- comment
 		{ "numToStr/Comment.nvim", opts = {} },
 
-		-- playtime
-		{ "Aityz/usage.nvim" },
-
 		-- fuzzy finder
 		{
 			"nvim-telescope/telescope.nvim",
 			tag = "0.1.8",
-			dependencies = { "nvim-lua/plenary.nvim" },
+			dependencies = { 
+				"BurntSushi/ripgrep",
+				"nvim-lua/plenary.nvim",
+			},
 		},
+
+		-- diagnostcs finder
+		{ "folke/trouble.nvim" },
+
+		-- file manager
+		{ 'stevearc/oil.nvim' },
 
 		-- folder
 		{'kevinhwang91/nvim-ufo', dependencies = 'kevinhwang91/promise-async'},
 
 		-- todo comments
 		{ "folke/todo-comments.nvim" },
+
+		-- icons
+  		{ "nvim-tree/nvim-web-devicons" },
+
+		--scrolling
+		{ 'karb94/neoscroll.nvim' },
+
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -114,26 +126,31 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 vim.diagnostic.config({
+	-- virtual_text = false,
 	virtual_text = {
 		prefix = '▲',
 		severity = { 
 			min = vim.diagnostic.severity.ERROR,
-			max = vim.diagnostic.severity.ERROR,
 		}
 	},
 	signs = {
 		severity = { 
 			min = vim.diagnostic.severity.ERROR,
-			max = vim.diagnostic.severity.ERROR,
 		}
 	},
 	virtual_lines = true,
-	underline = true,
+	underline = {
+		severity = {
+			min = vim.diagnostic.severity.WARN,
+		}
+	},
 	update_in_insert = false,
 	float = { border = "rounded" },
 })
 
 vim.fn.sign_define('DiagnosticSignError', { text = '●', texthl = 'DiagnosticSignError' })
+vim.fn.sign_define('DiagnosticSignWarn', { text = '●', texthl = 'DiagnosticSignWarn' })
+vim.fn.sign_define('DiagnosticSignHint', { text = '●', texthl = 'DiagnosticSignHint' })
 
 ----------------------------------------------mason setup--------------------------------------------------
 require("mason").setup({})
@@ -184,10 +201,11 @@ require("lsp_signature").setup({
 	max_height = 2,
 	floating_window_off_y = -3,
 	hint_enable = false,
+	severity_sort = true,
 })
 
 
--------------------------------------------tree-sitter setup--------------------------------------------------
+-------------------------------------------tree-sitter setup--------------------------------------------
 require("nvim-treesitter.configs").setup({
 	ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
 	sync_install = false,
@@ -208,9 +226,6 @@ require("conform").setup({
 		lua = { "stylua" },
 		cpp = { "clang-format" },
 		python = { "ruff_format" },
-		default_format_opts = {
-			lsp_format = "fallback",
-		},
 		["*"] = { "codespell" },
 		["_"] = { "trim_whitespace" },
 	},
@@ -218,7 +233,7 @@ require("conform").setup({
 		lsp_format = "fallback",
 	},
 })
-
+--
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 
 vim.api.nvim_set_keymap("n", "==", "gq", { noremap = true, silent = true })
@@ -234,24 +249,61 @@ require("Comment").setup({
 	},
 })
 
--------------------------------------------usage setup--------------------------------------------------
-require("usage").setup({
-	mode = "float", -- One of "float", "notify", or "print"
+-------------------------------------------file manager setup--------------------------------------------
+local oil = require("oil")
+oil.setup({
+    show_hidden = true,
+	skip_confirm_for_simple_edits = true,
 })
 
+vim.keymap.set("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
 -------------------------------------------fuzzy finder setup--------------------------------------------
-require("telescope").setup({
+local telescope = require("telescope")
+telescope.setup({
 	defaults = {
 		layout_config = {
 			horizontal = {
 				preview_cutoff = 0,
 			},
 		},
+		file_ignore_patterns = {
+			".git/",
+			"%.o",
+			"%.out",
+			"%.dSYM/"
+		},
 	},
+
 })
 
 local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>f", builtin.find_files, {})
+local utils = require("telescope.utils")
+vim.keymap.set("n", "<leader>f", builtin.find_files)
+
+--run relative search from oil dir if in oil or telescope curr buffer if in normal file
+function relativeSearch() 
+	if vim.bo.filetype == "oil" then
+		builtin.find_files({ cwd = oil.get_current_dir() })
+	else
+		builtin.find_files({ cwd = utils.buffer_dir() })
+	end
+end
+
+vim.keymap.set("n", "<leader>r", relativeSearch)
+
+require("trouble").setup({
+	win = {
+		size = 5,
+	},
+	filter = {
+		severity = {
+			min = vim.diagnostic.severity.WARN,
+			max = vim.diagnostic.severity.ERROR,
+		},
+	},
+})
+vim.keymap.set('n', '<leader>t', '<cmd>Trouble diagnostics toggle<CR>')
 
 
 -------------------------------------------folder setup--------------------------------------------
@@ -298,6 +350,38 @@ vim.keymap.set("n", "[t", function()
   todo.jump_prev()
 end, { desc = "Previous todo comment" })
 
+-------------------------------------------scrolling setup--------------------------------------------
+
+require('neoscroll').setup({
+  easing = 'linear',          
+  cursor_scrolls_alone = false,
+})
+
+neoscroll = require('neoscroll')
+local keymap = {
+	["<C-u>"] = function()
+		vim.cmd("normal!H")
+		neoscroll.ctrl_u({ duration = 50 })
+	end,
+	["<C-d>"] = function()
+		vim.cmd("normal!L")
+		neoscroll.ctrl_d({ duration = 50 })
+	end,
+	["<C-b>"] = function()
+		neoscroll.ctrl_b({ duration = 200 })
+	end,
+	["<C-f>"] = function()
+		neoscroll.ctrl_f({ duration = 200 })
+	end,
+}
+local modes = { 'n', 'v', 'x' }
+for key, func in pairs(keymap) do
+  vim.keymap.set(modes, key, func)
+end
+
+
+
+
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
 	style = "storm", -- "night" or "storm"
@@ -310,9 +394,17 @@ require("tokyonight").setup({
         hl.DiagnosticUnderlineHint.underline = true
 	end,
 })
-require("monokai-pro").setup({
-  	filter = "classic", -- classic | octagon | pro | machine | ristretto | spectrum
-})
 require("visual_studio_code").setup({
 	mode = "dark", -- light | dark
 })
+
+require("onedark").setup({
+	highlights = {
+		['@operator'] = { fg = "#89BEFA" }
+	},
+	diagnostics = {
+		undercurl = false,
+	}
+})
+
+

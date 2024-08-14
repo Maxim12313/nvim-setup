@@ -22,7 +22,6 @@ vim.o.splitright = true
 
 -- file navigation
 vim.api.nvim_set_keymap('i', '<C-c>', '<ESC>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>e', '<Cmd>Exp<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>w', "<C-^>", { noremap = true, silent = true })
 
 -- non overwrite registers
@@ -33,8 +32,7 @@ vim.api.nvim_set_keymap('n', '<leader>d', '"_d', { noremap = true, silent = true
 vim.api.nvim_set_keymap('v', '<leader>d', '"_d', { noremap = true, silent = true })
 
 
-
---emacs bindings
+--emacs bindings (almost)
 vim.api.nvim_set_keymap('i', '<C-f>', '<Right>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-b>', '<Left>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('i', '<C-n>', '<Down>', {noremap = true, silent = true})
@@ -61,8 +59,8 @@ vim.api.nvim_set_keymap('i', '{ ', '{}<Left><Space><Left><Space>', {noremap = tr
 -- vertical movement
 vim.api.nvim_set_keymap('n', 'K', '4k', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'J', '4j', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-u>', 'H6k', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-d>', 'L6j', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<C-u>', 'H6k', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', '<C-d>', 'L6j', { noremap = true, silent = true })
 
 vim.api.nvim_set_keymap('v', 'K', '4k', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'J', '4j', { noremap = true, silent = true })
@@ -70,5 +68,5 @@ vim.api.nvim_set_keymap('v', '<C-u>', 'H6k', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<C-d>', 'L6j', { noremap = true, silent = true })
 
 --color
-vim.cmd.colorscheme "visual_studio_code"
+vim.cmd.colorscheme "tender"
 
