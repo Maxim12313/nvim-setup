@@ -363,6 +363,7 @@ neoscroll = require('neoscroll')
 neoscroll.setup({
   easing = 'linear',          
   cursor_scrolls_alone = false,
+  mappings = {},
 })
 
 local keymap = {
