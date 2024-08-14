@@ -99,6 +99,12 @@ require("lazy").setup({
 		--scrolling
 		{ 'karb94/neoscroll.nvim' },
 
+		--auto pairs
+		{ 
+			'windwp/nvim-autopairs',
+			event = "InsertEnter",
+    		config = true
+		},
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -256,7 +262,7 @@ oil.setup({
 	skip_confirm_for_simple_edits = true,
 })
 
-vim.keymap.set("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
 -------------------------------------------fuzzy finder setup--------------------------------------------
 local telescope = require("telescope")
@@ -307,8 +313,8 @@ vim.keymap.set('n', '<leader>t', '<cmd>Trouble diagnostics toggle<CR>')
 
 
 -------------------------------------------folder setup--------------------------------------------
-vim.keymap.set('n', '-', 'za', { noremap = true, silent = true })
-vim.keymap.set('v', '-', 'zf', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>e', 'za', { noremap = true, silent = true })
+vim.keymap.set('v', '<leader>e', 'zf', { noremap = true, silent = true })
 vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
 vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 
@@ -380,6 +386,17 @@ for key, func in pairs(keymap) do
 end
 
 
+
+-------------------------------------------autopairs setup--------------------------------------------
+local autopairs = require("nvim-autopairs")
+autopairs.remove_rule("{")
+
+-- better { rules
+vim.keymap.set('i', '{', '{}<left>', {noremap = true, silent = true})
+vim.keymap.set('i', '{<CR>', '{<CR>}<ESC>O', {noremap = true, silent = true})
+vim.keymap.set('i', '{;<CR>', '{<CR>};<ESC>O', {noremap = true, silent = true})
+vim.keymap.set('i', '{,<CR>', '{<CR>},<ESC>O', {noremap = true, silent = true})
+vim.keymap.set('i', '{ ', '{}<Left><Space><Left><Space>', {noremap = true, silent = true})
 
 
 -------------------------------------------theme setup--------------------------------------------
