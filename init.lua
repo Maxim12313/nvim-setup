@@ -19,10 +19,32 @@ vim.o.signcolumn = "yes"
 -- windows
 vim.o.splitbelow = true
 vim.o.splitright = true
+vim.keymap.set("n", "<C-w>,", ":resize 5<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w>.", ":resize 10<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w>m", ":resize<CR>", { noremap = true, silent = true })
 
 -- file navigation
 vim.keymap.set("i", "<C-c>", "<ESC>", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>w", "<C-^>", { noremap = true, silent = true })
+vim.keymap.set("n", ";r", "<C-^>", { noremap = true, silent = true })
+
+function toggleQF()
+	local isOpen = false
+	for _, win in pairs(vim.fn.getwininfo()) do
+		if win["quickfix"] == 1 then
+			isOpen = true
+		end
+	end
+	if isOpen then
+		vim.cmd("cclose")
+	else
+		vim.cmd("copen 5")
+	end
+end
+
+vim.keymap.set("n", "<leader>wq", toggleQF, { noremap = true, silent = true })
+
+-- -- replacement
+vim.keymap.set("n", "gn", ":%s/")
 
 -- non overwrite registers
 vim.keymap.set("v", "<leader>p", '"_dP', { noremap = true, silent = true })
@@ -31,7 +53,7 @@ vim.keymap.set("v", "<leader>c", '"_c', { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>d", '"_d', { noremap = true, silent = true })
 vim.keymap.set("v", "<leader>d", '"_d', { noremap = true, silent = true })
 
---emacs bindings
+--insert editing bindings
 vim.keymap.set("i", "<C-f>", "<Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-b>", "<Left>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-n>", "<Down>", { noremap = true, silent = true })
@@ -42,6 +64,7 @@ vim.keymap.set("i", "<C-k>", "<Right><ESC>C", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Right>", "<ESC>ea", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Left>", "<S-Left>", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-l>", "<Delete>", { noremap = true, silent = true })
 
 -- vertical movement
 vim.keymap.set("n", "K", "4k", { noremap = true, silent = true })

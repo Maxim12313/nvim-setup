@@ -96,6 +96,12 @@ require("lazy").setup({
 			event = "InsertEnter",
 			config = true,
 		},
+
+		-- file navigation harpoon
+		{ "ThePrimeagen/harpoon" },
+
+		-- pair binds
+		{ "tpope/vim-unimpaired" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -106,20 +112,25 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP actions",
 	callback = function(event)
 		local opts = { buffer = event.buf }
-		-- vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+		vim.keymap.set("n", "<C-k>", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
 		vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
 		vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
 		vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
 		vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-		vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-		vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-		vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
-		vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+		-- vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+		vim.keymap.set("n", "gh", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
+		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
 		vim.keymap.set("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
 		vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
 		vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 	end,
+})
+
+-- make hover rounded window
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+	border = "rounded",
 })
 
 vim.diagnostic.config({
@@ -308,7 +319,9 @@ require("trouble").setup({
 		},
 	},
 })
-vim.keymap.set("n", "<leader>t", "<cmd>Trouble diagnostics toggle<CR>")
+
+vim.keymap.set("n", "<leader>we", "<cmd>Trouble diagnostics toggle<CR>")
+vim.keymap.set("n", "<leader>wq", "copen 8")
 
 -------------------------------------------folder setup--------------------------------------------
 vim.keymap.set("n", "<leade>e", "za", { noremap = true, silent = true })
@@ -395,6 +408,24 @@ vim.keymap.set("i", "{<CR>", "{<CR>}<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{;<CR>", "{<CR>};<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{,<CR>", "{<CR>},<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{ ", "{}<Left><Space><Left><Space>", { noremap = true, silent = true })
+
+-------------------------------------------harpoon setup--------------------------------------------
+local harpoon = require("harpoon").setup({
+	tabline = true,
+})
+local harpoonUI = require("harpoon.ui")
+local harpoonMark = require("harpoon.mark")
+
+vim.keymap.set("n", ";a", harpoonMark.add_file)
+vim.keymap.set("n", ";q", harpoonUI.nav_prev)
+vim.keymap.set("n", ";e", harpoonUI.nav_next)
+vim.keymap.set("n", ";w", harpoonUI.toggle_quick_menu)
+
+for i = 1, 9 do
+	vim.keymap.set("n", ";" .. i, function()
+		harpoonUI.nav_file(i)
+	end)
+end
 
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
