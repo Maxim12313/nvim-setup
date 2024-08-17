@@ -252,7 +252,9 @@ require("Comment").setup({
 -------------------------------------------file manager setup--------------------------------------------
 local oil = require("oil")
 oil.setup({
-	show_hidden = true,
+	view_options = {
+		show_hidden = true,
+	},
 	skip_confirm_for_simple_edits = true,
 })
 
@@ -264,7 +266,10 @@ telescope.setup({
 	defaults = {
 		layout_config = {
 			horizontal = {
+				width = 0.90,
+				height = 0.95,
 				preview_cutoff = 0,
+				preview_width = 0.55,
 			},
 		},
 		file_ignore_patterns = {
@@ -279,13 +284,14 @@ telescope.setup({
 local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
 vim.keymap.set("n", "<leader>f", builtin.find_files)
+vim.keymap.set("n", "<leader>g", builtin.live_grep)
 
 --run relative search from oil dir if in oil or telescope curr buffer if in normal file
 function relativeSearch()
 	if vim.bo.filetype == "oil" then
-		builtin.find_files({ cwd = oil.get_current_dir() })
+		builtin.find_files({ cwd = oil.get_current_dir(), hidden = true })
 	else
-		builtin.find_files({ cwd = utils.buffer_dir() })
+		builtin.find_files({ cwd = utils.buffer_dir(), hidden = true })
 	end
 end
 
