@@ -38,6 +38,7 @@ require("lazy").setup({
 		{ "askfiy/visual_studio_code" },
 		{ "jacoborus/tender.vim" },
 		{ "tanvirtin/monokai.nvim" },
+		{ "marko-cerovac/material.nvim" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
