@@ -39,6 +39,7 @@ require("lazy").setup({
 		{ "jacoborus/tender.vim" },
 		{ "tanvirtin/monokai.nvim" },
 		{ "marko-cerovac/material.nvim" },
+		{ "ellisonleao/gruvbox.nvim" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -103,6 +104,15 @@ require("lazy").setup({
 
 		-- pair binds
 		{ "tpope/vim-unimpaired" },
+
+		-- collapse code
+		-- { "Wansmer/treesj" },
+
+		-- better quick fix
+		{ "kevinhwang91/nvim-bqf" },
+
+		-- surround editing
+		{ "kylechui/nvim-surround" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -209,7 +219,7 @@ cmp.setup({
 require("lsp_signature").setup({
 	floating_window = true,
 	floating_window_above_cur_line = true,
-	max_height = 3,
+	max_height = 5,
 	floating_window_off_y = -3,
 	hint_enable = false,
 })
@@ -229,7 +239,8 @@ vim.keymap.set("n", "[c", function()
 end, { silent = true })
 
 -------------------------------------------conform setup--------------------------------------------------
-require("conform").setup({
+local conform = require("conform")
+conform.setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
 		cpp = { "clang-format" },
@@ -428,6 +439,19 @@ for i = 1, 9 do
 	end)
 end
 
+-------------------------------------------collapse setup--------------------------------------------
+-- local tsj = require("treesj")
+-- tsj.setup({})
+-- vim.keymap.set("n", "<C-j>", tsj.toggle)
+-- vim.keymap.set("n", "<leader>j", function()
+-- 	tsj.toggle({ split = { recursive = true } })
+-- end)
+-------------------------------------------better quick fix setup--------------------------------------------
+require("bqf").setup({})
+
+-------------------------------------------surround setup--------------------------------------------
+require("nvim-surround").setup({})
+
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
 	style = "storm", -- "night" or "storm"
@@ -468,28 +492,10 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 
--- remove undercurls
+--dont change cursor color on themes
 vim.api.nvim_create_autocmd("ColorScheme", {
 	pattern = "*",
 	callback = function()
-		-- Function to get the existing highlight attributes
-		local function get_hl(name)
-			return vim.api.nvim_get_hl_by_name(name, true)
-		end
-
-		-- Update diagnostic highlight groups
-		for _, group in ipairs({
-			"DiagnosticUnderlineError",
-			"DiagnosticUnderlineWarn",
-			"DiagnosticUnderlineInfo",
-			"DiagnosticUnderlineHint",
-		}) do
-			local hl = get_hl(group)
-			vim.api.nvim_set_hl(0, group, {
-				undercurl = false,
-				underline = true,
-				sp = hl["special"], -- Preserve the original 'sp' color
-			})
-		end
+		vim.cmd("highlight Cursor guifg=NONE guibg=NONE")
 	end,
 })

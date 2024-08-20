@@ -7,7 +7,7 @@ vim.o.clipboard = "unnamed"
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.smartindent = true
--- vim.o.autoindent = true
+vim.o.autoindent = true
 vim.o.number = true
 vim.o.scrolloff = 8
 vim.o.guifont = "Input Mono 13"
@@ -37,11 +37,13 @@ function toggleQF()
 	if isOpen then
 		vim.cmd("cclose")
 	else
-		vim.cmd("copen 5")
+		vim.cmd("copen")
 	end
 end
 
+vim.keymap.set("n", "<leader>q", ":q!", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>wq", toggleQF, { noremap = true, silent = true })
+-- vim.keymap.set("n", "<leader>wr", "<CMD>cexpr []<CR>", { noremap = true, silent = true })
 
 -- -- replacement
 vim.keymap.set("n", "gn", ":%s/")
