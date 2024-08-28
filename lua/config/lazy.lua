@@ -415,7 +415,7 @@ local autopairs = require("nvim-autopairs")
 autopairs.remove_rule("{")
 
 -- better { rules
-vim.keymap.set("i", "{", "{}<left>", { noremap = true, silent = true })
+-- vim.keymap.set("i", "{", "{}<left>", { noremap = true, silent = true })
 vim.keymap.set("i", "{<CR>", "{<CR>}<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{;<CR>", "{<CR>};<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{,<CR>", "{<CR>},<ESC>O", { noremap = true, silent = true })
@@ -465,7 +465,7 @@ require("tokyonight").setup({
 	end,
 })
 require("visual_studio_code").setup({
-	mode = "dark", -- light | dark
+	mode = "light", -- light | dark
 })
 
 require("onedark").setup({

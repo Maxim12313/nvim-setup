@@ -1,5 +1,4 @@
 require("config.lazy")
-
 -- must have options
 vim.o.hlsearch = true
 vim.o.incsearch = true
@@ -23,7 +22,7 @@ vim.keymap.set("n", "<C-w>,", ":resize 5<CR>", { noremap = true, silent = true }
 vim.keymap.set("n", "<C-w>.", ":resize 10<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-w>m", ":resize<CR>", { noremap = true, silent = true })
 
--- file navigation
+-- misc
 vim.keymap.set("i", "<C-c>", "<ESC>", { noremap = true, silent = true })
 vim.keymap.set("n", ";r", "<C-^>", { noremap = true, silent = true })
 
@@ -43,9 +42,8 @@ end
 
 vim.keymap.set("n", "<leader>q", ":q!", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>wq", toggleQF, { noremap = true, silent = true })
--- vim.keymap.set("n", "<leader>wr", "<CMD>cexpr []<CR>", { noremap = true, silent = true })
-
--- -- replacement
+vim.keymap.set("n", "<leader>ch", ":colorscheme ", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>cj", "<CMD>cexpr []<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "gn", ":%s/")
 
 -- non overwrite registers
@@ -66,7 +64,6 @@ vim.keymap.set("i", "<C-k>", "<Right><ESC>C", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Right>", "<ESC>ea", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Left>", "<S-Left>", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-l>", "<Delete>", { noremap = true, silent = true })
 
 -- vertical movement
 vim.keymap.set("n", "K", "4k", { noremap = true, silent = true })
