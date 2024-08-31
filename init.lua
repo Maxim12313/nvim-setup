@@ -3,8 +3,6 @@ require("config.lazy")
 vim.o.hlsearch = true
 vim.o.incsearch = true
 vim.o.clipboard = "unnamed"
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
 vim.o.smartindent = true
 vim.o.autoindent = true
 vim.o.number = true
@@ -14,6 +12,18 @@ vim.o.swapfile = false
 vim.o.cursorline = true
 vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
+
+-- indent
+-- Default to 4 spaces per tab
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
+
+-- Use 2 spaces per tab for HTML, CSS, and JavaScript
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "html", "css", "javascript" },
+	command = "setlocal tabstop=2 shiftwidth=2",
+})
 
 -- windows
 vim.o.splitbelow = true
@@ -40,10 +50,7 @@ function toggleQF()
 	end
 end
 
-vim.keymap.set("n", "<leader>q", ":q!", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>wq", toggleQF, { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>ch", ":colorscheme ", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>cj", "<CMD>cexpr []<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "gn", ":%s/")
 
 -- non overwrite registers
@@ -58,8 +65,8 @@ vim.keymap.set("i", "<C-f>", "<Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-b>", "<Left>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-n>", "<Down>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-p>", "<Up>", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-a>", "<ESC>I", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-e>", "<ESC>A", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-a>", "<Home>", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-k>", "<Right><ESC>C", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Right>", "<ESC>ea", { noremap = true, silent = true })

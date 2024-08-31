@@ -80,9 +80,6 @@ require("lazy").setup({
 		-- file manager
 		{ "stevearc/oil.nvim" },
 
-		-- folder
-		{ "kevinhwang91/nvim-ufo", dependencies = "kevinhwang91/promise-async" },
-
 		-- todo comments
 		{ "folke/todo-comments.nvim" },
 
@@ -98,6 +95,7 @@ require("lazy").setup({
 			event = "InsertEnter",
 			config = true,
 		},
+		{ "windwp/nvim-ts-autotag" },
 
 		-- file navigation harpoon
 		{ "ThePrimeagen/harpoon" },
@@ -113,6 +111,10 @@ require("lazy").setup({
 
 		-- surround editing
 		{ "kylechui/nvim-surround" },
+
+		-- debugger
+		-- { "mfussenegger/nvim-dap" },
+		-- { "rcarriga/nvim-dap-ui" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -245,6 +247,8 @@ conform.setup({
 		lua = { "stylua" },
 		cpp = { "clang-format" },
 		python = { "ruff_format" },
+		javascript = { "prettierd", "prettier" },
+		html = { "prettierd", "prettier" },
 		["*"] = { "codespell" },
 		["_"] = { "trim_whitespace" },
 	},
@@ -326,7 +330,7 @@ require("trouble").setup({
 	},
 	filter = {
 		severity = {
-			min = vim.diagnostic.severity.WARN,
+			min = vim.diagnostic.severity.ERROR,
 			max = vim.diagnostic.severity.ERROR,
 		},
 	},
@@ -334,38 +338,6 @@ require("trouble").setup({
 
 vim.keymap.set("n", "<leader>we", "<cmd>Trouble diagnostics toggle<CR>")
 vim.keymap.set("n", "<leader>wq", "copen 8")
-
--------------------------------------------folder setup--------------------------------------------
-vim.keymap.set("n", "<leade>e", "za", { noremap = true, silent = true })
-vim.keymap.set("v", "<leader>e", "zf", { noremap = true, silent = true })
-vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-
-vim.wo.foldmethod = "expr"
-vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.o.fillchars = [[eob: ,fold: ,foldopen:-,foldsep: ,foldclose:+]]
-vim.o.foldcolumn = "0" -- '0' is not bad
-
-vim.o.foldlevel = 99
-vim.o.foldlevelstart = 99
-vim.o.foldenable = true
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.foldingRange = {
-	dynamicRegistration = false,
-	lineFoldingOnly = true,
-}
-local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
-for _, ls in ipairs(language_servers) do
-	require("lspconfig")[ls].setup({
-		capabilities = capabilities,
-		-- you can add other fields for setting up lsp server in this table
-	})
-end
-require("ufo").setup({
-	open_fold_hl_timeout = 0,
-})
-
 -------------------------------------------todo setup--------------------------------------------
 local todo = require("todo-comments").setup({
 	signs = false,
@@ -399,10 +371,10 @@ local keymap = {
 		neoscroll.ctrl_d({ duration = 100 })
 	end,
 	["<C-b>"] = function()
-		neoscroll.ctrl_b({ duration = 300 })
+		neoscroll.ctrl_b({ duration = 250 })
 	end,
 	["<C-f>"] = function()
-		neoscroll.ctrl_f({ duration = 300 })
+		neoscroll.ctrl_f({ duration = 250 })
 	end,
 }
 local modes = { "n", "v", "x" }
@@ -420,6 +392,15 @@ vim.keymap.set("i", "{<CR>", "{<CR>}<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{;<CR>", "{<CR>};<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{,<CR>", "{<CR>},<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{ ", "{}<Left><Space><Left><Space>", { noremap = true, silent = true })
+
+require("nvim-ts-autotag").setup({
+	opts = {
+		-- Defaults
+		enable_close = true, -- Auto close tags
+		enable_rename = true, -- Auto rename pairs of tags
+		enable_close_on_slash = false, -- Auto close on trailing </
+	},
+})
 
 -------------------------------------------harpoon setup--------------------------------------------
 local harpoon = require("harpoon").setup({
@@ -451,6 +432,53 @@ require("bqf").setup({})
 
 -------------------------------------------surround setup--------------------------------------------
 require("nvim-surround").setup({})
+
+-------------------------------------------debugger setup--------------------------------------------
+-- local dap = require("dap")
+-- dap.adapters.gdb = {
+-- 	type = "executable",
+-- 	command = "gdb",
+-- 	args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
+-- }
+--
+-- vim.keymap.set("n", "<C-l>w", function()
+-- 	dap.continue()
+-- end)
+-- vim.keymap.set("n", "<C-l>q", function()
+-- 	dap.step_over()
+-- end)
+-- vim.keymap.set("n", "<C-l>i", function()
+-- 	dap.step_into()
+-- end)
+-- vim.keymap.set("n", "<C-l>o", function()
+-- 	dap.step_out()
+-- end)
+-- vim.keymap.set("n", "<C-l>k", function()
+-- 	dap.toggle_breakpoint()
+-- end)
+-- vim.keymap.set("n", "<C-l>j", function()
+-- 	dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+-- end)
+-- vim.keymap.set("n", "<C-l>r", function()
+-- 	dap.repl.open()
+-- end)
+-- vim.keymap.set("n", "<C-l>l", function()
+-- 	dap.run_last()
+-- end)
+-- vim.keymap.set({ "n", "v" }, "<C-l>n", function()
+-- 	require("dap.ui.widgets").hover()
+-- end)
+-- vim.keymap.set({ "n", "v" }, "<C-l>m", function()
+-- 	require("dap.ui.widgets").preview()
+-- end)
+-- vim.keymap.set("n", "<Leader>df", function()
+-- 	local widgets = require("dap.ui.widgets")
+-- 	widgets.centered_float(widgets.frames)
+-- end)
+-- vim.keymap.set("n", "<Leader>ds", function()
+-- 	local widgets = require("dap.ui.widgets")
+-- 	widgets.centered_float(widgets.scopes)
+-- end)
 
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
