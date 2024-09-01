@@ -40,6 +40,7 @@ require("lazy").setup({
 		{ "tanvirtin/monokai.nvim" },
 		{ "marko-cerovac/material.nvim" },
 		{ "ellisonleao/gruvbox.nvim" },
+		{ "neanias/everforest-nvim" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -503,6 +504,10 @@ require("onedark").setup({
 	diagnostics = {
 		undercurl = false,
 	},
+})
+
+require("everforest").setup({
+	background = "hard",
 })
 
 --remove italics always

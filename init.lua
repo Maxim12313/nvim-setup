@@ -33,6 +33,16 @@ vim.keymap.set("n", "<C-w>.", ":resize 10<CR>", { noremap = true, silent = true 
 vim.keymap.set("n", "<C-w>m", ":resize<CR>", { noremap = true, silent = true })
 
 -- misc
+
+function toggleLightDark()
+	if vim.o.background == "dark" then
+		vim.o.background = "light"
+	else
+		vim.o.background = "dark"
+	end
+end
+
+vim.keymap.set("n", "<leader>wr", toggleLightDark)
 vim.keymap.set("i", "<C-c>", "<ESC>", { noremap = true, silent = true })
 vim.keymap.set("n", ";r", "<C-^>", { noremap = true, silent = true })
 
