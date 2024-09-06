@@ -13,11 +13,13 @@ vim.o.cursorline = true
 vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
 
+-- extra set
+vim.opt.guicursor = "n-v-i-c:block-Cursor"
+
 -- indent
 -- Default to 4 spaces per tab
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
 
 -- Use 2 spaces per tab for HTML, CSS, and JavaScript
 vim.api.nvim_create_autocmd("FileType", {
@@ -33,7 +35,6 @@ vim.keymap.set("n", "<C-w>.", ":resize 10<CR>", { noremap = true, silent = true 
 vim.keymap.set("n", "<C-w>m", ":resize<CR>", { noremap = true, silent = true })
 
 -- misc
-
 function toggleLightDark()
 	if vim.o.background == "dark" then
 		vim.o.background = "light"
@@ -95,4 +96,4 @@ vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
 
 --color
-vim.cmd.colorscheme("sonokai")
+vim.cmd.colorscheme("tender")

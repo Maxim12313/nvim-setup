@@ -41,6 +41,9 @@ require("lazy").setup({
 		{ "marko-cerovac/material.nvim" },
 		{ "ellisonleao/gruvbox.nvim" },
 		{ "neanias/everforest-nvim" },
+		{ "NLKNguyen/papercolor-theme" },
+		{ "Shatur/neovim-ayu" },
+		{ "ishan9299/nvim-solarized-lua" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -48,12 +51,18 @@ require("lazy").setup({
 
 		-- base lsp
 		{ "neovim/nvim-lspconfig" },
+		{ "nanotee/sqls.nvim" },
 
 		-- completion and suggestions
 		{ "hrsh7th/cmp-nvim-lsp" },
 		{ "hrsh7th/nvim-cmp" },
-		{ "L3MON4D3/LuaSnip" },
+		{
+			"L3MON4D3/LuaSnip",
+			dependencies = { "rafamadriz/friendly-snippets" },
+		},
 		{ "ray-x/lsp_signature.nvim" },
+		{ "luckasRanarison/tailwind-tools.nvim" },
+		{ "brenoprata10/nvim-highlight-colors" },
 
 		-- formatter
 		{ "stevearc/conform.nvim", opts = {} },
@@ -116,6 +125,27 @@ require("lazy").setup({
 		-- debugger
 		-- { "mfussenegger/nvim-dap" },
 		-- { "rcarriga/nvim-dap-ui" },
+
+		-- persistence
+		{
+			"folke/persistence.nvim",
+			event = "BufReadPre", -- this will only start session saving when an actual file was opened
+			opts = {
+				-- add any custom options here
+			},
+		},
+
+		-- neotree
+		{
+			"nvim-neo-tree/neo-tree.nvim",
+			branch = "v3.x",
+			dependencies = {
+				"nvim-lua/plenary.nvim",
+				"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+				"MunifTanjim/nui.nvim",
+				-- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+			},
+		},
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -175,6 +205,14 @@ vim.fn.sign_define("DiagnosticSignError", { text = "●", texthl = "DiagnosticSi
 vim.fn.sign_define("DiagnosticSignWarn", { text = "●", texthl = "DiagnosticSignWarn" })
 vim.fn.sign_define("DiagnosticSignHint", { text = "●", texthl = "DiagnosticSignHint" })
 
+require("lspconfig").sqls.setup({
+	on_attach = function(client, bufnr)
+		require("sqls").on_attach(client, bufnr)
+	end,
+})
+
+require("tailwind-tools").setup({})
+
 ----------------------------------------------mason setup--------------------------------------------------
 require("mason").setup({})
 require("mason-lspconfig").setup({
@@ -188,11 +226,21 @@ require("mason-lspconfig").setup({
 
 ----------------------------------------------suggestion setup--------------------------------------------------
 local cmp = require("cmp")
+local ls = require("luasnip")
+
+require("luasnip.loaders.from_vscode").lazy_load()
+ls.filetype_extend("javascript", { "javascriptreact" })
+ls.filetype_extend("javascript", { "html" })
+
+require("nvim-highlight-colors").setup({})
 
 cmp.setup({
+	formatting = {
+		format = require("nvim-highlight-colors").format,
+	},
 	snippet = {
 		expand = function(args)
-			require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
+			ls.lsp_expand(args.body) -- For `luasnip` users.
 		end,
 	},
 	mapping = {
@@ -200,6 +248,7 @@ cmp.setup({
 		["<C-p>"] = cmp.config.disable,
 		["<C-e>"] = cmp.config.disable,
 		["<Tab>"] = cmp.mapping.confirm({ select = true }),
+		["<C-Space>"] = cmp.mapping.complete(),
 	},
 	window = {
 		completion = cmp.config.window.bordered(),
@@ -209,11 +258,11 @@ cmp.setup({
 		debounce = 60,
 		throttle = 30,
 		fetching_timeout = 200,
-		max_view_entries = 3,
+		max_view_entries = 4,
 	},
 	sources = cmp.config.sources({
 		{ name = "nvim_lsp" },
-		{ name = "luasnip" }, -- For luasnip users.
+		{ name = "luasnip" },
 	}, {
 		{ name = "buffer" },
 	}),
@@ -233,6 +282,9 @@ require("nvim-treesitter.configs").setup({
 	sync_install = false,
 	auto_install = true,
 	highlight = {
+		enable = true,
+	},
+	indent = {
 		enable = true,
 	},
 })
@@ -324,6 +376,7 @@ function relativeSearch()
 end
 
 vim.keymap.set("n", "<leader>r", relativeSearch)
+vim.keymap.set("n", "<leader>e", builtin.buffers)
 
 require("trouble").setup({
 	win = {
@@ -480,6 +533,37 @@ require("nvim-surround").setup({})
 -- 	local widgets = require("dap.ui.widgets")
 -- 	widgets.centered_float(widgets.scopes)
 -- end)
+
+-------------------------------------------persistence setup--------------------------------------------
+-- load the session for the current directory
+vim.keymap.set("n", "<leader>qd", function()
+	require("persistence").load()
+end)
+
+-- select a session to load
+vim.keymap.set("n", "<leader>qw", function()
+	require("persistence").select()
+end)
+
+-- load the last session
+vim.keymap.set("n", "<leader>qe", function()
+	require("persistence").load({ last = true })
+end)
+
+-- stop Persistence => session won't be saved on exit
+vim.keymap.set("n", "<leader>qq", function()
+	require("persistence").stop()
+end)
+
+-------------------------------------------neotree setup--------------------------------------------
+local neotree = require("neo-tree")
+neotree.setup({
+	-- window = {
+	-- 	position = "foat",
+	-- 	border = "rounded",
+	-- },
+})
+vim.keymap.set("n", "<leader>t", ":Neotree float toggle=true reveal=true<CR>", { silent = true })
 
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
