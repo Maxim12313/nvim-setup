@@ -88,7 +88,7 @@ require("lazy").setup({
 		{ "folke/trouble.nvim" },
 
 		-- file manager
-		{ "stevearc/oil.nvim" },
+		-- { "stevearc/oil.nvim" },
 
 		-- todo comments
 		{ "folke/todo-comments.nvim" },
@@ -289,6 +289,10 @@ require("nvim-treesitter.configs").setup({
 	},
 })
 
+require("treesitter-context").setup({
+	max_lines = 2,
+})
+
 vim.keymap.set("n", "[c", function()
 	require("treesitter-context").go_to_context(vim.v.count1)
 end, { silent = true })
@@ -330,15 +334,15 @@ require("Comment").setup({
 })
 
 -------------------------------------------file manager setup--------------------------------------------
-local oil = require("oil")
-oil.setup({
-	view_options = {
-		show_hidden = true,
-	},
-	skip_confirm_for_simple_edits = true,
-})
-
-vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+-- local oil = require("oil")
+-- oil.setup({
+-- 	view_options = {
+-- 		show_hidden = true,
+-- 	},
+-- 	skip_confirm_for_simple_edits = true,
+-- })
+--
+-- vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
 -------------------------------------------fuzzy finder setup--------------------------------------------
 local telescope = require("telescope")
@@ -363,20 +367,20 @@ telescope.setup({
 
 local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
+vim.keymap.set("n", "<leader>r", builtin.buffers)
 vim.keymap.set("n", "<leader>f", builtin.find_files)
 vim.keymap.set("n", "<leader>g", builtin.live_grep)
 
 --run relative search from oil dir if in oil or telescope curr buffer if in normal file
-function relativeSearch()
-	if vim.bo.filetype == "oil" then
-		builtin.find_files({ cwd = oil.get_current_dir(), hidden = true })
-	else
-		builtin.find_files({ cwd = utils.buffer_dir(), hidden = true })
-	end
-end
-
-vim.keymap.set("n", "<leader>r", relativeSearch)
-vim.keymap.set("n", "<leader>e", builtin.buffers)
+-- function relativeSearch()
+-- 	if vim.bo.filetype == "oil" then
+-- 		builtin.find_files({ cwd = oil.get_current_dir(), hidden = true })
+-- 	else
+-- 		builtin.find_files({ cwd = utils.buffer_dir(), hidden = true })
+-- 	end
+-- end
+--
+-- vim.keymap.set("n", "<leader>r", relativeSearch)
 
 require("trouble").setup({
 	win = {
@@ -536,34 +540,19 @@ require("nvim-surround").setup({})
 
 -------------------------------------------persistence setup--------------------------------------------
 -- load the session for the current directory
-vim.keymap.set("n", "<leader>qd", function()
+vim.keymap.set("n", "<leader>s", function()
 	require("persistence").load()
-end)
-
--- select a session to load
-vim.keymap.set("n", "<leader>qw", function()
-	require("persistence").select()
-end)
-
--- load the last session
-vim.keymap.set("n", "<leader>qe", function()
-	require("persistence").load({ last = true })
-end)
-
--- stop Persistence => session won't be saved on exit
-vim.keymap.set("n", "<leader>qq", function()
-	require("persistence").stop()
 end)
 
 -------------------------------------------neotree setup--------------------------------------------
 local neotree = require("neo-tree")
 neotree.setup({
-	-- window = {
-	-- 	position = "foat",
-	-- 	border = "rounded",
-	-- },
+	filesystem = {
+		hijack_netrw_behavior = "open_current",
+	},
 })
-vim.keymap.set("n", "<leader>t", ":Neotree float toggle=true reveal=true<CR>", { silent = true })
+vim.keymap.set("n", "-", ":Neotree toggle current reveal<CR>")
+vim.keymap.set("n", "<leader>t", ":Neotree show toggle right reveal<CR>")
 
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
