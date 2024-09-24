@@ -13,7 +13,7 @@ vim.o.cursorline = true
 vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
 
--- extra set
+-- cursor
 vim.opt.guicursor = "n-v-i-c:block-Cursor"
 
 -- indent
@@ -63,6 +63,7 @@ end
 
 vim.keymap.set("n", "<leader>wq", toggleQF, { noremap = true, silent = true })
 vim.keymap.set("n", "gn", ":%s/")
+vim.keymap.set("n", "<leasder>j", "", { noremap = true })
 
 -- non overwrite registers
 vim.keymap.set("v", "<leader>p", '"_dP', { noremap = true, silent = true })
@@ -80,7 +81,7 @@ vim.keymap.set("i", "<C-a>", "<Home>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-k>", "<Right><ESC>C", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
-vim.keymap.set("i", "<A-Right>", "<ESC>ea", { noremap = true, silent = true })
+vim.keymap.set("i", "<A-Right>", "<S-Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Left>", "<S-Left>", { noremap = true, silent = true })
 
 -- vertical movement
@@ -96,4 +97,4 @@ vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
 
 --color
-vim.cmd.colorscheme("tender")
+vim.cmd.colorscheme("ayu-mirage")

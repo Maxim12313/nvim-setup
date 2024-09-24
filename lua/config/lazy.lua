@@ -51,7 +51,6 @@ require("lazy").setup({
 
 		-- base lsp
 		{ "neovim/nvim-lspconfig" },
-		{ "nanotee/sqls.nvim" },
 
 		-- completion and suggestions
 		{ "hrsh7th/cmp-nvim-lsp" },
@@ -146,6 +145,10 @@ require("lazy").setup({
 				-- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
 			},
 		},
+		{
+			"MeanderingProgrammer/render-markdown.nvim",
+			opts = {},
+		},
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = true },
@@ -205,12 +208,6 @@ vim.fn.sign_define("DiagnosticSignError", { text = "●", texthl = "DiagnosticSi
 vim.fn.sign_define("DiagnosticSignWarn", { text = "●", texthl = "DiagnosticSignWarn" })
 vim.fn.sign_define("DiagnosticSignHint", { text = "●", texthl = "DiagnosticSignHint" })
 
-require("lspconfig").sqls.setup({
-	on_attach = function(client, bufnr)
-		require("sqls").on_attach(client, bufnr)
-	end,
-})
-
 require("tailwind-tools").setup({})
 
 ----------------------------------------------mason setup--------------------------------------------------
@@ -229,8 +226,7 @@ local cmp = require("cmp")
 local ls = require("luasnip")
 
 require("luasnip.loaders.from_vscode").lazy_load()
-ls.filetype_extend("javascript", { "javascriptreact" })
-ls.filetype_extend("javascript", { "html" })
+ls.filetype_extend("javascript", { "javascriptreact", "html", "css" }) -- Extending for CSS
 
 require("nvim-highlight-colors").setup({})
 
@@ -267,6 +263,23 @@ cmp.setup({
 		{ name = "buffer" },
 	}),
 })
+
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local servers = {
+	"pyright",
+	"tsserver",
+	"eslint",
+	"cssls",
+	"html",
+	"clangd",
+}
+
+local lsp = require("lspconfig")
+for _, server in ipairs(servers) do
+	lsp[server].setup({
+		capabilities = capabilities,
+	})
+end
 
 require("lsp_signature").setup({
 	floating_window = true,
@@ -371,17 +384,6 @@ vim.keymap.set("n", "<leader>r", builtin.buffers)
 vim.keymap.set("n", "<leader>f", builtin.find_files)
 vim.keymap.set("n", "<leader>g", builtin.live_grep)
 
---run relative search from oil dir if in oil or telescope curr buffer if in normal file
--- function relativeSearch()
--- 	if vim.bo.filetype == "oil" then
--- 		builtin.find_files({ cwd = oil.get_current_dir(), hidden = true })
--- 	else
--- 		builtin.find_files({ cwd = utils.buffer_dir(), hidden = true })
--- 	end
--- end
---
--- vim.keymap.set("n", "<leader>r", relativeSearch)
-
 require("trouble").setup({
 	win = {
 		size = 5,
@@ -421,18 +423,18 @@ neoscroll.setup({
 
 local keymap = {
 	["<C-u>"] = function()
-		vim.cmd("normal!H")
-		neoscroll.ctrl_u({ duration = 100 })
+		-- vim.cmd("normal!H")
+		neoscroll.ctrl_u({ duration = 50 })
 	end,
 	["<A-Right>"] = function()
-		vim.cmd("normal!L")
-		neoscroll.ctrl_d({ duration = 100 })
+		-- vim.cmd("normal!L")
+		neoscroll.ctrl_d({ duration = 50 })
 	end,
 	["<C-b>"] = function()
-		neoscroll.ctrl_b({ duration = 250 })
+		neoscroll.ctrl_b({ duration = 600 })
 	end,
 	["<C-f>"] = function()
-		neoscroll.ctrl_f({ duration = 250 })
+		neoscroll.ctrl_f({ duration = 600 })
 	end,
 }
 local modes = { "n", "v", "x" }
@@ -445,7 +447,7 @@ local autopairs = require("nvim-autopairs")
 autopairs.remove_rule("{")
 
 -- better { rules
--- vim.keymap.set("i", "{", "{}<left>", { noremap = true, silent = true })
+vim.keymap.set("i", "{", "{}<left>", { noremap = true, silent = true })
 vim.keymap.set("i", "{<CR>", "{<CR>}<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{;<CR>", "{<CR>};<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "{,<CR>", "{<CR>},<ESC>O", { noremap = true, silent = true })
@@ -549,10 +551,16 @@ local neotree = require("neo-tree")
 neotree.setup({
 	filesystem = {
 		hijack_netrw_behavior = "open_current",
+		filtered_items = {
+			hide_dotfiles = false,
+		},
 	},
 })
-vim.keymap.set("n", "-", ":Neotree toggle current reveal<CR>")
-vim.keymap.set("n", "<leader>t", ":Neotree show toggle right reveal<CR>")
+vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
+vim.keymap.set("n", "<leader>t", ":Neotree show toggle right reveal<CR>", { silent = true })
+
+-------------------------------------------neotree setup--------------------------------------------
+require("render-markdown").setup({})
 
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
