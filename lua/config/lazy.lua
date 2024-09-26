@@ -6,7 +6,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	if vim.v.shell_error ~= 0 then
 		vim.api.nvim_echo({
 			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out, "WarningMsg" },
+			{ out,                            "WarningMsg" },
 			{ "\nPress any key to exit..." },
 		}, true, {})
 		vim.fn.getchar()
@@ -22,7 +22,7 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup({
 	spec = {
 		-- themes
-		{ "catppuccin/nvim", name = "catppuccin" },
+		{ "catppuccin/nvim",                  name = "catppuccin" },
 		{
 			"sainnhe/sonokai",
 			lazy = false,
@@ -64,14 +64,14 @@ require("lazy").setup({
 		{ "brenoprata10/nvim-highlight-colors" },
 
 		-- formatter
-		{ "stevearc/conform.nvim", opts = {} },
+		{ "stevearc/conform.nvim",                  opts = {} },
 
 		-- tree-siter
 		{ "nvim-treesitter/nvim-treesitter" },
 		{ "nvim-treesitter/nvim-treesitter-context" },
 
 		-- comment
-		{ "numToStr/Comment.nvim", opts = {} },
+		{ "numToStr/Comment.nvim",                  opts = {} },
 
 		-- fuzzy finder
 		{
@@ -264,23 +264,6 @@ cmp.setup({
 	}),
 })
 
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-local servers = {
-	"pyright",
-	"tsserver",
-	"eslint",
-	"cssls",
-	"html",
-	"clangd",
-}
-
-local lsp = require("lspconfig")
-for _, server in ipairs(servers) do
-	lsp[server].setup({
-		capabilities = capabilities,
-	})
-end
-
 require("lsp_signature").setup({
 	floating_window = true,
 	floating_window_above_cur_line = true,
@@ -456,8 +439,8 @@ vim.keymap.set("i", "{ ", "{}<Left><Space><Left><Space>", { noremap = true, sile
 require("nvim-ts-autotag").setup({
 	opts = {
 		-- Defaults
-		enable_close = true, -- Auto close tags
-		enable_rename = true, -- Auto rename pairs of tags
+		enable_close = true,     -- Auto close tags
+		enable_rename = true,    -- Auto rename pairs of tags
 		enable_close_on_slash = false, -- Auto close on trailing </
 	},
 })
