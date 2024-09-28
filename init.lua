@@ -79,7 +79,6 @@ vim.keymap.set("i", "<C-n>", "<Down>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-p>", "<Up>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-a>", "<Home>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-k>", "<Right><ESC>C", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Right>", "<S-Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Left>", "<S-Left>", { noremap = true, silent = true })
@@ -97,4 +96,4 @@ vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
 
 --color
-vim.cmd.colorscheme("ayu-mirage")
+vim.cmd.colorscheme("monokai")
