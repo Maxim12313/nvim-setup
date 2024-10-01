@@ -6,7 +6,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	if vim.v.shell_error ~= 0 then
 		vim.api.nvim_echo({
 			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out,                            "WarningMsg" },
+			{ out, "WarningMsg" },
 			{ "\nPress any key to exit..." },
 		}, true, {})
 		vim.fn.getchar()
@@ -22,7 +22,7 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup({
 	spec = {
 		-- themes
-		{ "catppuccin/nvim",                  name = "catppuccin" },
+		{ "catppuccin/nvim", name = "catppuccin" },
 		{
 			"sainnhe/sonokai",
 			lazy = false,
@@ -64,14 +64,14 @@ require("lazy").setup({
 		{ "brenoprata10/nvim-highlight-colors" },
 
 		-- formatter
-		{ "stevearc/conform.nvim",                  opts = {} },
+		{ "stevearc/conform.nvim", opts = {} },
 
 		-- tree-siter
 		{ "nvim-treesitter/nvim-treesitter" },
 		{ "nvim-treesitter/nvim-treesitter-context" },
 
 		-- comment
-		{ "numToStr/Comment.nvim",                  opts = {} },
+		{ "numToStr/Comment.nvim", opts = {} },
 
 		-- fuzzy finder
 		{
@@ -107,13 +107,16 @@ require("lazy").setup({
 		{ "windwp/nvim-ts-autotag" },
 
 		-- file navigation harpoon
-		{ "ThePrimeagen/harpoon" },
+		{
+			"ThePrimeagen/harpoon",
+			branch = "harpoon2",
+		},
 
 		-- pair binds
 		{ "tpope/vim-unimpaired" },
 
 		-- collapse code
-		-- { "Wansmer/treesj" },
+		{ "Wansmer/treesj" },
 
 		-- better quick fix
 		{ "kevinhwang91/nvim-bqf" },
@@ -151,7 +154,7 @@ require("lazy").setup({
 		},
 	},
 	install = { colorscheme = { "habamax" } },
-	checker = { enabled = true },
+	checker = { enabled = false },
 })
 
 ----------------------------------------------lsp setup--------------------------------------------------
@@ -244,6 +247,7 @@ cmp.setup({
 		["<C-e>"] = cmp.config.disable,
 		["<Tab>"] = cmp.mapping.confirm({ select = true }),
 		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-j>"] = cmp.mapping.select_next_item(),
 	},
 	window = {
 		completion = cmp.config.window.bordered(),
@@ -266,7 +270,7 @@ cmp.setup({
 require("lsp_signature").setup({
 	floating_window = true,
 	floating_window_above_cur_line = true,
-	max_height = 5,
+	max_height = 3,
 	hint_enable = false,
 })
 
@@ -404,11 +408,12 @@ neoscroll.setup({
 
 local keymap = {
 	["<C-u>"] = function()
-		-- vim.cmd("normal!H")
 		neoscroll.ctrl_u({ duration = 50 })
 	end,
 	["<A-Right>"] = function()
-		-- vim.cmd("normal!L")
+		neoscroll.ctrl_d({ duration = 50 })
+	end,
+	["<M-f>"] = function()
 		neoscroll.ctrl_d({ duration = 50 })
 	end,
 	["<C-b>"] = function()
@@ -437,37 +442,52 @@ vim.keymap.set("i", "{ ", "{}<Left><Space><Left><Space>", { noremap = true, sile
 require("nvim-ts-autotag").setup({
 	opts = {
 		-- Defaults
-		enable_close = true,     -- Auto close tags
-		enable_rename = true,    -- Auto rename pairs of tags
+		enable_close = true, -- Auto close tags
+		enable_rename = true, -- Auto rename pairs of tags
 		enable_close_on_slash = false, -- Auto close on trailing </
 	},
 })
 
 -------------------------------------------harpoon setup--------------------------------------------
-local harpoon = require("harpoon").setup({
-	tabline = true,
-})
-local harpoonUI = require("harpoon.ui")
-local harpoonMark = require("harpoon.mark")
+local harpoon = require("harpoon")
 
-vim.keymap.set("n", ";a", harpoonMark.add_file)
-vim.keymap.set("n", ";q", harpoonUI.nav_prev)
-vim.keymap.set("n", ";e", harpoonUI.nav_next)
-vim.keymap.set("n", ";w", harpoonUI.toggle_quick_menu)
+harpoon.setup({})
 
-for i = 1, 9 do
-	vim.keymap.set("n", ";" .. i, function()
-		harpoonUI.nav_file(i)
-	end)
-end
+vim.keymap.set("n", ";a", function()
+	harpoon:list():add()
+end)
+vim.keymap.set("n", ";w", function()
+	harpoon.ui:toggle_quick_menu(harpoon:list())
+end)
+
+vim.keymap.set("n", ";1", function()
+	harpoon:list():select(1)
+end)
+vim.keymap.set("n", ";2", function()
+	harpoon:list():select(2)
+end)
+vim.keymap.set("n", ";3", function()
+	harpoon:list():select(3)
+end)
+vim.keymap.set("n", ";4", function()
+	harpoon:list():select(4)
+end)
+
+-- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set("n", ";q", function()
+	harpoon:list():prev()
+end)
+vim.keymap.set("n", ";e", function()
+	harpoon:list():next()
+end)
 
 -------------------------------------------collapse setup--------------------------------------------
--- local tsj = require("treesj")
--- tsj.setup({})
--- vim.keymap.set("n", "<C-j>", tsj.toggle)
--- vim.keymap.set("n", "<leader>j", function()
--- 	tsj.toggle({ split = { recursive = true } })
--- end)
+local tsj = require("treesj")
+tsj.setup({})
+vim.keymap.set("n", "<C-j>", tsj.toggle)
+vim.keymap.set("n", "<leader>j", function()
+	tsj.toggle({ split = { recursive = true } })
+end)
 -------------------------------------------better quick fix setup--------------------------------------------
 require("bqf").setup({})
 
@@ -523,7 +543,7 @@ require("nvim-surround").setup({})
 
 -------------------------------------------persistence setup--------------------------------------------
 -- load the session for the current directory
-vim.keymap.set("n", "<leader>s", function()
+vim.keymap.set("n", ";s", function()
 	require("persistence").load()
 end)
 
@@ -533,7 +553,7 @@ neotree.setup({
 	filesystem = {
 		hijack_netrw_behavior = "open_current",
 		filtered_items = {
-			hide_dotfiles = false,
+			visible = true,
 		},
 	},
 })

@@ -23,7 +23,7 @@ vim.opt.shiftwidth = 4
 
 -- Use 2 spaces per tab for HTML, CSS, and JavaScript
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "html", "css", "javascript" },
+	pattern = { "html", "css", "javascript", "javascriptreact", "typescript", "typescriptreact" },
 	command = "setlocal tabstop=2 shiftwidth=2",
 })
 
@@ -80,8 +80,14 @@ vim.keymap.set("i", "<C-p>", "<Up>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-a>", "<Home>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
+
+-- for mac system
 vim.keymap.set("i", "<A-Right>", "<S-Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Left>", "<S-Left>", { noremap = true, silent = true })
+
+-- for tmux system
+vim.keymap.set("i", "<M-f>", "<S-Right>", { noremap = true, silent = true })
+vim.keymap.set("i", "<M-b>", "<S-Left>", { noremap = true, silent = true })
 
 -- vertical movement
 vim.keymap.set("n", "K", "4k", { noremap = true, silent = true })
