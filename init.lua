@@ -12,6 +12,7 @@ vim.o.swapfile = false
 vim.o.cursorline = true
 vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
+vim.o.showmode = false
 
 -- cursor
 vim.opt.guicursor = "n-v-i-c:block-Cursor"
@@ -90,16 +91,23 @@ vim.keymap.set("i", "<M-f>", "<S-Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<M-b>", "<S-Left>", { noremap = true, silent = true })
 
 -- vertical movement
-vim.keymap.set("n", "K", "4k", { noremap = true, silent = true })
-vim.keymap.set("n", "J", "4j", { noremap = true, silent = true })
-vim.keymap.set("v", "K", "4k", { noremap = true, silent = true })
-vim.keymap.set("v", "J", "4j", { noremap = true, silent = true })
+vim.keymap.set("n", "K", "5k", { noremap = true, silent = true })
+vim.keymap.set("n", "J", "5j", { noremap = true, silent = true })
+vim.keymap.set("v", "K", "5k", { noremap = true, silent = true })
+vim.keymap.set("v", "J", "5j", { noremap = true, silent = true })
 
 -- indent
-vim.keymap.set("n", ">", ">>", { noremap = true, silent = true })
-vim.keymap.set("n", "<", "<<", { noremap = true, silent = true })
 vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
 
 --color
 vim.cmd.colorscheme("monokai")
+
+-- theme changes
+local function themeChanges()
+	vim.api.nvim_set_hl(0, "Visual", { bg = "#FFA500", blend = 80 }) -- Softer blue background with a slight transparency
+	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#FFA500", blend = 80 }) -- Softer blue background with a slight transparency
+end
+
+vim.api.nvim_create_autocmd("Colorscheme", { callback = themeChanges })
+themeChanges()

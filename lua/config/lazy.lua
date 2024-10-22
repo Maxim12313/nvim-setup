@@ -148,10 +148,28 @@ require("lazy").setup({
 				-- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
 			},
 		},
+
+		-- markdown
 		{
 			"MeanderingProgrammer/render-markdown.nvim",
 			opts = {},
 		},
+
+		-- status line
+		{ "nvim-lualine/lualine.nvim" },
+
+		-- cpp
+		{
+			"xeluxee/competitest.nvim",
+			dependencies = "MunifTanjim/nui.nvim",
+		},
+
+		-- tetris
+		{ "alec-gibson/nvim-tetris" },
+
+		-- git
+		{ "lewis6991/gitsigns.nvim" },
+		{ "tpope/vim-fugitive" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
@@ -365,7 +383,6 @@ telescope.setup({
 
 local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
-vim.keymap.set("n", "<leader>r", builtin.buffers)
 vim.keymap.set("n", "<leader>f", builtin.find_files)
 vim.keymap.set("n", "<leader>g", builtin.live_grep)
 
@@ -417,10 +434,10 @@ local keymap = {
 		neoscroll.ctrl_d({ duration = 50 })
 	end,
 	["<C-b>"] = function()
-		neoscroll.ctrl_b({ duration = 600 })
+		neoscroll.ctrl_b({ duration = 400 })
 	end,
 	["<C-f>"] = function()
-		neoscroll.ctrl_f({ duration = 600 })
+		neoscroll.ctrl_f({ duration = 400 })
 	end,
 }
 local modes = { "n", "v", "x" }
@@ -483,7 +500,9 @@ end)
 
 -------------------------------------------collapse setup--------------------------------------------
 local tsj = require("treesj")
-tsj.setup({})
+tsj.setup({
+	use_default_keymaps = false,
+})
 vim.keymap.set("n", "<C-j>", tsj.toggle)
 vim.keymap.set("n", "<leader>j", function()
 	tsj.toggle({ split = { recursive = true } })
@@ -558,11 +577,65 @@ neotree.setup({
 	},
 })
 vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
-vim.keymap.set("n", "<leader>t", ":Neotree show toggle right reveal<CR>", { silent = true })
-
--------------------------------------------neotree setup--------------------------------------------
+-------------------------------------------render setup--------------------------------------------
 require("render-markdown").setup({})
 
+-------------------------------------------cpp setup--------------------------------------------
+local args = {
+	"-std=c++17",
+	"-g",
+	"$(FNAME)",
+	"-o",
+	"$(FNOEXT)",
+	"-Wall",
+	"-Wextra",
+	"-Wshadow",
+	"-Wconversion",
+	"-Wno-sign-conversion",
+	"-Wno-sign-compare",
+	"-Wfloat-equal",
+	"-fsanitize=undefined",
+}
+require("competitest").setup({
+	compile_command = {
+		cpp = { exec = "g++", args = args },
+	},
+	replace_received_testcases = true,
+	runner_ui = {
+		viewer = {
+			width = 0.8,
+			height = 0.7,
+		},
+	},
+	popup_ui = {
+		total_width = 0.95,
+		total_height = 0.95,
+		layout = {
+			{ 2, "tc" },
+			{ 5, { { 2, "so" }, { 1, "si" } } },
+			{ 5, { { 2, "eo" }, { 1, "se" } } },
+		},
+	},
+})
+vim.keymap.set("n", "<leader>eq", ":CompetiTest run<CR>")
+vim.keymap.set("n", "<leader>ew", ":CompetiTest receive testcases<CR>")
+
+-------------------------------------------status line setup--------------------------------------------
+require("lualine").setup({
+	options = {
+		theme = "gruvbox-material",
+	},
+	sections = {
+		lualine_a = { "mode" },
+		lualine_b = { { "filename", path = 1 } },
+		lualine_c = { "diagnostics" },
+		lualine_x = { "filetype" },
+		lualine_y = { "progress" },
+		lualine_z = { "location" },
+	},
+})
+-------------------------------------------git setup--------------------------------------------
+require("gitsigns").setup({})
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
 	style = "storm", -- "night" or "storm"
