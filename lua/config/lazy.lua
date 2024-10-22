@@ -168,6 +168,9 @@ require("lazy").setup({
 		-- git
 		{ "lewis6991/gitsigns.nvim" },
 		{ "tpope/vim-fugitive" },
+
+		-- startup time
+		{ "dstein64/vim-startuptime" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
