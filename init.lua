@@ -19,8 +19,9 @@ vim.opt.guicursor = "n-v-i-c:block-Cursor"
 
 -- indent
 -- Default to 4 spaces per tab
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
 
 -- Use 2 spaces per tab for HTML, CSS, and JavaScript
 vim.api.nvim_create_autocmd("FileType", {

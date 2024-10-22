@@ -86,9 +86,6 @@ require("lazy").setup({
 		-- diagnostcs finder
 		{ "folke/trouble.nvim" },
 
-		-- file manager
-		-- { "stevearc/oil.nvim" },
-
 		-- todo comments
 		{ "folke/todo-comments.nvim" },
 
@@ -137,7 +134,8 @@ require("lazy").setup({
 			},
 		},
 
-		-- neotree
+		-- files
+		-- { "stevearc/oil.nvim" },
 		{
 			"nvim-neo-tree/neo-tree.nvim",
 			branch = "v3.x",
@@ -349,17 +347,6 @@ require("Comment").setup({
 	},
 })
 
--------------------------------------------file manager setup--------------------------------------------
--- local oil = require("oil")
--- oil.setup({
--- 	view_options = {
--- 		show_hidden = true,
--- 	},
--- 	skip_confirm_for_simple_edits = true,
--- })
---
--- vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-
 -------------------------------------------fuzzy finder setup--------------------------------------------
 local telescope = require("telescope")
 telescope.setup({
@@ -566,7 +553,17 @@ vim.keymap.set("n", ";s", function()
 	require("persistence").load()
 end)
 
--------------------------------------------neotree setup--------------------------------------------
+-------------------------------------------file manager setup--------------------------------------------
+-- local oil = require("oil")
+-- oil.setup({
+-- 	view_options = {
+-- 		show_hidden = true,
+-- 	},
+-- 	skip_confirm_for_simple_edits = true,
+-- })
+--
+-- vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+--
 local neotree = require("neo-tree")
 neotree.setup({
 	filesystem = {
@@ -576,6 +573,7 @@ neotree.setup({
 		},
 	},
 })
+vim.keymap.set("n", "_", ":Neotree toggle position=current reveal<CR>", { silent = true })
 vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
 -------------------------------------------render setup--------------------------------------------
 require("render-markdown").setup({})
@@ -635,7 +633,9 @@ require("lualine").setup({
 	},
 })
 -------------------------------------------git setup--------------------------------------------
-require("gitsigns").setup({})
+require("gitsigns").setup({
+	current_line_blame = true,
+})
 -------------------------------------------theme setup--------------------------------------------
 require("tokyonight").setup({
 	style = "storm", -- "night" or "storm"
