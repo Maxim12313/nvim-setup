@@ -13,6 +13,7 @@ vim.o.cursorline = true
 vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
 vim.o.showmode = false
+vim.o.undofile = true
 
 -- cursor
 vim.opt.guicursor = "n-v-i-c:block-Cursor"
