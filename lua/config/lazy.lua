@@ -22,28 +22,21 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup({
 	spec = {
 		-- themes
-		{ "catppuccin/nvim", name = "catppuccin" },
-		{
-			"sainnhe/sonokai",
-			lazy = false,
-			config = function()
-				vim.g.gonokai_style = "atlantis"
-				vim.g.sonokai_enable_italic = false
-			end,
-		},
-		{ "projekt0n/github-nvim-theme" },
-		{ "rose-pine/neovim" },
-		{ "folke/tokyonight.nvim" },
-		{ "navarasu/onedark.nvim" },
-		{ "askfiy/visual_studio_code" },
-		{ "jacoborus/tender.vim" },
-		{ "tanvirtin/monokai.nvim" },
-		{ "marko-cerovac/material.nvim" },
-		{ "ellisonleao/gruvbox.nvim" },
-		{ "neanias/everforest-nvim" },
-		{ "NLKNguyen/papercolor-theme" },
-		{ "Shatur/neovim-ayu" },
-		{ "ishan9299/nvim-solarized-lua" },
+		{ "catppuccin/nvim", name = "catppuccin", lazy = true },
+		{ "sainnhe/sonokai", lazy = true },
+		{ "projekt0n/github-nvim-theme", lazy = true },
+		{ "rose-pine/neovim", lazy = true },
+		{ "folke/tokyonight.nvim", lazy = true },
+		{ "navarasu/onedark.nvim", lazy = true },
+		{ "askfiy/visual_studio_code", lazy = true },
+		{ "jacoborus/tender.vim", lazy = true },
+		{ "tanvirtin/monokai.nvim", lazy = true },
+		{ "marko-cerovac/material.nvim", lazy = true },
+		{ "ellisonleao/gruvbox.nvim", lazy = true },
+		{ "neanias/everforest-nvim", lazy = true },
+		{ "NLKNguyen/papercolor-theme", lazy = true },
+		{ "Shatur/neovim-ayu", lazy = true },
+		{ "ishan9299/nvim-solarized-lua", lazy = true },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
