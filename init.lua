@@ -14,6 +14,7 @@ vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
 vim.o.showmode = false
 vim.o.undofile = true
+vim.lsp.set_log_level("off")
 
 -- cursor
 vim.opt.guicursor = "n-v-i-c:block-Cursor"
@@ -33,9 +34,6 @@ vim.api.nvim_create_autocmd("FileType", {
 -- windows
 vim.o.splitbelow = true
 vim.o.splitright = true
-vim.keymap.set("n", "<C-w>,", ":resize 5<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w>.", ":resize 10<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w>m", ":resize<CR>", { noremap = true, silent = true })
 
 -- misc
 function toggleLightDark()
@@ -107,8 +105,26 @@ vim.cmd.colorscheme("monokai")
 
 -- theme changes
 local function themeChanges()
-	vim.api.nvim_set_hl(0, "Visual", { bg = "#FFA500", blend = 80 }) -- Softer blue background with a slight transparency
-	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#FFA500", blend = 80 }) -- Softer blue background with a slight transparency
+	-- make highlight orange
+	vim.api.nvim_set_hl(0, "Visual", { bg = "#FFA500", blend = 80 })
+	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#FFA500", blend = 80 })
+
+	-- remove squiggly underline
+	vim.cmd([[
+            highlight! DiagnosticUnderlineError gui=underline
+            highlight! DiagnosticUnderlineWarn gui=underline
+            highlight! DiagnosticUnderlineInfo gui=underline
+            highlight! DiagnosticUnderlineHint gui=underline
+    ]])
+
+	-- Remove italic from all highlight groups
+	for _, group in ipairs(vim.fn.getcompletion("", "highlight")) do
+		local highlight = vim.api.nvim_get_hl_by_name(group, true)
+		if highlight and highlight.italic then
+			highlight.italic = nil
+			vim.api.nvim_set_hl(0, group, highlight)
+		end
+	end
 end
 
 vim.api.nvim_create_autocmd("Colorscheme", { callback = themeChanges })
