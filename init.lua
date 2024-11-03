@@ -35,6 +35,8 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.o.splitbelow = true
 vim.o.splitright = true
 
+vim.keymap.set("n", "H", ":nohlsearch<CR>", { silent = true, noremap = true })
+
 -- misc
 function toggleLightDark()
 	if vim.o.background == "dark" then
@@ -101,20 +103,20 @@ vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
 
 --color
-vim.cmd.colorscheme("monokai")
+vim.cmd.colorscheme("tender")
 
 -- theme changes
 local function themeChanges()
-	-- make highlight orange
+	-- set highlight orange
 	vim.api.nvim_set_hl(0, "Visual", { bg = "#FFA500", blend = 80 })
 	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#FFA500", blend = 80 })
 
-	-- remove squiggly underline
+	-- set cursor to default terminal
+	vim.cmd("highlight Cursor guifg=NONE guibg=NONE")
+
+	-- set telescope highlight color
 	vim.cmd([[
-            highlight! DiagnosticUnderlineError gui=underline
-            highlight! DiagnosticUnderlineWarn gui=underline
-            highlight! DiagnosticUnderlineInfo gui=underline
-            highlight! DiagnosticUnderlineHint gui=underline
+        highlight TelescopeSelection guibg=#707070
     ]])
 
 	-- Remove italic from all highlight groups

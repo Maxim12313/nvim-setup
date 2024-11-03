@@ -169,7 +169,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP actions",
 	callback = function(event)
 		local opts = { buffer = event.buf }
-		vim.keymap.set("n", "<C-l>", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+		vim.keymap.set("n", "L", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
 		vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
 		vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
@@ -178,7 +178,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gh", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-		vim.keymap.set("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+		vim.keymap.set("n", "<C-l>", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
 		vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
 		vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 	end,
@@ -201,12 +201,13 @@ vim.diagnostic.config({
 		severity = { min = vim.diagnostic.severity.WARN },
 	},
 	virtual_lines = false,
-	-- underline = false,
-	underline = {
-		severity = {
-			min = vim.diagnostic.severity.WARN,
-		},
-	},
+	underline = false,
+	-- underline = {
+	-- 	severity = {
+	-- 		min = vim.diagnostic.severity.WARN,
+	-- 		max = vim.diagnostic.severity.ERROR,
+	-- 	},
+	-- },
 	update_in_insert = false,
 	float = { border = "rounded" },
 })
@@ -220,11 +221,29 @@ require("tailwind-tools").setup({})
 ----------------------------------------------mason setup--------------------------------------------------
 require("mason").setup({})
 require("mason-lspconfig").setup({
-	ensure_installed = {},
+	ensure_installed = {
+		"pyright",
+		"lua_ls",
+		"ts_ls",
+		"html",
+		"cssls",
+		"jdtls",
+		"clangd",
+	},
 	handlers = {
 		function(server_name)
 			require("lspconfig")[server_name].setup({})
 		end,
+	},
+})
+
+require("lspconfig").pyright.setup({
+	settings = {
+		python = {
+			analysis = {
+				typeCheckingMode = "off",
+			},
+		},
 	},
 })
 
@@ -252,7 +271,7 @@ cmp.setup({
 		["<C-e>"] = cmp.config.disable,
 		["<Tab>"] = cmp.mapping.confirm({ select = true }),
 		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-Tab>"] = cmp.mapping.select_next_item(),
+		["<C-l>"] = cmp.mapping.select_next_item(),
 	},
 	window = {
 		completion = cmp.config.window.bordered(),
