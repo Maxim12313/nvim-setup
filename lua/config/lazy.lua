@@ -30,6 +30,7 @@ require("lazy").setup({
 		{ "ellisonleao/gruvbox.nvim" },
 		{ "neanias/everforest-nvim" },
 		{ "ishan9299/nvim-solarized-lua" },
+		{ "projekt0n/github-nvim-theme" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -159,6 +160,9 @@ require("lazy").setup({
 
 		-- moving items
 		{ "fedepujol/move.nvim" },
+
+		-- make theme
+		{ "rktjmp/lush.nvim" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
@@ -169,7 +173,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP actions",
 	callback = function(event)
 		local opts = { buffer = event.buf }
-		vim.keymap.set("n", "L", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+		vim.keymap.set("n", "H", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
 		vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
 		vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
@@ -178,7 +182,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gh", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-		vim.keymap.set("n", "<C-l>", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+		vim.keymap.set("n", "L", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
 		vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
 		vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 	end,
@@ -307,7 +311,7 @@ require("nvim-treesitter.configs").setup({
 		enable = true,
 	},
 	indent = {
-		enable = true,
+		enable = false,
 	},
 })
 
@@ -364,7 +368,7 @@ telescope.setup({
 				width = 0.90,
 				height = 0.95,
 				preview_cutoff = 0,
-				preview_width = 0.55,
+				preview_width = 0.7,
 			},
 		},
 		file_ignore_patterns = {
@@ -570,7 +574,6 @@ neotree.setup({
 		},
 	},
 })
-vim.keymap.set("n", "_", ":Neotree toggle position=current reveal<CR>", { silent = true })
 vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
 -------------------------------------------render setup--------------------------------------------
 require("render-markdown").setup({})
@@ -616,20 +619,6 @@ vim.keymap.set("n", "<leader>q", ":CompetiTest run<CR>")
 vim.keymap.set("n", "<leader>r", ":CompetiTest receive testcases<CR>")
 vim.keymap.set("n", "<leader>e", ":CompetiTest edit_testcase <CR>")
 
--------------------------------------------status line setup--------------------------------------------
-require("lualine").setup({
-	options = {
-		theme = "gruvbox-material",
-	},
-	sections = {
-		lualine_a = { "mode" },
-		lualine_b = { { "filename", path = 1 } },
-		lualine_c = { "diagnostics" },
-		lualine_x = { "filetype" },
-		lualine_y = { "progress" },
-		lualine_z = { "location" },
-	},
-})
 -------------------------------------------git setup--------------------------------------------
 require("gitsigns").setup({
 	current_line_blame = true,
