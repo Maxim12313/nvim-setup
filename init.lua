@@ -105,25 +105,27 @@ end
 
 local function themeChanges()
 	-- set highlight orange
-	vim.api.nvim_set_hl(0, "Visual", { bg = "#FFA500", blend = 80 })
-	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#FFA500", blend = 80 })
-
-	vim.api.nvim_set_hl(0, "Identifier", { fg = "#FFFFFF" })
+	vim.api.nvim_set_hl(0, "Visual", { bg = "#335E5E", blend = 80 })
+	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
 
 	local theme
 	if vim.opt.background:get() == "light" then
+		-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#EDEDED" })
+		setBG("SignColumn", "#FFFFFF")
 		setBG("Normal", "#FFFFFF")
 		setBG("CursorLine", "#F7F7F7")
 		setBG("TelescopeSelection", "#EDEDED")
 		theme = "iceberg_light"
 	else
+		vim.api.nvim_set_hl(0, "LineNr", { fg = "#47494C" })
+		setBG("SignColumn", "#27292C")
 		setBG("Normal", "#27292C")
 		setBG("CursorLine", "#2f323b")
 		setBG("TelescopeSelection", "#3a3d45")
 		theme = "iceberg_dark"
 	end
+	vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Variable" })
 
-	print(theme)
 	require("lualine").setup({
 		options = {
 			theme = theme,
@@ -139,6 +141,7 @@ local function themeChanges()
 	})
 
 	-- parenthesis hl
+	-- setBG("MatchParen", "FFD700")
 	vim.api.nvim_set_hl(0, "MatchParen", { bg = "#FFD700", fg = "#000000" })
 
 	-- set cursor to default terminal

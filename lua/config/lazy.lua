@@ -31,6 +31,7 @@ require("lazy").setup({
 		{ "neanias/everforest-nvim" },
 		{ "ishan9299/nvim-solarized-lua" },
 		{ "projekt0n/github-nvim-theme" },
+		{ "Shatur/neovim-ayu" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -158,9 +159,6 @@ require("lazy").setup({
 		-- startup time
 		{ "dstein64/vim-startuptime" },
 
-		-- moving items
-		{ "fedepujol/move.nvim" },
-
 		-- make theme
 		{ "rktjmp/lush.nvim" },
 	},
@@ -173,7 +171,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP actions",
 	callback = function(event)
 		local opts = { buffer = event.buf }
-		vim.keymap.set("n", "H", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+		vim.keymap.set("n", "<C-k>", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
 		vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
 		vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
@@ -314,6 +312,7 @@ require("nvim-treesitter.configs").setup({
 		enable = false,
 	},
 })
+-- vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Identifier" })
 
 require("treesitter-context").setup({
 	max_lines = 2,
@@ -623,16 +622,6 @@ vim.keymap.set("n", "<leader>e", ":CompetiTest edit_testcase <CR>")
 require("gitsigns").setup({
 	current_line_blame = true,
 })
--------------------------------------------move setup--------------------------------------------
-require("move").setup({})
-local opts = { noremap = true, silent = true }
--- Normal-mode commands
-vim.keymap.set("n", "<C-j>", ":MoveLine(1)<CR>", opts)
-vim.keymap.set("n", "<C-k>", ":MoveLine(-1)<CR>", opts)
-
--- Visual-mode commands
-vim.keymap.set("v", "<C-j>", ":MoveBlock(1)<CR>", opts)
-vim.keymap.set("v", "<C-k>", ":MoveBlock(-1)<CR>", opts)
 
 -------------------------------------------theme setup--------------------------------------------
 
