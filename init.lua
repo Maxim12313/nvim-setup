@@ -14,7 +14,8 @@ vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
 vim.o.showmode = false
 vim.o.undofile = true
-vim.lsp.set_log_level("off")
+
+-- vim.lsp.set_log_level("off")
 
 -- cursor
 vim.opt.guicursor = "n-v-i-c:block-Cursor"
@@ -105,26 +106,40 @@ end
 
 local function themeChanges()
 	-- set highlight orange
-	vim.api.nvim_set_hl(0, "Visual", { bg = "#335E5E", blend = 80 })
-	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
 
 	local theme
 	if vim.opt.background:get() == "light" then
-		-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#EDEDED" })
-		setBG("SignColumn", "#FFFFFF")
-		setBG("Normal", "#FFFFFF")
-		setBG("CursorLine", "#F7F7F7")
+		vim.api.nvim_set_hl(0, "@lsp.typemod.variable.defaultLibrary", { fg = "#FF00FF" })
+		vim.api.nvim_set_hl(0, "Identifier", { fg = "#495057" })
+		vim.api.nvim_set_hl(0, "Visual", { bg = "#D0E0E3", blend = 50 })
+		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#D0E0E3", blend = 50 })
+		vim.api.nvim_set_hl(0, "Normal", { bg = "#F7F7F7", fg = "#495057" })
+		setBG("SignColumn", "#F7F7F7")
+		setBG("LineNr", "#F7F7F7")
+		setBG("CursorLine", "#F0F0F0")
 		setBG("TelescopeSelection", "#EDEDED")
 		theme = "iceberg_light"
 	else
-		vim.api.nvim_set_hl(0, "LineNr", { fg = "#47494C" })
+		vim.api.nvim_set_hl(0, "@lsp.typemod.variable.defaultLibrary", { fg = "#FF66CC" })
+		vim.api.nvim_set_hl(0, "Identifier", { fg = "#FFFFFF" })
+		vim.api.nvim_set_hl(0, "Visual", { bg = "#335E5E", blend = 80 })
+		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
+		vim.api.nvim_set_hl(0, "Normal", { bg = "#27292C", fg = "#FFFFFF" })
 		setBG("SignColumn", "#27292C")
-		setBG("Normal", "#27292C")
+		setBG("LineNr", "#27292C")
 		setBG("CursorLine", "#2f323b")
 		setBG("TelescopeSelection", "#3a3d45")
 		theme = "iceberg_dark"
 	end
-	vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Variable" })
+
+	vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
+	vim.api.nvim_set_hl(0, "@parameter", { link = "Identifier" })
+	vim.api.nvim_set_hl(0, "@variable", { link = "Identifier" })
+	vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Identifier" })
+	vim.api.nvim_set_hl(0, "@member", { link = "Identifier" })
+	vim.api.nvim_set_hl(0, "@property", { link = "Identifier" })
+
+	setBG("MatchParen", "#FFD700")
 
 	require("lualine").setup({
 		options = {
@@ -139,10 +154,6 @@ local function themeChanges()
 			lualine_z = { "location" },
 		},
 	})
-
-	-- parenthesis hl
-	-- setBG("MatchParen", "FFD700")
-	vim.api.nvim_set_hl(0, "MatchParen", { bg = "#FFD700", fg = "#000000" })
 
 	-- set cursor to default terminal
 	vim.cmd("highlight Cursor guifg=NONE guibg=NONE")

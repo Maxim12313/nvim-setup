@@ -32,6 +32,7 @@ require("lazy").setup({
 		{ "ishan9299/nvim-solarized-lua" },
 		{ "projekt0n/github-nvim-theme" },
 		{ "Shatur/neovim-ayu" },
+		{ "Mofiqul/vscode.nvim" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -97,15 +98,6 @@ require("lazy").setup({
 			branch = "harpoon2",
 		},
 
-		-- pair binds
-		{ "tpope/vim-unimpaired" },
-
-		-- collapse code
-		{ "Wansmer/treesj", lazy = true },
-
-		-- better quick fix
-		{ "kevinhwang91/nvim-bqf", lazy = true },
-
 		-- surround editing
 		{ "kylechui/nvim-surround" },
 
@@ -135,13 +127,6 @@ require("lazy").setup({
 			},
 		},
 
-		-- markdown
-		{
-			"MeanderingProgrammer/render-markdown.nvim",
-			opts = {},
-			lazy = true,
-		},
-
 		-- status line
 		{ "nvim-lualine/lualine.nvim" },
 
@@ -159,8 +144,9 @@ require("lazy").setup({
 		-- startup time
 		{ "dstein64/vim-startuptime" },
 
-		-- make theme
-		{ "rktjmp/lush.nvim" },
+		-- off
+		-- { "rktjmp/lush.nvim" },
+		-- { "nvim-treesitter/playground" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
@@ -177,7 +163,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
 		vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
 		vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-		vim.keymap.set("n", "gh", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+		vim.keymap.set("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
 		vim.keymap.set("n", "L", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
@@ -327,11 +313,11 @@ local conform = require("conform")
 conform.setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
+		c = { "clang-format" },
 		cpp = { "clang-format" },
 		python = { "ruff_format" },
 		javascript = { "prettierd", "prettier" },
 		html = { "prettierd", "prettier" },
-		["*"] = { "codespell" },
 		["_"] = { "trim_whitespace" },
 	},
 	default_format_opts = {
@@ -498,15 +484,6 @@ vim.keymap.set("n", ";e", function()
 	harpoon:list():next()
 end)
 
--------------------------------------------collapse setup--------------------------------------------
-local tsj = require("treesj")
-tsj.setup({
-	use_default_keymaps = false,
-})
-vim.keymap.set("n", "<C-e>", tsj.toggle)
--------------------------------------------better quick fix setup--------------------------------------------
-require("bqf").setup({})
-
 -------------------------------------------surround setup--------------------------------------------
 require("nvim-surround").setup({})
 
@@ -574,9 +551,6 @@ neotree.setup({
 	},
 })
 vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
--------------------------------------------render setup--------------------------------------------
-require("render-markdown").setup({})
-
 -------------------------------------------cpp setup--------------------------------------------
 local args = {
 	"-std=c++17",
@@ -615,8 +589,9 @@ require("competitest").setup({
 	},
 })
 vim.keymap.set("n", "<leader>q", ":CompetiTest run<CR>")
-vim.keymap.set("n", "<leader>r", ":CompetiTest receive testcases<CR>")
-vim.keymap.set("n", "<leader>e", ":CompetiTest edit_testcase <CR>")
+vim.keymap.set("n", "<leader>ew", ":CompetiTest receive testcases<CR>")
+vim.keymap.set("n", "<leader>eq", ":CompetiTest edit_testcase <CR>")
+vim.keymap.set("n", "<leader>ea", ":CompetiTest add_testcase <CR>")
 
 -------------------------------------------git setup--------------------------------------------
 require("gitsigns").setup({
@@ -627,4 +602,8 @@ require("gitsigns").setup({
 
 require("everforest").setup({
 	background = "hard",
+})
+
+require("vscode").setup({
+	style = "light",
 })
