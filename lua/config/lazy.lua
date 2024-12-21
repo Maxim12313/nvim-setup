@@ -33,6 +33,7 @@ require("lazy").setup({
 		{ "projekt0n/github-nvim-theme" },
 		{ "Shatur/neovim-ayu" },
 		{ "Mofiqul/vscode.nvim" },
+		{ "folke/tokyonight.nvim" },
 
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
@@ -141,9 +142,6 @@ require("lazy").setup({
 		{ "lewis6991/gitsigns.nvim", lazy = true },
 		{ "tpope/vim-fugitive", lazy = true },
 
-		-- startup time
-		{ "dstein64/vim-startuptime" },
-
 		-- off
 		-- { "rktjmp/lush.nvim" },
 		-- { "nvim-treesitter/playground" },
@@ -162,7 +160,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
 		vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-		vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+		vim.keymap.set("n", "gr", "<cmd>cexpr []<cr><cmd>lua vim.lsp.buf.references()<cr>", opts)
 		vim.keymap.set("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
@@ -553,7 +551,7 @@ neotree.setup({
 vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
 -------------------------------------------cpp setup--------------------------------------------
 local args = {
-	"-std=c++17",
+	"-std=c++20",
 	"-g",
 	"$(FNAME)",
 	"-o",
@@ -570,6 +568,7 @@ local args = {
 require("competitest").setup({
 	compile_command = {
 		cpp = { exec = "g++", args = args },
+		python = { exec = "pypy3" },
 	},
 	replace_received_testcases = true,
 	runner_ui = {

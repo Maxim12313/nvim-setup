@@ -18,7 +18,7 @@ vim.o.undofile = true
 -- vim.lsp.set_log_level("off")
 
 -- cursor
-vim.opt.guicursor = "n-v-i-c:block-Cursor"
+vim.o.guicursor = "n-v-c-sm:block,i-ci-ve:block,r-cr-o:hor20"
 
 -- indent
 -- Default to 4 spaces per tab
@@ -94,8 +94,19 @@ vim.keymap.set("v", "J", "5j", { noremap = true, silent = true })
 vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
 
+-- quick fix better defaults
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "qf",
+	callback = function()
+		vim.api.nvim_buf_set_keymap(0, "n", "j", "j<CR><C-w>j", { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(0, "n", "k", "k<CR><C-w>j", { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(0, "n", "J", "5j<CR><C-w>j", { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(0, "n", "K", "5k<CR><C-w>j", { noremap = true, silent = true })
+	end,
+})
+
 --color
-vim.cmd.colorscheme("monokai")
+vim.cmd.colorscheme("tokyonight")
 
 -- if exists fg, then preserve it when changing
 local function setBG(group, bg_color)
@@ -114,6 +125,7 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "Visual", { bg = "#D0E0E3", blend = 50 })
 		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#D0E0E3", blend = 50 })
 		vim.api.nvim_set_hl(0, "Normal", { bg = "#F7F7F7", fg = "#495057" })
+		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#D0E0E3" })
 		setBG("SignColumn", "#F7F7F7")
 		setBG("LineNr", "#F7F7F7")
 		setBG("CursorLine", "#F0F0F0")
@@ -125,6 +137,7 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "Visual", { bg = "#335E5E", blend = 80 })
 		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
 		vim.api.nvim_set_hl(0, "Normal", { bg = "#27292C", fg = "#FFFFFF" })
+		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#335E5E" })
 		setBG("SignColumn", "#27292C")
 		setBG("LineNr", "#27292C")
 		setBG("CursorLine", "#2f323b")
@@ -136,10 +149,9 @@ local function themeChanges()
 	vim.api.nvim_set_hl(0, "@parameter", { link = "Identifier" })
 	vim.api.nvim_set_hl(0, "@variable", { link = "Identifier" })
 	vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Identifier" })
+	vim.api.nvim_set_hl(0, "@function.call", { link = "Function" })
 	vim.api.nvim_set_hl(0, "@member", { link = "Identifier" })
 	vim.api.nvim_set_hl(0, "@property", { link = "Identifier" })
-
-	setBG("MatchParen", "#FFD700")
 
 	require("lualine").setup({
 		options = {
