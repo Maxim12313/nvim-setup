@@ -89,6 +89,10 @@ vim.keymap.set("n", "K", "5k", { noremap = true, silent = true })
 vim.keymap.set("n", "J", "5j", { noremap = true, silent = true })
 vim.keymap.set("v", "K", "5k", { noremap = true, silent = true })
 vim.keymap.set("v", "J", "5j", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<C-e>", "10<C-e>", { noremap = true })
+-- vim.keymap.set("v", "<C-e>", "10<C-e>", { noremap = true })
+-- vim.keymap.set("n", "<C-y>", "10<C-y>", { noremap = true })
+-- vim.keymap.set("v", "<C-y>", "10<C-y>", { noremap = true })
 
 -- indent
 vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })

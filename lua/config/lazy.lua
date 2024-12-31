@@ -161,7 +161,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
 		vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
 		vim.keymap.set("n", "gr", "<cmd>cexpr []<cr><cmd>lua vim.lsp.buf.references()<cr>", opts)
-		vim.keymap.set("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+		vim.keymap.set("n", "gu", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
 		vim.keymap.set("n", "L", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
@@ -177,6 +177,7 @@ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
 
 vim.diagnostic.config({
 	virtual_text = false,
+	severity_sort = true,
 	-- virtual_text = {
 	-- 	prefix = "▲",
 	-- 	severity = {
@@ -242,6 +243,18 @@ ls.filetype_extend("javascript", { "javascriptreact", "html", "css" }) -- Extend
 
 require("nvim-highlight-colors").setup({})
 
+function cmpNext(fallback)
+	if cmp.visible() then
+		print("oh ok")
+		cmp.select_next_item()
+	elseif ls.expand_or_jumpable() then
+		print("yay")
+		ls.expand_or_jump()
+	else
+		fallback()
+	end
+end
+
 cmp.setup({
 	formatting = {
 		format = require("nvim-highlight-colors").format,
@@ -255,9 +268,19 @@ cmp.setup({
 		["<C-n>"] = cmp.config.disable,
 		["<C-p>"] = cmp.config.disable,
 		["<C-e>"] = cmp.config.disable,
-		["<Tab>"] = cmp.mapping.confirm({ select = true }),
+		["<Tab>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
 		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-l>"] = cmp.mapping.select_next_item(),
+		["<C-l>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				print("oh ok")
+				cmp.select_next_item()
+			elseif ls.expand_or_jumpable() then
+				print("yay")
+				ls.expand_or_jump()
+			else
+				fallback()
+			end
+		end),
 	},
 	window = {
 		completion = cmp.config.window.bordered(),
@@ -365,9 +388,10 @@ telescope.setup({
 
 local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
-vim.keymap.set("n", ";d", builtin.buffers)
+vim.keymap.set("n", "<leader>f", builtin.buffers)
 vim.keymap.set("n", ";f", builtin.find_files)
-vim.keymap.set("n", ";g", builtin.live_grep)
+vim.keymap.set("n", ";d", "<CMD>Telescope diagnostics<CR>")
+vim.keymap.set("n", "<leader>g", builtin.live_grep)
 
 require("trouble").setup({
 	win = {
@@ -382,20 +406,21 @@ require("trouble").setup({
 	update_in_insert = true,
 })
 
-vim.keymap.set("n", "<leader>t", "<cmd>Trouble diagnostics toggle<CR>")
-vim.keymap.set("n", "<leader>f", "copen 8")
+vim.keymap.set("n", ";t", "<CMD>Trouble diagnostics toggle<CR>")
 -------------------------------------------todo setup--------------------------------------------
 local todo = require("todo-comments").setup({
 	signs = false,
 })
 
 vim.keymap.set("n", "]t", function()
-	todo.jump_next()
+	require("todo-comments").jump_next()
 end, { desc = "Next todo comment" })
 
 vim.keymap.set("n", "[t", function()
-	todo.jump_prev()
+	require("todo-comments").jump_prev()
 end, { desc = "Previous todo comment" })
+
+vim.keymap.set("n", ";g", "<CMD>TodoTelescope<CR>")
 
 -------------------------------------------scrolling setup--------------------------------------------
 
@@ -403,25 +428,31 @@ neoscroll = require("neoscroll")
 
 neoscroll.setup({
 	easing = "linear",
-	cursor_scrolls_alone = false,
+	cursor_scrolls_alone = true,
 	mappings = {},
 })
 
 local keymap = {
+	["<C-y>"] = function()
+		neoscroll.scroll(-0.25, { move_cursor = true, duration = 75 })
+	end,
+	["<C-e>"] = function()
+		neoscroll.scroll(0.25, { move_cursor = true, duration = 75 })
+	end,
 	["<C-u>"] = function()
-		neoscroll.ctrl_u({ duration = 50 })
+		neoscroll.scroll(-0.25, { move_cursor = false, duration = 75 })
 	end,
 	["<A-Right>"] = function()
-		neoscroll.ctrl_d({ duration = 50 })
+		neoscroll.scroll(0.25, { move_cursor = false, duration = 75 })
 	end,
 	["<M-f>"] = function()
-		neoscroll.ctrl_d({ duration = 50 })
+		neoscroll.scroll(0.25, { move_cursor = false, duration = 75 })
 	end,
 	["<C-b>"] = function()
-		neoscroll.ctrl_b({ duration = 400 })
+		neoscroll.ctrl_u({ duration = 100 })
 	end,
 	["<C-f>"] = function()
-		neoscroll.ctrl_f({ duration = 400 })
+		neoscroll.ctrl_d({ duration = 100 })
 	end,
 }
 local modes = { "n", "v", "x" }
