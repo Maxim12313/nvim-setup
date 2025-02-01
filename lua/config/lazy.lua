@@ -374,7 +374,7 @@ telescope.setup({
 				width = 0.90,
 				height = 0.95,
 				preview_cutoff = 0,
-				preview_width = 0.7,
+				preview_width = 0.6,
 			},
 		},
 		file_ignore_patterns = {
@@ -390,7 +390,9 @@ local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
 vim.keymap.set("n", "<leader>f", builtin.buffers)
 vim.keymap.set("n", ";f", builtin.find_files)
-vim.keymap.set("n", ";d", "<CMD>Telescope diagnostics<CR>")
+vim.keymap.set("n", ";d", function()
+	builtin.diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
+end)
 vim.keymap.set("n", "<leader>g", builtin.live_grep)
 
 require("trouble").setup({
@@ -433,12 +435,6 @@ neoscroll.setup({
 })
 
 local keymap = {
-	["<C-y>"] = function()
-		neoscroll.scroll(-0.25, { move_cursor = true, duration = 75 })
-	end,
-	["<C-e>"] = function()
-		neoscroll.scroll(0.25, { move_cursor = true, duration = 75 })
-	end,
 	["<C-u>"] = function()
 		neoscroll.scroll(-0.25, { move_cursor = false, duration = 75 })
 	end,
@@ -580,6 +576,7 @@ neotree.setup({
 	},
 })
 vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
+-- vim.keymap.set("n", "-", ":Neotree toggle current reveal<CR>", { silent = true })
 -------------------------------------------cpp setup--------------------------------------------
 local args = {
 	"-std=c++20",
@@ -617,10 +614,17 @@ require("competitest").setup({
 			{ 5, { { 2, "eo" }, { 1, "se" } } },
 		},
 	},
+	template_file = {
+		cpp = "~/cpp/template/setup.cpp",
+		py = "~/cpp/template/setup.py",
+	},
+	received_contests_directory = "~/cpp/contest",
+	evaluate_template_modifiers = true,
 })
 vim.keymap.set("n", "<leader>q", ":CompetiTest run<CR>")
+vim.keymap.set("n", "<leader>eq", ":CompetiTest receive contest<CR>")
 vim.keymap.set("n", "<leader>ew", ":CompetiTest receive testcases<CR>")
-vim.keymap.set("n", "<leader>eq", ":CompetiTest edit_testcase <CR>")
+vim.keymap.set("n", "<leader>es", ":CompetiTest edit_testcase <CR>")
 vim.keymap.set("n", "<leader>ea", ":CompetiTest add_testcase <CR>")
 
 -------------------------------------------git setup--------------------------------------------
