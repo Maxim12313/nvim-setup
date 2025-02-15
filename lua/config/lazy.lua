@@ -238,22 +238,10 @@ require("lspconfig").pyright.setup({
 local cmp = require("cmp")
 local ls = require("luasnip")
 
-require("luasnip.loaders.from_vscode").lazy_load()
+-- require("luasnip.loaders.from_vscode").lazy_load({ paths="" })
 ls.filetype_extend("javascript", { "javascriptreact", "html", "css" }) -- Extending for CSS
 
 require("nvim-highlight-colors").setup({})
-
-function cmpNext(fallback)
-	if cmp.visible() then
-		print("oh ok")
-		cmp.select_next_item()
-	elseif ls.expand_or_jumpable() then
-		print("yay")
-		ls.expand_or_jump()
-	else
-		fallback()
-	end
-end
 
 cmp.setup({
 	formatting = {
@@ -270,17 +258,7 @@ cmp.setup({
 		["<C-e>"] = cmp.config.disable,
 		["<Tab>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
 		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-l>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				print("oh ok")
-				cmp.select_next_item()
-			elseif ls.expand_or_jumpable() then
-				print("yay")
-				ls.expand_or_jump()
-			else
-				fallback()
-			end
-		end),
+		["<C-l>"] = cmp.mapping.select_next_item(),
 	},
 	window = {
 		completion = cmp.config.window.bordered(),
@@ -340,6 +318,9 @@ conform.setup({
 		javascript = { "prettierd", "prettier" },
 		html = { "prettierd", "prettier" },
 		["_"] = { "trim_whitespace" },
+		["verible-verilog-format"] = {
+			args = { "--module-port-list-indentation=0" },
+		},
 	},
 	default_format_opts = {
 		lsp_format = "fallback",
@@ -598,34 +579,37 @@ require("competitest").setup({
 		cpp = { exec = "g++", args = args },
 		python = { exec = "pypy3" },
 	},
-	replace_received_testcases = true,
-	runner_ui = {
-		viewer = {
-			width = 0.8,
-			height = 0.7,
-		},
-	},
+	-- replace_received_testcases = true,
 	popup_ui = {
-		total_width = 0.95,
+		total_width = 0.9,
 		total_height = 0.95,
 		layout = {
-			{ 2, "tc" },
-			{ 5, { { 2, "so" }, { 1, "si" } } },
-			{ 5, { { 2, "eo" }, { 1, "se" } } },
+			{
+				1,
+				{
+					{ 1, "so" },
+					{ 1, {
+						{ 1, "tc" },
+						{ 1, "se" },
+					} },
+				},
+			},
+			{ 1, {
+				{ 1, "eo" },
+				{ 1, "si" },
+			} },
 		},
 	},
 	template_file = {
 		cpp = "~/cpp/template/setup.cpp",
 		py = "~/cpp/template/setup.py",
 	},
-	received_contests_directory = "~/cpp/contest",
+	received_contests_directory = "contest",
+	received_problems_path = "contest",
 	evaluate_template_modifiers = true,
 })
 vim.keymap.set("n", "<leader>q", ":CompetiTest run<CR>")
 vim.keymap.set("n", "<leader>eq", ":CompetiTest receive contest<CR>")
-vim.keymap.set("n", "<leader>ew", ":CompetiTest receive testcases<CR>")
-vim.keymap.set("n", "<leader>es", ":CompetiTest edit_testcase <CR>")
-vim.keymap.set("n", "<leader>ea", ":CompetiTest add_testcase <CR>")
 
 -------------------------------------------git setup--------------------------------------------
 require("gitsigns").setup({
