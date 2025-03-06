@@ -40,7 +40,6 @@ vim.o.splitright = true
 -- misc
 
 vim.keymap.set("i", "<C-c>", "<ESC>", { noremap = true, silent = true })
-vim.keymap.set("n", ";r", "<C-^>", { noremap = true, silent = true })
 vim.keymap.set("n", "_", ":e!<CR>", { noremap = true, silent = true })
 
 function toggleQF()

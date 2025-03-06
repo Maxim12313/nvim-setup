@@ -163,6 +163,7 @@ require("lazy").setup({
 			build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
 			opts = {},
 		},
+		-- run jupyter in md
 		{
 			"benlubas/molten-nvim",
 			version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
@@ -170,13 +171,20 @@ require("lazy").setup({
 			build = ":UpdateRemotePlugins",
 			init = moltSetup,
 		},
+		-- lsp for md
 		{
 			"quarto-dev/quarto-nvim",
 			dependencies = {
 				"jmbuhr/otter.nvim",
 				"nvim-treesitter/nvim-treesitter",
 			},
-			ft = { "markdown", "qmd" },
+			ft = { "markdown", "qmd", "ipynb" },
+		},
+		-- convert between jupyter md
+		{
+			"GCBallesteros/jupytext.nvim",
+			config = true,
+			lazy = false,
 		},
 
 		-- {
@@ -417,7 +425,7 @@ local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
 vim.keymap.set("n", "<leader>f", builtin.buffers)
 vim.keymap.set("n", ";f", builtin.find_files)
-vim.keymap.set("n", ";d", function()
+vim.keymap.set("n", ";c", function()
 	builtin.diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
 end)
 vim.keymap.set("n", "<leader>g", builtin.live_grep)
@@ -520,9 +528,12 @@ require("bufferline").setup({
 	},
 })
 
-vim.keymap.set("n", ";q", "<CMD>BufferLineCyclePrev<CR>")
-vim.keymap.set("n", ";e", "<CMD>BufferLineCycleNext<CR>")
+vim.keymap.set("n", ";q", "<C-^>", { noremap = true, silent = true })
+vim.keymap.set("n", ";e", "<CMD>BufferLineTogglePin<CR>")
+vim.keymap.set("n", ";r", "<CMD>bd<CR>")
 vim.keymap.set("n", ";w", "<CMD>BufferLineCloseOthers<CR>")
+vim.keymap.set("n", ";d", "<CMD>BufferLineMoveNext<CR>")
+vim.keymap.set("n", ";a", "<CMD>BufferLineMovePrev<CR>")
 
 for i = 1, 9 do
 	local str = tostring(i)
@@ -747,15 +758,80 @@ quarto.setup({
 
 vim.keymap.set("n", "[e", "<CMD>MoltenPrev>", { desc = "prev molten", silent = true })
 vim.keymap.set("n", "]e", "<CMD>MoltenNext<CR>", { desc = "next molten", silent = true })
-vim.keymap.set("n", "<leader>r2", "<CMD>MoltenInit<CR>", { desc = "init molten", silent = true })
+vim.keymap.set("n", "<leader>ri", function()
+	vim.cmd("MoltenInit")
+	vim.cmd("QuartoActivate")
+end, { desc = "init molten", silent = true })
 
-vim.keymap.set("n", "<leader>r3", "<CMD>MoltenHideOutput<CR>", { desc = "open output window", silent = true })
+vim.keymap.set("n", "<leader>rh", "<CMD>MoltenHideOutput<CR>", { desc = "open output window", silent = true })
 vim.keymap.set("n", "<leader>re", ":noautocmd MoltenEnterOutput<CR>", { desc = "open output window", silent = true })
 
 local runner = require("quarto.runner")
 vim.keymap.set("n", "<leader>rq", runner.run_cell, { desc = "run cell", silent = true })
 vim.keymap.set("n", "<leader>rw", runner.run_above, { desc = "run cell and above", silent = true })
 vim.keymap.set("n", "<leadr>ra", runner.run_all, { desc = "run all cells", silent = true })
+
+require("jupytext").setup({
+	style = "markdown",
+	output_extension = "md",
+	force_ft = "markdown",
+	-- style = "light",
+})
+
+-- Provide a command to create a blank new Python notebook
+-- note: the metadata is needed for Jupytext to understand how to parse the notebook.
+-- if you use another language than Python, you should change it in the template.
+local default_notebook = [[
+  {
+    "cells": [
+     {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ""
+      ]
+     }
+    ],
+    "metadata": {
+     "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+     },
+     "language_info": {
+      "codemirror_mode": {
+        "name": "ipython"
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3"
+     }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 5
+  }
+]]
+
+local function new_notebook(filename)
+	local path = filename .. ".ipynb"
+	local file = io.open(path, "w")
+	if file then
+		file:write(default_notebook)
+		file:close()
+		vim.cmd("edit " .. path)
+	else
+		print("Error: Could not open new notebook file for writing.")
+	end
+end
+
+vim.api.nvim_create_user_command("NewNotebook", function(opts)
+	new_notebook(opts.args)
+end, {
+	nargs = 1,
+	complete = "file",
+})
 
 -------------------------------------------theme setup--------------------------------------------
 
