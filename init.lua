@@ -14,6 +14,7 @@ vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
 vim.o.showmode = false
 vim.o.undofile = true
+vim.g.python3_host_prog = "/Users/maximkim/.config/nvim/env/bin/python3"
 
 -- vim.lsp.set_log_level("off")
 
@@ -140,10 +141,10 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "Identifier", { fg = "#FFFFFF" })
 		vim.api.nvim_set_hl(0, "Visual", { bg = "#335E5E", blend = 80 })
 		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
-		vim.api.nvim_set_hl(0, "Normal", { bg = "#27292C", fg = "#FFFFFF" })
+		vim.api.nvim_set_hl(0, "Normal", { bg = "#212229", fg = "#FFFFFF" })
 		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#335E5E" })
-		setBG("SignColumn", "#27292C")
-		setBG("LineNr", "#27292C")
+		setBG("SignColumn", "#212229")
+		setBG("LineNr", "#212229")
 		setBG("CursorLine", "#2f323b")
 		setBG("TelescopeSelection", "#3a3d45")
 		theme = "iceberg_dark"

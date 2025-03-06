@@ -35,6 +35,14 @@ require("lazy").setup({
 		{ "Mofiqul/vscode.nvim" },
 		{ "folke/tokyonight.nvim" },
 
+		{
+			"vhyrro/luarocks.nvim",
+			priority = 1001, -- this plugin needs to run before anything else
+			opts = {
+				rocks = { "magick" },
+			},
+		},
+
 		-- lsp manager
 		{ "williamboman/mason.nvim" },
 		{ "williamboman/mason-lspconfig.nvim" },
@@ -47,7 +55,10 @@ require("lazy").setup({
 		{ "hrsh7th/nvim-cmp" },
 		{
 			"L3MON4D3/LuaSnip",
-			dependencies = { "rafamadriz/friendly-snippets" },
+			-- follow latest release.
+			version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+			-- install jsregexp (optional!).
+			build = "make install_jsregexp",
 		},
 		{ "ray-x/lsp_signature.nvim" },
 		{ "luckasRanarison/tailwind-tools.nvim", lazy = true },
@@ -94,9 +105,14 @@ require("lazy").setup({
 		{ "windwp/nvim-ts-autotag", lazy = true },
 
 		-- file navigation harpoon
+		-- {
+		-- 	"ThePrimeagen/harpoon",
+		-- 	branch = "harpoon2",
+		-- },
 		{
-			"ThePrimeagen/harpoon",
-			branch = "harpoon2",
+			"akinsho/bufferline.nvim",
+			version = "*",
+			dependencies = "nvim-tree/nvim-web-devicons",
 		},
 
 		-- surround editing
@@ -142,6 +158,31 @@ require("lazy").setup({
 		{ "lewis6991/gitsigns.nvim", lazy = true },
 		{ "tpope/vim-fugitive", lazy = true },
 
+		{
+			"3rd/image.nvim",
+			build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
+			opts = {},
+		},
+		{
+			"benlubas/molten-nvim",
+			version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
+			dependencies = { "3rd/image.nvim" },
+			build = ":UpdateRemotePlugins",
+			init = moltSetup,
+		},
+		{
+			"quarto-dev/quarto-nvim",
+			dependencies = {
+				"jmbuhr/otter.nvim",
+				"nvim-treesitter/nvim-treesitter",
+			},
+			ft = { "markdown", "qmd" },
+		},
+
+		-- {
+		-- 	"dccsillag/magma-nvim",
+		-- 	build = ":UpdateRemotePlugins",
+		-- },
 		-- off
 		-- { "rktjmp/lush.nvim" },
 		-- { "nvim-treesitter/playground" },
@@ -206,6 +247,8 @@ vim.fn.sign_define("DiagnosticSignHint", { text = "●", texthl = "DiagnosticSig
 require("tailwind-tools").setup({})
 
 ----------------------------------------------mason setup--------------------------------------------------
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local lspconfig = require("lspconfig")
 require("mason").setup({})
 require("mason-lspconfig").setup({
 	ensure_installed = {
@@ -219,12 +262,14 @@ require("mason-lspconfig").setup({
 	},
 	handlers = {
 		function(server_name)
-			require("lspconfig")[server_name].setup({})
+			lspconfig[server_name].setup({
+				capabilities = capabilities, -- Apply to all LSPs
+			})
 		end,
 	},
 })
 
-require("lspconfig").pyright.setup({
+lspconfig.pyright.setup({
 	settings = {
 		python = {
 			analysis = {
@@ -238,8 +283,9 @@ require("lspconfig").pyright.setup({
 local cmp = require("cmp")
 local ls = require("luasnip")
 
--- require("luasnip.loaders.from_vscode").lazy_load({ paths="" })
+require("luasnip.loaders.from_vscode").lazy_load() -- friendly snipp
 ls.filetype_extend("javascript", { "javascriptreact", "html", "css" }) -- Extending for CSS
+ls.filetype_extend("markdown", { "plaintext", "mdx", "latex" })
 
 require("nvim-highlight-colors").setup({})
 
@@ -294,7 +340,7 @@ require("nvim-treesitter.configs").setup({
 		enable = true,
 	},
 	indent = {
-		enable = false,
+		enable = true,
 	},
 })
 -- vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Identifier" })
@@ -457,38 +503,64 @@ require("nvim-ts-autotag").setup({
 	},
 })
 
--------------------------------------------harpoon setup--------------------------------------------
-local harpoon = require("harpoon")
+-------------------------------------------file navigation setup--------------------------------------------
 
-harpoon.setup({})
+require("bufferline").setup({
+	options = {
+		-- Custom sorting, most recent on the left
+		tab_size = 18,
+		sort_by = "tab",
+		show_buffer_icons = true,
+		diagnostics = "nvim_lsp",
+		color_icons = true,
+		diagnostics_indicator = function(count, level, diagnostics_dict, context)
+			local icon = level:match("error") and " " or " "
+			return " " .. icon .. count
+		end,
+	},
+})
 
-vim.keymap.set("n", ";a", function()
-	harpoon:list():add()
-end)
-vim.keymap.set("n", ";w", function()
-	harpoon.ui:toggle_quick_menu(harpoon:list())
-end)
+vim.keymap.set("n", ";q", "<CMD>BufferLineCyclePrev<CR>")
+vim.keymap.set("n", ";e", "<CMD>BufferLineCycleNext<CR>")
+vim.keymap.set("n", ";w", "<CMD>BufferLineCloseOthers<CR>")
 
-vim.keymap.set("n", ";1", function()
-	harpoon:list():select(1)
-end)
-vim.keymap.set("n", ";2", function()
-	harpoon:list():select(2)
-end)
-vim.keymap.set("n", ";3", function()
-	harpoon:list():select(3)
-end)
-vim.keymap.set("n", ";4", function()
-	harpoon:list():select(4)
-end)
+for i = 1, 9 do
+	local str = tostring(i)
+	vim.keymap.set("n", ";" .. str, "<CMD>BufferLineGoToBuffer " .. str .. "<CR>")
+end
 
--- Toggle previous & next buffers stored within Harpoon list
-vim.keymap.set("n", ";q", function()
-	harpoon:list():prev()
-end)
-vim.keymap.set("n", ";e", function()
-	harpoon:list():next()
-end)
+-- local harpoon = require("harpoon")
+--
+-- harpoon.setup({
+-- })
+--
+-- vim.keymap.set("n", ";a", function()
+-- 	harpoon:list():add()
+-- end)
+-- vim.keymap.set("n", ";w", function()
+-- 	harpoon.ui:toggle_quick_menu(harpoon:list())
+-- end)
+--
+-- vim.keymap.set("n", ";1", function()
+-- 	harpoon:list():select(1)
+-- end)
+-- vim.keymap.set("n", ";2", function()
+-- 	harpoon:list():select(2)
+-- end)
+-- vim.keymap.set("n", ";3", function()
+-- 	harpoon:list():select(3)
+-- end)
+-- vim.keymap.set("n", ";4", function()
+-- 	harpoon:list():select(4)
+-- end)
+--
+-- -- Toggle previous & next buffers stored within Harpoon list
+-- vim.keymap.set("n", ";q", function()
+-- 	harpoon:list():prev()
+-- end)
+-- vim.keymap.set("n", ";e", function()
+-- 	harpoon:list():next()
+-- end)
 
 -------------------------------------------surround setup--------------------------------------------
 require("nvim-surround").setup({})
@@ -615,6 +687,75 @@ vim.keymap.set("n", "<leader>eq", ":CompetiTest receive contest<CR>")
 require("gitsigns").setup({
 	current_line_blame = true,
 })
+-------------------------------------------image setup--------------------------------------------
+require("image").setup({
+	backend = "ueberzug",
+	integrations = {}, -- do whatever you want with image.nvim's integrations
+	max_width = 100, -- tweak to preference
+	max_height = 12, -- ^
+	max_height_window_percentage = math.huge, -- this is necessary for a good experience
+	max_width_window_percentage = math.huge,
+	window_overlap_clear_enabled = true,
+	window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+	markdown = {
+		enabled = true,
+		clear_in_insert_mode = false,
+		download_remote_images = true,
+		only_render_image_at_cursor = false,
+		floating_windows = false, -- if true, images will be rendered in floating markdown windows
+		filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
+	},
+})
+
+-------------------------------------------molten setup--------------------------------------------
+
+function moltSetup()
+	-- these are examples, not defaults. Please see the readme
+	-- vim.g.molten_image_provider = "image.nvim"
+	vim.g.molten_virt_lines_off_by_1 = true
+	vim.g.molten_output_win_max_height = 20
+	vim.g.molten.wrap_output = true
+end
+
+local quarto = require("quarto")
+quarto.setup({
+	lspFeatures = {
+		-- NOTE: put whatever languages you want here:
+		languages = { "r", "python", "rust" },
+		chunks = "all",
+		diagnostics = {
+			enabled = true,
+			triggers = { "BufWritePost" },
+		},
+		completion = {
+			enabled = true,
+		},
+	},
+	keymap = {
+		-- NOTE: setup your own keymaps:
+		hover = "H",
+		definition = "gd",
+		rename = "<leader>rn",
+		references = "gr",
+		format = "<leader>gf",
+	},
+	codeRunner = {
+		enabled = true,
+		default_method = "molten",
+	},
+})
+
+vim.keymap.set("n", "[e", "<CMD>MoltenPrev>", { desc = "prev molten", silent = true })
+vim.keymap.set("n", "]e", "<CMD>MoltenNext<CR>", { desc = "next molten", silent = true })
+vim.keymap.set("n", "<leader>r2", "<CMD>MoltenInit<CR>", { desc = "init molten", silent = true })
+
+vim.keymap.set("n", "<leader>r3", "<CMD>MoltenHideOutput<CR>", { desc = "open output window", silent = true })
+vim.keymap.set("n", "<leader>re", ":noautocmd MoltenEnterOutput<CR>", { desc = "open output window", silent = true })
+
+local runner = require("quarto.runner")
+vim.keymap.set("n", "<leader>rq", runner.run_cell, { desc = "run cell", silent = true })
+vim.keymap.set("n", "<leader>rw", runner.run_above, { desc = "run cell and above", silent = true })
+vim.keymap.set("n", "<leadr>ra", runner.run_all, { desc = "run all cells", silent = true })
 
 -------------------------------------------theme setup--------------------------------------------
 
