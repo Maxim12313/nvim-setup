@@ -154,6 +154,32 @@ require("lazy").setup({
 			lazy = true,
 		},
 
+		-- letcode
+		{
+			"kawre/leetcode.nvim",
+			dependencies = {
+				"nvim-telescope/telescope.nvim",
+				-- "ibhagwan/fzf-lua",
+				"nvim-lua/plenary.nvim",
+				"MunifTanjim/nui.nvim",
+			},
+			opts = {
+				lang = "python3",
+				injector = {
+					python3 = {
+						before = { "from typing import List, Dict", "from collections import defaultdict" },
+					},
+					cpp = {
+						before = { "#include <bits/stdc++.h>", "using namespace std;" },
+						after = "int main() {}",
+					},
+					java = {
+						before = "import java.util.*;",
+					},
+				},
+			},
+		},
+
 		-- git
 		{ "lewis6991/gitsigns.nvim", lazy = true },
 		{ "tpope/vim-fugitive", lazy = true },
@@ -348,7 +374,7 @@ require("nvim-treesitter.configs").setup({
 		enable = true,
 	},
 	indent = {
-		enable = true,
+		enable = false,
 	},
 })
 -- vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Identifier" })
@@ -517,10 +543,12 @@ require("bufferline").setup({
 	options = {
 		-- Custom sorting, most recent on the left
 		tab_size = 18,
-		sort_by = "tab",
+		sort_by = "insert_at_end",
 		show_buffer_icons = true,
 		diagnostics = "nvim_lsp",
 		color_icons = true,
+		always_show_bufferline = false,
+		-- auto_toggle_bufferline = true | false,
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
 			local icon = level:match("error") and " " or " "
 			return " " .. icon .. count
@@ -693,6 +721,13 @@ require("competitest").setup({
 })
 vim.keymap.set("n", "<leader>q", ":CompetiTest run<CR>")
 vim.keymap.set("n", "<leader>eq", ":CompetiTest receive contest<CR>")
+
+vim.keymap.set("n", "<leader>lq", ":Leet console<CR>")
+vim.keymap.set("n", "<leader>le", ":Leet run<CR>")
+vim.keymap.set("n", "<leader>lw", ":Leet desc<CR>")
+vim.keymap.set("n", "<leader>lf", ":Leet list<CR>")
+vim.keymap.set("n", "<leader>ld", ":Leet tabs<CR>")
+vim.keymap.set("n", "<leader>ls", ":Leet submit<CR>")
 
 -------------------------------------------git setup--------------------------------------------
 require("gitsigns").setup({

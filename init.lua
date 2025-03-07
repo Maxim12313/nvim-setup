@@ -129,9 +129,16 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "Visual", { bg = "#D0E0E3", blend = 50 })
 		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#D0E0E3", blend = 50 })
 		vim.api.nvim_set_hl(0, "Normal", { bg = "#F7F7F7", fg = "#495057" })
-		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#D0E0E3" })
+		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#D2691E" })
+
+		vim.api.nvim_set_hl(0, "leetcode_dyn_p", { fg = "#000000" })
+		vim.api.nvim_set_hl(0, "leetcode_dyn_pre", { fg = "#000000" })
+		vim.api.nvim_set_hl(0, "leetcode_ok", { fg = "#77B254" })
+		vim.api.nvim_set_hl(0, "leetcode_case_ok", { fg = "#77B254" })
+
 		setBG("SignColumn", "#F7F7F7")
 		setBG("LineNr", "#F7F7F7")
+		setBG("CursorLineNr", "#F0F0F0")
 		setBG("CursorLine", "#F0F0F0")
 		setBG("TelescopeSelection", "#EDEDED")
 		theme = "iceberg_light"
@@ -142,9 +149,16 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
 		vim.api.nvim_set_hl(0, "Normal", { bg = "#212229", fg = "#FFFFFF" })
 		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#335E5E" })
+
+		vim.api.nvim_set_hl(0, "leetcode_dyn_p", { fg = "#FFFFFF" })
+		vim.api.nvim_set_hl(0, "leetcode_dyn_pre", { fg = "#FFFFFF" })
+		vim.api.nvim_set_hl(0, "leetcode_ok", { fg = "#228B22" })
+		vim.api.nvim_set_hl(0, "leetcode_case_ok", { fg = "#228B22" })
+
 		setBG("SignColumn", "#212229")
 		setBG("LineNr", "#212229")
 		setBG("CursorLine", "#2f323b")
+		setBG("CursorLineNr", "#2f323b")
 		setBG("TelescopeSelection", "#3a3d45")
 		theme = "iceberg_dark"
 	end
