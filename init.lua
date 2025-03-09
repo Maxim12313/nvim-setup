@@ -14,6 +14,7 @@ vim.o.termguicolors = true
 vim.o.signcolumn = "yes"
 vim.o.showmode = false
 vim.o.undofile = true
+vim.o.wrap = false
 vim.g.python3_host_prog = "/Users/maximkim/.config/nvim/env/bin/python3"
 
 -- vim.lsp.set_log_level("off")
@@ -72,16 +73,16 @@ vim.keymap.set("i", "<C-f>", "<Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-b>", "<Left>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-n>", "<Down>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-p>", "<Up>", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-a>", "<Home>", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-a>", "<C-o>I", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
 
 -- for mac system
-vim.keymap.set("i", "<A-Right>", "<S-Right>", { noremap = true, silent = true })
+vim.keymap.set("i", "<A-Right>", "<ESC>ea", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-Left>", "<S-Left>", { noremap = true, silent = true })
 
 -- for tmux system
-vim.keymap.set("i", "<M-f>", "<S-Right>", { noremap = true, silent = true })
+vim.keymap.set("i", "<M-f>", "<ESC>ea", { noremap = true, silent = true })
 vim.keymap.set("i", "<M-b>", "<S-Left>", { noremap = true, silent = true })
 
 -- vertical movement
@@ -135,6 +136,7 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "leetcode_dyn_pre", { fg = "#000000" })
 		vim.api.nvim_set_hl(0, "leetcode_ok", { fg = "#77B254" })
 		vim.api.nvim_set_hl(0, "leetcode_case_ok", { fg = "#77B254" })
+		vim.api.nvim_set_hl(0, "leetcode_case_focus_ok", { bg = "#77B254", fg = "#000000" })
 
 		setBG("SignColumn", "#F7F7F7")
 		setBG("LineNr", "#F7F7F7")
@@ -150,10 +152,11 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "Normal", { bg = "#212229", fg = "#FFFFFF" })
 		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#335E5E" })
 
-		vim.api.nvim_set_hl(0, "leetcode_dyn_p", { fg = "#FFFFFF" })
-		vim.api.nvim_set_hl(0, "leetcode_dyn_pre", { fg = "#FFFFFF" })
+		vim.api.nvim_set_hl(0, "leetcode_dyn_p", { fg = "#B0B0B0" })
+		vim.api.nvim_set_hl(0, "leetcode_dyn_pre", { fg = "#B0B0B0" })
 		vim.api.nvim_set_hl(0, "leetcode_ok", { fg = "#228B22" })
 		vim.api.nvim_set_hl(0, "leetcode_case_ok", { fg = "#228B22" })
+		vim.api.nvim_set_hl(0, "leetcode_case_focus_ok", { bg = "#228B22", fg = "#FFFFFF" })
 
 		setBG("SignColumn", "#212229")
 		setBG("LineNr", "#212229")

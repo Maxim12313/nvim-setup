@@ -131,6 +131,12 @@ require("lazy").setup({
 			},
 		},
 
+		{
+			"nvimdev/dashboard-nvim",
+			event = "VimEnter",
+			dependencies = { { "nvim-tree/nvim-web-devicons" } },
+		},
+
 		-- files
 		-- { "stevearc/oil.nvim" },
 		{
@@ -164,10 +170,15 @@ require("lazy").setup({
 				"MunifTanjim/nui.nvim",
 			},
 			opts = {
+				-- image_support = true,
 				lang = "python3",
 				injector = {
 					python3 = {
-						before = { "from typing import List, Dict", "from collections import defaultdict" },
+						before = {
+							"from typing import List, Dict",
+							"from collections import defaultdict",
+							"from sortedcontainers import SortedDict, SortedSet",
+						},
 					},
 					cpp = {
 						before = { "#include <bits/stdc++.h>", "using namespace std;" },
@@ -183,12 +194,12 @@ require("lazy").setup({
 		-- git
 		{ "lewis6991/gitsigns.nvim", lazy = true },
 		{ "tpope/vim-fugitive", lazy = true },
-
-		{
-			"3rd/image.nvim",
-			build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
-			opts = {},
-		},
+		--
+		-- {
+		-- 	"3rd/image.nvim",
+		-- 	build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
+		-- 	opts = {},
+		-- },
 		-- run jupyter in md
 		{
 			"benlubas/molten-nvim",
@@ -213,6 +224,10 @@ require("lazy").setup({
 			lazy = false,
 		},
 
+		{
+			"Eandrju/cellular-automaton.nvim",
+		},
+
 		-- {
 		-- 	"dccsillag/magma-nvim",
 		-- 	build = ":UpdateRemotePlugins",
@@ -224,6 +239,10 @@ require("lazy").setup({
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
 })
+
+vim.keymap.set("n", "<leader>fml1", ":CellularAutomaton game_of_life<CR>", { silent = true })
+vim.keymap.set("n", "<leader>fml2", ":CellularAutomaton make_it_rain<CR>", { silent = true })
+vim.keymap.set("n", "<leader>fml3", ":CellularAutomaton scramble<CR>", { silent = true })
 
 ----------------------------------------------lsp setup--------------------------------------------------
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -519,14 +538,54 @@ end
 
 -------------------------------------------autopairs setup--------------------------------------------
 local autopairs = require("nvim-autopairs")
-autopairs.remove_rule("{")
+local Rule = require("nvim-autopairs.rule")
+local cond = require("nvim-autopairs.conds")
 
+autopairs.setup({
+	map_bs = false, -- map the <BS> key
+	map_c_w = true, -- Map the <C-h> key to delete a pair
+	check_ts = true, -- Enable treesitter integration
+	enable_afterquote = false, -- add bracket pairs after quote
+	fast_wrap = {
+		map = "<C-j>",
+		end_key = "l",
+		manual_position = false,
+		keys = "asdfghjk",
+		-- cursor_pos_before = treu,
+	},
+	ignored_next_char = "[%w%(%{%[%'%\"]",
+})
+
+local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+local cmp = require("cmp")
+cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+
+function rule1(a1, ins, a2, lang)
+	autopairs.add_rule(Rule(ins, ins, lang)
+		:with_pair(function(opts)
+			return a1 .. a2 == opts.line:sub(opts.col - #a1, opts.col + #a2 - 1)
+		end)
+		:with_move(cond.none())
+		:with_cr(cond.none())
+		:with_del(function(opts)
+			local col = vim.api.nvim_win_get_cursor(0)[2]
+			return a1 .. ins .. ins .. a2 == opts.line:sub(col - #a1 - #ins + 1, col + #ins + #a2) -- insert only works for #ins == 1 anyway
+		end))
+end
+rule1("(", " ", ")")
+rule1("{", " ", "}")
+rule1("[", " ", "]")
+
+-- vim.keymap.set("i", "{;<CR>", "{<DOWN>;<UP>")
+
+-- autopairs.remove_rule("{")
 -- better { rules
-vim.keymap.set("i", "{", "{}<left>", { noremap = true, silent = true })
-vim.keymap.set("i", "{<CR>", "{<CR>}<ESC>O", { noremap = true, silent = true })
-vim.keymap.set("i", "{;<CR>", "{<CR>};<ESC>O", { noremap = true, silent = true })
-vim.keymap.set("i", "{,<CR>", "{<CR>},<ESC>O", { noremap = true, silent = true })
-vim.keymap.set("i", "{ ", "{}<Left><Space><Left><Space>", { noremap = true, silent = true })
+-- vim.keymap.set("i", "{", "{}<left>", { noremap = true, silent = true })
+-- vim.keymap.set("i", "{<CR>", "{<CR>}<ESC>O", { noremap = true, silent = true })
+vim.keymap.set("i", "@{<CR>", "{<CR>};<ESC>O", { noremap = true, silent = true })
+-- vim.keymap.set("i", "{,<CR>", "{<CR>},<ESC>O", { noremap = true, silent = true })
+-- vim.keymap.set("i", "{ ", "{}<Left><Space><Left><Space>", { noremap = true, silent = true })
+--
 
 require("nvim-ts-autotag").setup({
 	opts = {
@@ -602,7 +661,20 @@ end
 -- end)
 
 -------------------------------------------surround setup--------------------------------------------
-require("nvim-surround").setup({})
+require("nvim-surround").setup({
+	move_cursor = false,
+	keymaps = {
+		normal = "vs",
+		normal_cur = "vss",
+		normal_line = "vS",
+		normal_cur_line = "vSS",
+		visual = "s",
+		visual_line = "gs",
+		delete = "ds",
+		change = "cs",
+		change_line = "cS",
+	},
+})
 
 -------------------------------------------debugger setup--------------------------------------------
 -- local dap = require("dap")
@@ -657,13 +729,60 @@ vim.keymap.set("n", ";s", function()
 	require("persistence").load()
 end)
 
+require("dashboard").setup({
+	theme = "hyper",
+	config = {
+		week_header = {
+			enable = true,
+		},
+		shortcut = {
+			{ desc = "󰊳 Update", group = "@property", action = "Lazy update", key = "u" },
+			{
+				icon = " ",
+				icon_hl = "@variable",
+				desc = "Files",
+				group = "Label",
+				action = "Telescope find_files",
+				key = "f",
+			},
+			{
+				desc = " Session",
+				group = "DiagnosticHint",
+				action = "lua require('persistence').load()",
+				key = "s",
+			},
+			{
+				desc = " dotfiles",
+				group = "Number",
+				action = "lua require('telescope.builtin').find_files({ cwd = '~/.config/nvim' })",
+				key = "d",
+			},
+		},
+
+		change_to_vcs_root = true,
+		mru = { enable = false },
+		footer = { "", "", "🏆 Make the complex appear simple" }, -- footer
+	},
+})
+
+vim.keymap.set("n", ";v", ":Dashboard<CR>")
+
 -------------------------------------------file manager setup--------------------------------------------
 local neotree = require("neo-tree")
 neotree.setup({
 	filesystem = {
 		hijack_netrw_behavior = "open_current",
+		follow_current_file = {
+			enabled = true,
+		},
+		use_libuv_file_watcher = true, -- Auto-refresh
 		filtered_items = {
 			visible = true,
+		},
+	},
+	buffers = {
+		follow_current_file = {
+			enabled = true,
 		},
 	},
 })
@@ -734,24 +853,25 @@ require("gitsigns").setup({
 	current_line_blame = true,
 })
 -------------------------------------------image setup--------------------------------------------
-require("image").setup({
-	backend = "ueberzug",
-	integrations = {}, -- do whatever you want with image.nvim's integrations
-	max_width = 100, -- tweak to preference
-	max_height = 12, -- ^
-	max_height_window_percentage = math.huge, -- this is necessary for a good experience
-	max_width_window_percentage = math.huge,
-	window_overlap_clear_enabled = true,
-	window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
-	markdown = {
-		enabled = true,
-		clear_in_insert_mode = false,
-		download_remote_images = true,
-		only_render_image_at_cursor = false,
-		floating_windows = false, -- if true, images will be rendered in floating markdown windows
-		filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
-	},
-})
+-- require("image").setup({
+-- 	backend = "ueberzug",
+-- 	processor = "magick_rock",
+-- integrations = {}, -- do whatever you want with image.nvim's integrations
+-- max_width = 100, -- tweak to preference
+-- max_height = 12, -- ^
+-- max_height_window_percentage = math.huge, -- this is necessary for a good experience
+-- max_width_window_percentage = math.huge,
+-- window_overlap_clear_enabled = true,
+-- window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+-- markdown = {
+-- 	enabled = true,
+-- 	clear_in_insert_mode = false,
+-- 	download_remote_images = true,
+-- 	only_render_image_at_cursor = false,
+-- 	floating_windows = false, -- if true, images will be rendered in floating markdown windows
+-- 	filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
+-- },
+-- })
 
 -------------------------------------------molten setup--------------------------------------------
 
@@ -867,7 +987,6 @@ end, {
 	nargs = 1,
 	complete = "file",
 })
-
 -------------------------------------------theme setup--------------------------------------------
 
 require("everforest").setup({
