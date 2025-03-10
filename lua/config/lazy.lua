@@ -36,11 +36,40 @@ require("lazy").setup({
 		{ "folke/tokyonight.nvim" },
 
 		{
+			"Wansmer/treesj",
+			dependencies = { "nvim-treesitter/nvim-treesitter" }, -- if you install parsers with `nvim-treesitter`
+		},
+		{
+			"folke/zen-mode.nvim",
+			opts = {
+				window = {
+					backdrop = 0.8,
+				},
+				plugins = {
+					options = {
+						laststatus = 1,
+					},
+					gitsigns = {
+						enabled = true,
+					},
+				},
+			},
+		},
+
+		{
 			"vhyrro/luarocks.nvim",
 			priority = 1001, -- this plugin needs to run before anything else
 			opts = {
 				rocks = { "magick" },
 			},
+		},
+
+		-- peak lines
+		{
+			"nacro90/numb.nvim",
+			config = function()
+				require("numb").setup()
+			end,
 		},
 
 		-- lsp manager
@@ -160,7 +189,7 @@ require("lazy").setup({
 			lazy = true,
 		},
 
-		-- letcode
+		-- leetcode
 		{
 			"kawre/leetcode.nvim",
 			dependencies = {
@@ -187,6 +216,10 @@ require("lazy").setup({
 					java = {
 						before = "import java.util.*;",
 					},
+				},
+				storage = {
+					home = "~/cpp/leetcode",
+					cache = vim.fn.stdpath("cache") .. "/leetcode",
 				},
 			},
 		},
@@ -224,8 +257,15 @@ require("lazy").setup({
 			lazy = false,
 		},
 
+		-- games
 		{
 			"Eandrju/cellular-automaton.nvim",
+		},
+		{
+			"nvzone/typr",
+			dependencies = "nvzone/volt",
+			opts = {},
+			cmd = { "Typr", "TyprStats" },
 		},
 
 		-- {
@@ -243,6 +283,13 @@ require("lazy").setup({
 vim.keymap.set("n", "<leader>fml1", ":CellularAutomaton game_of_life<CR>", { silent = true })
 vim.keymap.set("n", "<leader>fml2", ":CellularAutomaton make_it_rain<CR>", { silent = true })
 vim.keymap.set("n", "<leader>fml3", ":CellularAutomaton scramble<CR>", { silent = true })
+----------------------------------------------lsp setup--------------------------------------------------
+
+local tsj = require("treesj")
+tsj.setup({
+	use_default_keymaps = false,
+})
+vim.keymap.set("n", "<C-j>", ":lua require('treesj').toggle()<CR>", { silent = true })
 
 ----------------------------------------------lsp setup--------------------------------------------------
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -327,6 +374,19 @@ lspconfig.pyright.setup({
 		python = {
 			analysis = {
 				typeCheckingMode = "off",
+			},
+		},
+	},
+})
+lspconfig.verible.setup({
+	cmd = { "verible-verilog-ls" },
+	root_dir = function(fname)
+		return vim.fn.getcwd() -- Use current working directory
+	end,
+	settings = {
+		verible = {
+			lint = {
+				arguments = { "--rules=-no-tabs" }, -- Customize enabled rules
 			},
 		},
 	},
@@ -418,7 +478,7 @@ conform.setup({
 		html = { "prettierd", "prettier" },
 		["_"] = { "trim_whitespace" },
 		["verible-verilog-format"] = {
-			args = { "--module-port-list-indentation=0" },
+			args = { "--wrap_ports=0" },
 		},
 	},
 	default_format_opts = {
@@ -607,7 +667,7 @@ require("bufferline").setup({
 		diagnostics = "nvim_lsp",
 		color_icons = true,
 		always_show_bufferline = false,
-		-- auto_toggle_bufferline = true | false,
+		auto_toggle_bufferline = true,
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
 			local icon = level:match("error") and " " or " "
 			return " " .. icon .. count
@@ -754,7 +814,7 @@ require("dashboard").setup({
 			{
 				desc = " dotfiles",
 				group = "Number",
-				action = "lua require('telescope.builtin').find_files({ cwd = '~/.config/nvim' })",
+				action = "lua vim.api.nvim_set_current_dir('~/.config/nvim'); require('telescope.builtin').find_files()",
 				key = "d",
 			},
 		},

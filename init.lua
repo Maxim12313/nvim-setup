@@ -15,6 +15,7 @@ vim.o.signcolumn = "yes"
 vim.o.showmode = false
 vim.o.undofile = true
 vim.o.wrap = false
+vim.o.ignorecase = true
 vim.g.python3_host_prog = "/Users/maximkim/.config/nvim/env/bin/python3"
 
 -- vim.lsp.set_log_level("off")
@@ -37,6 +38,14 @@ vim.api.nvim_create_autocmd("FileType", {
 -- windows
 vim.o.splitbelow = true
 vim.o.splitright = true
+
+-- work on this
+-- vim.keymap.set("n", "<C-w>l", "<C-w>l:vertical resize 100<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<C-w>h", "<C-w>h:vertical resize 100<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<C-w>k", "<C-w>k:horizontal resize 25<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<C-w>j", "<C-w>j:horizontal resize 25<CR>", { noremap = true, silent = true })
+--
+vim.keymap.set("n", ";z", ":ZenMode<CR>")
 
 -- misc
 
@@ -110,9 +119,6 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
---color
-vim.cmd.colorscheme("tokyonight")
-
 -- if exists fg, then preserve it when changing
 local function setBG(group, bg_color)
 	local current_hl = vim.api.nvim_get_hl_by_name(group, true)
@@ -121,8 +127,7 @@ local function setBG(group, bg_color)
 end
 
 local function themeChanges()
-	-- set highlight orange
-
+	-- print("theme changed!")
 	local theme
 	if vim.opt.background:get() == "light" then
 		vim.api.nvim_set_hl(0, "@lsp.typemod.variable.defaultLibrary", { fg = "#FF00FF" })
@@ -149,7 +154,20 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "Identifier", { fg = "#FFFFFF" })
 		vim.api.nvim_set_hl(0, "Visual", { bg = "#335E5E", blend = 80 })
 		vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
-		vim.api.nvim_set_hl(0, "Normal", { bg = "#212229", fg = "#FFFFFF" })
+
+		-- local normal = "#2A2B2F"
+		local normal = "#212229"
+		-- local normal = "#1A1B1F"
+
+		vim.api.nvim_set_hl(0, "Normal", { bg = normal, fg = "#FFFFFF" })
+		setBG("SignColumn", normal)
+		setBG("LineNr", normal)
+		setBG("NormalNC", normal)
+		setBG("ZenBG", normal)
+
+		vim.api.nvim_set_hl(0, "Search", { bg = "#FFD700", fg = "#000000", bold = true }) -- Normal search highlight
+		vim.api.nvim_set_hl(0, "IncSearch", { bg = "#ffb86c", fg = "#282a36", bold = true }) -- While typing in search mode
+
 		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#335E5E" })
 
 		vim.api.nvim_set_hl(0, "leetcode_dyn_p", { fg = "#B0B0B0" })
@@ -158,8 +176,6 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "leetcode_case_ok", { fg = "#228B22" })
 		vim.api.nvim_set_hl(0, "leetcode_case_focus_ok", { bg = "#228B22", fg = "#FFFFFF" })
 
-		setBG("SignColumn", "#212229")
-		setBG("LineNr", "#212229")
 		setBG("CursorLine", "#2f323b")
 		setBG("CursorLineNr", "#2f323b")
 		setBG("TelescopeSelection", "#3a3d45")
@@ -212,5 +228,7 @@ end
 
 vim.keymap.set("n", "<leader>wr", toggleLightDark)
 
-vim.api.nvim_create_autocmd("Colorscheme", { callback = themeChanges })
-themeChanges()
+vim.api.nvim_create_autocmd("Colorscheme", {
+	callback = themeChanges,
+})
+vim.cmd.colorscheme("tokyonight")
