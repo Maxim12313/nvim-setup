@@ -134,16 +134,16 @@ require("lazy").setup({
 		{ "windwp/nvim-ts-autotag", lazy = true },
 
 		-- file navigation harpoon
-		-- {
-		-- 	"ThePrimeagen/harpoon",
-		-- 	branch = "harpoon2",
-		-- },
 		{
-			"akinsho/bufferline.nvim",
-			version = "*",
-			dependencies = "nvim-tree/nvim-web-devicons",
+			"ThePrimeagen/harpoon",
+			branch = "harpoon2",
 		},
-
+		-- {
+		-- 	"akinsho/bufferline.nvim",
+		-- 	version = "*",
+		-- 	dependencies = "nvim-tree/nvim-web-devicons",
+		-- },
+		--
 		-- surround editing
 		{ "kylechui/nvim-surround" },
 
@@ -200,18 +200,18 @@ require("lazy").setup({
 			},
 			opts = {
 				-- image_support = true,
-				lang = "python3",
+				lang = "cpp",
 				injector = {
 					python3 = {
 						before = {
-							"from typing import List, Dict",
-							"from collections import defaultdict",
-							"from sortedcontainers import SortedDict, SortedSet",
+							"from typing import List, Dict, Optional",
+							-- "from collections import defaultdict",
+							-- "from sortedcontainers import SortedDict, SortedSet",
+							-- "from bisect import bisect_left, bisect_right",
 						},
 					},
 					cpp = {
-						before = { "#include <bits/stdc++.h>", "using namespace std;" },
-						after = "int main() {}",
+						before = { '#include "headers.hpp"' },
 					},
 					java = {
 						before = "import java.util.*;",
@@ -280,9 +280,6 @@ require("lazy").setup({
 	checker = { enabled = false },
 })
 
-vim.keymap.set("n", "<leader>fml1", ":CellularAutomaton game_of_life<CR>", { silent = true })
-vim.keymap.set("n", "<leader>fml2", ":CellularAutomaton make_it_rain<CR>", { silent = true })
-vim.keymap.set("n", "<leader>fml3", ":CellularAutomaton scramble<CR>", { silent = true })
 ----------------------------------------------lsp setup--------------------------------------------------
 
 local tsj = require("treesj")
@@ -302,7 +299,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
 		vim.keymap.set("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
 		vim.keymap.set("n", "gr", "<cmd>cexpr []<cr><cmd>lua vim.lsp.buf.references()<cr>", opts)
-		vim.keymap.set("n", "gu", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+		vim.keymap.set("n", ";w", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
 		vim.keymap.set("n", "L", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
@@ -369,6 +366,12 @@ require("mason-lspconfig").setup({
 	},
 })
 
+lspconfig.clangd.setup({
+	init_options = {
+		fallbackFlags = { "--std=c++23" },
+	},
+})
+
 lspconfig.pyright.setup({
 	settings = {
 		python = {
@@ -378,6 +381,7 @@ lspconfig.pyright.setup({
 		},
 	},
 })
+
 lspconfig.verible.setup({
 	cmd = { "verible-verilog-ls" },
 	root_dir = function(fname)
@@ -391,7 +395,6 @@ lspconfig.verible.setup({
 		},
 	},
 })
-
 ----------------------------------------------suggestion setup--------------------------------------------------
 local cmp = require("cmp")
 local ls = require("luasnip")
@@ -477,9 +480,6 @@ conform.setup({
 		javascript = { "prettierd", "prettier" },
 		html = { "prettierd", "prettier" },
 		["_"] = { "trim_whitespace" },
-		["verible-verilog-format"] = {
-			args = { "--wrap_ports=0" },
-		},
 	},
 	default_format_opts = {
 		lsp_format = "fallback",
@@ -528,7 +528,6 @@ telescope.setup({
 
 local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
-vim.keymap.set("n", "<leader>f", builtin.buffers)
 vim.keymap.set("n", ";f", builtin.find_files)
 vim.keymap.set("n", ";c", function()
 	builtin.diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
@@ -602,7 +601,7 @@ local Rule = require("nvim-autopairs.rule")
 local cond = require("nvim-autopairs.conds")
 
 autopairs.setup({
-	map_bs = false, -- map the <BS> key
+	map_bs = true, -- map the <BS> key
 	map_c_w = true, -- Map the <C-h> key to delete a pair
 	check_ts = true, -- Enable treesitter integration
 	enable_afterquote = false, -- add bracket pairs after quote
@@ -658,67 +657,105 @@ require("nvim-ts-autotag").setup({
 
 -------------------------------------------file navigation setup--------------------------------------------
 
-require("bufferline").setup({
-	options = {
-		-- Custom sorting, most recent on the left
-		tab_size = 18,
-		sort_by = "insert_at_end",
-		show_buffer_icons = true,
-		diagnostics = "nvim_lsp",
-		color_icons = true,
-		always_show_bufferline = false,
-		auto_toggle_bufferline = true,
-		diagnostics_indicator = function(count, level, diagnostics_dict, context)
-			local icon = level:match("error") and " " or " "
-			return " " .. icon .. count
-		end,
+-- require("bufferline").setup({
+-- 	options = {
+-- 		-- Custom sorting, most recent on the left
+-- 		tab_size = 18,
+-- 		sort_by = "insert_at_end",
+-- 		show_buffer_icons = true,
+-- 		diagnostics = "nvim_lsp",
+-- 		color_icons = true,
+-- 		-- always_show_bufferline = false,
+-- 		-- auto_toggle_bufferline = true,
+-- 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
+-- 			local icon = level:match("error") and " " or " "
+-- 			return " " .. icon .. count
+-- 		end,
+-- 	},
+-- })
+--
+-- vim.keymap.set("n", ";w", function()
+-- 	local bufferline = require("bufferline.groups")
+--
+-- 	-- Get a list of all open buffers
+-- 	local buffers = vim.fn.getbufinfo({ buflisted = 1 })
+-- 	print(vim.inspect(buffers))
+-- end)
+--
+-- vim.keymap.set("n", ";q", "<C-^>", { noremap = true, silent = true })
+-- vim.keymap.set("n", ";e", "<CMD>BufferLineTogglePin<CR>")
+-- vim.keymap.set("n", ";r", "<CMD>bd<CR>")
+-- vim.keymap.set("n", ";w", "<CMD>BufferLineCloseOthers<CR>")
+-- vim.keymap.set("n", ";a", "<CMD>BufferLineCyclePrev<CR>")
+-- vim.keymap.set("n", ";d", "<CMD>BufferLineCycleNext<CR>")
+--
+-- for i = 1, 9 do
+-- 	local str = tostring(i)
+-- 	vim.keymap.set("n", ";" .. str, "<CMD>BufferLineGoToBuffer " .. str .. "<CR>")
+-- end
+
+local harpoon = require("harpoon")
+
+harpoon.setup({
+	settings = {
+		sync_on_ui_close = false,
 	},
 })
 
-vim.keymap.set("n", ";q", "<C-^>", { noremap = true, silent = true })
-vim.keymap.set("n", ";e", "<CMD>BufferLineTogglePin<CR>")
-vim.keymap.set("n", ";r", "<CMD>bd<CR>")
-vim.keymap.set("n", ";w", "<CMD>BufferLineCloseOthers<CR>")
-vim.keymap.set("n", ";d", "<CMD>BufferLineMoveNext<CR>")
-vim.keymap.set("n", ";a", "<CMD>BufferLineMovePrev<CR>")
+vim.keymap.set("n", ";e", function()
+	harpoon:list():add()
+end)
+vim.keymap.set("n", "_", function()
+	harpoon.ui:toggle_quick_menu(harpoon:list())
+end)
 
-for i = 1, 9 do
-	local str = tostring(i)
-	vim.keymap.set("n", ";" .. str, "<CMD>BufferLineGoToBuffer " .. str .. "<CR>")
+vim.keymap.set("n", ";1", function()
+	harpoon:list():select(1)
+end)
+vim.keymap.set("n", ";2", function()
+	harpoon:list():select(2)
+end)
+vim.keymap.set("n", ";3", function()
+	harpoon:list():select(3)
+end)
+vim.keymap.set("n", ";4", function()
+	harpoon:list():select(4)
+end)
+
+-- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set("n", ";a", function()
+	harpoon:list():prev()
+end)
+vim.keymap.set("n", ";d", function()
+	harpoon:list():next()
+end)
+
+local harpoon_extensions = require("harpoon.extensions")
+harpoon:extend(harpoon_extensions.builtins.highlight_current_file())
+
+-- basic telescope configuration
+local conf = require("telescope.config").values
+local function toggle_telescope(harpoon_files)
+	local file_paths = {}
+	for _, item in ipairs(harpoon_files.items) do
+		table.insert(file_paths, item.value)
+	end
+
+	require("telescope.pickers")
+		.new({}, {
+			prompt_title = "Harpoon",
+			finder = require("telescope.finders").new_table({
+				results = file_paths,
+			}),
+			previewer = conf.file_previewer({}),
+			sorter = conf.generic_sorter({}),
+		})
+		:find()
 end
 
--- local harpoon = require("harpoon")
---
--- harpoon.setup({
--- })
---
--- vim.keymap.set("n", ";a", function()
--- 	harpoon:list():add()
--- end)
--- vim.keymap.set("n", ";w", function()
--- 	harpoon.ui:toggle_quick_menu(harpoon:list())
--- end)
---
--- vim.keymap.set("n", ";1", function()
--- 	harpoon:list():select(1)
--- end)
--- vim.keymap.set("n", ";2", function()
--- 	harpoon:list():select(2)
--- end)
--- vim.keymap.set("n", ";3", function()
--- 	harpoon:list():select(3)
--- end)
--- vim.keymap.set("n", ";4", function()
--- 	harpoon:list():select(4)
--- end)
---
--- -- Toggle previous & next buffers stored within Harpoon list
--- vim.keymap.set("n", ";q", function()
--- 	harpoon:list():prev()
--- end)
--- vim.keymap.set("n", ";e", function()
--- 	harpoon:list():next()
--- end)
+vim.keymap.set("n", "<leader>f", function()
+	toggle_telescope(harpoon:list())
+end, { desc = "Open harpoon window" })
 
 -------------------------------------------surround setup--------------------------------------------
 require("nvim-surround").setup({
@@ -850,7 +887,7 @@ vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
 -- vim.keymap.set("n", "-", ":Neotree toggle current reveal<CR>", { silent = true })
 -------------------------------------------cpp setup--------------------------------------------
 local args = {
-	"-std=c++20",
+	"-std=c++23",
 	"-g",
 	"$(FNAME)",
 	"-o",
@@ -898,15 +935,36 @@ require("competitest").setup({
 	received_problems_path = "contest",
 	evaluate_template_modifiers = true,
 })
-vim.keymap.set("n", "<leader>q", ":CompetiTest run<CR>")
-vim.keymap.set("n", "<leader>eq", ":CompetiTest receive contest<CR>")
 
-vim.keymap.set("n", "<leader>lq", ":Leet console<CR>")
-vim.keymap.set("n", "<leader>le", ":Leet run<CR>")
-vim.keymap.set("n", "<leader>lw", ":Leet desc<CR>")
-vim.keymap.set("n", "<leader>lf", ":Leet list<CR>")
-vim.keymap.set("n", "<leader>ld", ":Leet tabs<CR>")
-vim.keymap.set("n", "<leader>ls", ":Leet submit<CR>")
+local function set_leet_keymaps()
+	vim.keymap.set("n", "<leader>lr", ":Leet random<CR>")
+	vim.keymap.set("n", "<leader>lq", ":Leet console<CR>")
+	vim.keymap.set("n", "<leader>le", ":Leet run<CR>")
+	vim.keymap.set("n", "<leader>lw", ":Leet desc<CR>")
+	vim.keymap.set("n", "<leader>lf", ":Leet list<CR>")
+	vim.keymap.set("n", "<leader>ld", ":Leet tabs<CR>")
+	vim.keymap.set("n", "<leader>ls", ":Leet submit<CR>")
+	vim.keymap.set("n", "<leader>ll", ":Leet lang<CR>")
+end
+
+local function set_competi_keymaps()
+	vim.keymap.set("n", "<leader>le", ":CompetiTest run<CR>")
+	vim.keymap.set("n", "<leader>lw", ":CompetiTest receive contest<CR>")
+	vim.keymap.set("n", "<leader>lq", ":CompetiTest show_ui<CR>")
+end
+
+-- Auto-detect if a LeetCode buffer is active and change keymaps
+vim.api.nvim_create_autocmd("BufEnter", {
+	pattern = "*",
+	callback = function()
+		local bufname = vim.api.nvim_buf_get_name(0) -- Get current buffer name
+		if bufname:match("leetcode") then
+			set_leet_keymaps() -- Apply LeetCode keymaps
+		else
+			set_competi_keymaps() -- Apply CompetiTest keymaps
+		end
+	end,
+})
 
 -------------------------------------------git setup--------------------------------------------
 require("gitsigns").setup({

@@ -11,12 +11,15 @@ vim.o.guifont = "Input Mono 13"
 vim.o.swapfile = false
 vim.o.cursorline = true
 vim.o.termguicolors = true
-vim.o.signcolumn = "yes"
 vim.o.showmode = false
 vim.o.undofile = true
 vim.o.wrap = false
 vim.o.ignorecase = true
 vim.g.python3_host_prog = "/Users/maximkim/.config/nvim/env/bin/python3"
+vim.o.numberwidth = 12
+vim.o.winheight = 10
+vim.o.signcolumn = "yes"
+vim.o.showtabline = 0
 
 -- vim.lsp.set_log_level("off")
 
@@ -31,7 +34,16 @@ vim.o.expandtab = true
 
 -- Use 2 spaces per tab for HTML, CSS, and JavaScript
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "html", "css", "javascript", "javascriptreact", "typescript", "typescriptreact" },
+	pattern = {
+		"html",
+		"css",
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+		"systemverilog",
+		"verilog",
+	},
 	command = "setlocal tabstop=2 shiftwidth=2",
 })
 
@@ -50,7 +62,7 @@ vim.keymap.set("n", ";z", ":ZenMode<CR>")
 -- misc
 
 vim.keymap.set("i", "<C-c>", "<ESC>", { noremap = true, silent = true })
-vim.keymap.set("n", "_", ":e!<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", ";w", ":e!<CR>", { noremap = true, silent = true })
 
 function toggleQF()
 	local isOpen = false
@@ -85,6 +97,17 @@ vim.keymap.set("i", "<C-p>", "<Up>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-a>", "<C-o>I", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
+
+-- command
+vim.keymap.set("c", "<C-f>", "<Right>")
+vim.keymap.set("c", "<C-b>", "<Left>")
+vim.keymap.set("c", "<C-n>", "<Down>")
+vim.keymap.set("c", "<C-p>", "<Up>")
+vim.keymap.set("c", "<C-a>", "<C-o>I")
+vim.keymap.set("c", "<C-e>", "<End>")
+vim.keymap.set("c", "<A-BS>", "<C-w>")
+vim.keymap.set("c", "<M-f>", "<S-Right>")
+vim.keymap.set("c", "<M-b>", "<S-Left>")
 
 -- for mac system
 vim.keymap.set("i", "<A-Right>", "<ESC>ea", { noremap = true, silent = true })
@@ -143,11 +166,18 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "leetcode_case_ok", { fg = "#77B254" })
 		vim.api.nvim_set_hl(0, "leetcode_case_focus_ok", { bg = "#77B254", fg = "#000000" })
 
-		setBG("SignColumn", "#F7F7F7")
-		setBG("LineNr", "#F7F7F7")
-		setBG("CursorLineNr", "#F0F0F0")
-		setBG("CursorLine", "#F0F0F0")
-		setBG("TelescopeSelection", "#EDEDED")
+		-- local normal = "#F7F7F7"
+		local normal = "#FFFFFF"
+		vim.api.nvim_set_hl(0, "Normal", { bg = normal, fg = "#000000" })
+		setBG("SignColumn", normal)
+		setBG("LineNr", normal)
+		setBG("NormalNC", normal)
+		setBG("ZenBG", normal)
+
+		local line = "#E7E7E7"
+		setBG("CursorLineNr", line)
+		setBG("CursorLine", line)
+		setBG("TelescopeSelection", line)
 		theme = "iceberg_light"
 	else
 		vim.api.nvim_set_hl(0, "@lsp.typemod.variable.defaultLibrary", { fg = "#FF66CC" })
@@ -199,8 +229,8 @@ local function themeChanges()
 			lualine_b = { { "filename", path = 1 } },
 			lualine_c = { "diagnostics" },
 			lualine_x = { "filetype" },
-			lualine_y = { "progress" },
-			lualine_z = { "location" },
+			lualine_y = { "" },
+			lualine_z = { "" },
 		},
 	})
 
