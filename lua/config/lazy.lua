@@ -31,9 +31,17 @@ require("lazy").setup({
         { "neanias/everforest-nvim" },
         { "ishan9299/nvim-solarized-lua" },
         { "projekt0n/github-nvim-theme" },
-        { "Shatur/neovim-ayu" },
         { "Mofiqul/vscode.nvim" },
         { "folke/tokyonight.nvim" },
+
+
+        {
+            "lukas-reineke/indent-blankline.nvim",
+            main = "ibl",
+            ---@module "ibl"
+            ---@type ibl.config
+            opts = {},
+        },
 
         {
             "Wansmer/treesj",
@@ -167,8 +175,6 @@ require("lazy").setup({
             dependencies = { { "nvim-tree/nvim-web-devicons" } },
         },
 
-        -- files
-        -- { "stevearc/oil.nvim" },
         {
             "nvim-neo-tree/neo-tree.nvim",
             branch = "v3.x",
@@ -228,57 +234,24 @@ require("lazy").setup({
         -- git
         { "lewis6991/gitsigns.nvim",  lazy = true },
         { "tpope/vim-fugitive",       lazy = true },
-        --
-        -- {
-        -- 	"3rd/image.nvim",
-        -- 	build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
-        -- 	opts = {},
-        -- },
-        -- run jupyter in md
-        -- {
-        --     "benlubas/molten-nvim",
-        --     version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
-        --     dependencies = { "3rd/image.nvim" },
-        --     build = ":UpdateRemotePlugins",
-        --     init = moltSetup,
-        -- },
-        -- lsp for md
-        -- {
-        --     "quarto-dev/quarto-nvim",
-        --     dependencies = {
-        --         "jmbuhr/otter.nvim",
-        --         "nvim-treesitter/nvim-treesitter",
-        --     },
-        --     ft = { "markdown", "qmd", "ipynb" },
-        -- },
-        -- convert between jupyter md
-        -- {
-        --     "GCBallesteros/jupytext.nvim",
-        --     config = true,
-        --     lazy = false,
-        -- },
-        --
-        -- games
-        {
-            "Eandrju/cellular-automaton.nvim",
-        },
-        {
-            "nvzone/typr",
-            dependencies = "nvzone/volt",
-            opts = {},
-            cmd = { "Typr", "TyprStats" },
-        },
 
-        -- {
-        -- 	"dccsillag/magma-nvim",
-        -- 	build = ":UpdateRemotePlugins",
-        -- },
         -- off
         -- { "rktjmp/lush.nvim" },
         -- { "nvim-treesitter/playground" },
     },
     install = { colorscheme = { "habamax" } },
     checker = { enabled = false },
+})
+
+----------------------------------------------indent setup--------------------------------------------------
+require("ibl").setup({
+    enabled = true,
+    indent = {
+        char = "┆",
+    },
+    scope = {
+        enabled = false,
+    }
 })
 
 ----------------------------------------------lsp setup--------------------------------------------------
@@ -383,19 +356,6 @@ lspconfig.pyright.setup({
     },
 })
 
-lspconfig.verible.setup({
-    cmd = { "verible-verilog-ls", "--rules_config_search" },
-    root_dir = function(fname)
-        return vim.fn.getcwd() -- Use current working directory
-    end,
-    -- settings = {
-    --     verible = {
-    --         lint = {
-    --             arguments = { "--rules=-no-tabs" }, -- Customize enabled rules
-    --         },
-    --     },
-    -- },
-})
 ----------------------------------------------suggestion setup--------------------------------------------------
 local cmp = require("cmp")
 local ls = require("luasnip")
@@ -457,10 +417,9 @@ require("nvim-treesitter.configs").setup({
         enable = true,
     },
     indent = {
-        enable = false,
+        enable = true,
     },
 })
--- vim.api.nvim_set_hl(0, "@variable.parameter", { link = "Identifier" })
 
 require("treesitter-context").setup({
     max_lines = 2,
@@ -566,36 +525,6 @@ vim.keymap.set("n", ";t", "<CMD>TodoTelescope<CR>")
 
 -------------------------------------------scrolling setup--------------------------------------------
 
--- neoscroll = require("neoscroll")
---
--- neoscroll.setup({
---     easing = "linear",
---     cursor_scrolls_alone = true,
---     mappings = {},
--- })
---
--- local keymap = {
---     ["<C-u>"] = function()
---         neoscroll.scroll(-0.25, { move_cursor = false, duration = 75 })
---     end,
---     ["<C-d>"] = function()
---         neoscroll.scroll(0.25, { move_cursor = false, duration = 75 })
---     end,
---     ["<M-f>"] = function()
---         neoscroll.scroll(0.25, { move_cursor = false, duration = 75 })
---     end,
---     ["<C-b>"] = function()
---         neoscroll.ctrl_u({ duration = 100 })
---     end,
---     ["<C-f>"] = function()
---         neoscroll.ctrl_d({ duration = 100 })
---     end,
--- }
--- local modes = { "n", "v", "x" }
--- for key, func in pairs(keymap) do
---     vim.keymap.set(modes, key, func)
--- end
-
 
 require("scrollbar").setup({
     handle = {
@@ -666,15 +595,7 @@ rule1("(", " ", ")")
 rule1("{", " ", "}")
 rule1("[", " ", "]")
 
--- vim.keymap.set("i", "{;<CR>", "{<DOWN>;<UP>")
-
--- autopairs.remove_rule("{")
--- better { rules
--- vim.keymap.set("i", "{", "{}<left>", { noremap = true, silent = true })
--- vim.keymap.set("i", "{<CR>", "{<CR>}<ESC>O", { noremap = true, silent = true })
 vim.keymap.set("i", "@{<CR>", "{<CR>};<ESC>O", { noremap = true, silent = true })
--- vim.keymap.set("i", "{,<CR>", "{<CR>},<ESC>O", { noremap = true, silent = true })
--- vim.keymap.set("i", "{ ", "{}<Left><Space><Left><Space>", { noremap = true, silent = true })
 --
 
 require("nvim-ts-autotag").setup({
@@ -1005,141 +926,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
 require("gitsigns").setup({
     current_line_blame = true,
 })
--------------------------------------------image setup--------------------------------------------
--- require("image").setup({
--- 	backend = "ueberzug",
--- 	processor = "magick_rock",
--- integrations = {}, -- do whatever you want with image.nvim's integrations
--- max_width = 100, -- tweak to preference
--- max_height = 12, -- ^
--- max_height_window_percentage = math.huge, -- this is necessary for a good experience
--- max_width_window_percentage = math.huge,
--- window_overlap_clear_enabled = true,
--- window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
--- markdown = {
--- 	enabled = true,
--- 	clear_in_insert_mode = false,
--- 	download_remote_images = true,
--- 	only_render_image_at_cursor = false,
--- 	floating_windows = false, -- if true, images will be rendered in floating markdown windows
--- 	filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
--- },
--- })
-
--------------------------------------------molten setup--------------------------------------------
-
--- function moltSetup()
---     -- these are examples, not defaults. Please see the readme
---     -- vim.g.molten_image_provider = "image.nvim"
---     vim.g.molten_virt_lines_off_by_1 = true
---     vim.g.molten_output_win_max_height = 20
---     vim.g.molten.wrap_output = true
--- end
---
--- local quarto = require("quarto")
--- quarto.setup({
---     lspFeatures = {
---         -- NOTE: put whatever languages you want here:
---         languages = { "r", "python", "rust" },
---         chunks = "all",
---         diagnostics = {
---             enabled = true,
---             triggers = { "BufWritePost" },
---         },
---         completion = {
---             enabled = true,
---         },
---     },
---     keymap = {
---         -- NOTE: setup your own keymaps:
---         hover = "H",
---         definition = "gd",
---         rename = "<leader>rn",
---         references = "gr",
---         format = "<leader>gf",
---     },
---     codeRunner = {
---         enabled = true,
---         default_method = "molten",
---     },
--- })
---
--- vim.keymap.set("n", "[e", "<CMD>MoltenPrev>", { desc = "prev molten", silent = true })
--- vim.keymap.set("n", "]e", "<CMD>MoltenNext<CR>", { desc = "next molten", silent = true })
--- vim.keymap.set("n", "<leader>ri", function()
---     vim.cmd("MoltenInit")
---     vim.cmd("QuartoActivate")
--- end, { desc = "init molten", silent = true })
---
--- vim.keymap.set("n", "<leader>rh", "<CMD>MoltenHideOutput<CR>", { desc = "open output window", silent = true })
--- vim.keymap.set("n", "<leader>re", ":noautocmd MoltenEnterOutput<CR>", { desc = "open output window", silent = true })
---
--- local runner = require("quarto.runner")
--- vim.keymap.set("n", "<leader>rq", runner.run_cell, { desc = "run cell", silent = true })
--- vim.keymap.set("n", "<leader>rw", runner.run_above, { desc = "run cell and above", silent = true })
--- vim.keymap.set("n", "<leadr>ra", runner.run_all, { desc = "run all cells", silent = true })
---
--- require("jupytext").setup({
---     style = "markdown",
---     output_extension = "md",
---     force_ft = "markdown",
---     -- style = "light",
--- })
-
--- Provide a command to create a blank new Python notebook
--- note: the metadata is needed for Jupytext to understand how to parse the notebook.
--- if you use another language than Python, you should change it in the template.
--- local default_notebook = [[
---   {
---     "cells": [
---      {
---       "cell_type": "markdown",
---       "metadata": {},
---       "source": [
---         ""
---       ]
---      }
---     ],
---     "metadata": {
---      "kernelspec": {
---       "display_name": "Python 3",
---       "language": "python",
---       "name": "python3"
---      },
---      "language_info": {
---       "codemirror_mode": {
---         "name": "ipython"
---       },
---       "file_extension": ".py",
---       "mimetype": "text/x-python",
---       "name": "python",
---       "nbconvert_exporter": "python",
---       "pygments_lexer": "ipython3"
---      }
---     },
---     "nbformat": 4,
---     "nbformat_minor": 5
---   }
--- ]]
---
--- local function new_notebook(filename)
---     local path = filename .. ".ipynb"
---     local file = io.open(path, "w")
---     if file then
---         file:write(default_notebook)
---         file:close()
---         vim.cmd("edit " .. path)
---     else
---         print("Error: Could not open new notebook file for writing.")
---     end
--- end
---
--- vim.api.nvim_create_user_command("NewNotebook", function(opts)
---     new_notebook(opts.args)
--- end, {
---     nargs = 1,
---     complete = "file",
--- })
 -------------------------------------------theme setup--------------------------------------------
 
 require("everforest").setup({

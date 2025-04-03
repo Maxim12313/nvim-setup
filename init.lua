@@ -24,7 +24,8 @@ vim.o.showtabline = 0
 -- vim.lsp.set_log_level("off")
 
 -- cursor
-vim.o.guicursor = "n-v-c-sm:block,i-ci-ve:block,r-cr-o:hor20"
+vim.o.guicursor = "n-c-i-ve-ci-v:block,r-cr-o:hor20"
+-- vim.o.guicursor = "n-c-i-ve-ci-v:blinkon10"
 
 -- indent
 -- Default to 4 spaces per tab
@@ -51,8 +52,8 @@ vim.o.splitright = true
 
 -- work on this
 
-vim.keymap.set("n", "<C-w>l", "<C-w>l:vertical resize 100<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w>h", "<C-w>h:vertical resize 100<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<C-w>l", "<C-w>l:vertical resize 100<CR>", { noremap = true, silent = true })
+-- vim.keymap.set("n", "<C-w>h", "<C-w>h:vertical resize 100<CR>", { noremap = true, silent = true })
 -- vim.keymap.set("n", "<C-w>k", "<C-w>k:horizontal resize 25<CR>", { noremap = true, silent = true })
 -- vim.keymap.set("n", "<C-w>j", "<C-w>j:horizontal resize 25<CR>", { noremap = true, silent = true })
 --
@@ -64,23 +65,6 @@ vim.keymap.set("n", ";q", "<C-^>")
 vim.keymap.set("i", "<C-c>", "<ESC>", { noremap = true, silent = true })
 vim.keymap.set("n", "_", ":e!<CR>", { noremap = true, silent = true })
 
-function toggleQF()
-    local isOpen = false
-    for _, win in pairs(vim.fn.getwininfo()) do
-        if win["quickfix"] == 1 then
-            isOpen = true
-        end
-    end
-    if isOpen then
-        vim.cmd("cclose")
-    else
-        vim.cmd("copen")
-    end
-end
-
-vim.keymap.set("n", "<leader>wq", toggleQF, { noremap = true, silent = true })
-vim.keymap.set("n", "gn", ":%s/")
-vim.keymap.set("n", "<leasder>j", "", { noremap = true })
 
 
 -- non overwrite registers
@@ -139,15 +123,30 @@ vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
 
 -- quick fix better defaults
+
+
+function deleteItemsQF()
+    local items = vim.fn.getqflist()
+    local line = vim.fn.line('.')
+    table.remove(items, line)
+    vim.fn.setqflist(items, "r")
+    vim.api.nvim_win_set_cursor(0, { line, 0 })
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR><C-w>j", true, true, true), 'n', true)
+end
+
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     callback = function()
-        vim.api.nvim_buf_set_keymap(0, "n", "j", "j<CR><C-w>j", { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(0, "n", "k", "k<CR><C-w>j", { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(0, "n", "J", "5j<CR><C-w>j", { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(0, "n", "K", "5k<CR><C-w>j", { noremap = true, silent = true })
+        vim.keymap.set("n", "j", "j<CR><C-w>j", { buffer = 0, noremap = true, silent = true })
+        vim.keymap.set("n", "k", "k<CR><C-w>j", { buffer = 0, noremap = true, silent = true })
+        vim.keymap.set("n", "J", "5j<CR><C-w>j", { buffer = 0, noremap = true, silent = true })
+        vim.keymap.set("n", "K", "5k<CR><C-w>j", { buffer = 0, noremap = true, silent = true })
+        vim.keymap.set("n", "D", deleteItemsQF, { buffer = 0, noremap = true })
     end,
 })
+
+
+
 
 -- if exists fg, then preserve it when changing
 local function setBG(group, bg_color)
