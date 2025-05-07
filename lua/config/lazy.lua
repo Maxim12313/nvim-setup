@@ -15,7 +15,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.g.mapleader = ","
+vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 -- Setup lazy.nvim
@@ -33,6 +33,15 @@ require("lazy").setup({
 		{ "projekt0n/github-nvim-theme" },
 		{ "Mofiqul/vscode.nvim" },
 		{ "folke/tokyonight.nvim" },
+
+		{
+			"iamcco/markdown-preview.nvim",
+			cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+			ft = { "markdown" },
+			build = function()
+				vim.fn["mkdp#util#install"]()
+			end,
+		},
 
 		{
 			"lukas-reineke/indent-blankline.nvim",
@@ -243,11 +252,17 @@ tsj.setup({
 vim.keymap.set("n", "<C-j>", ":lua require('treesj').toggle()<CR>", { silent = true })
 
 ----------------------------------------------lsp setup--------------------------------------------------
+function hoverLook()
+	vim.lsp.buf.hover({
+		border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+	})
+end
+
 vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP actions",
 	callback = function(event)
 		local opts = { buffer = event.buf }
-		vim.keymap.set("n", "<C-k>", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+		vim.keymap.set("n", "<C-k>", hoverLook, opts)
 		vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
 		vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
 		vim.keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
@@ -302,6 +317,7 @@ require("tailwind-tools").setup({})
 ----------------------------------------------mason setup--------------------------------------------------
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 local lspconfig = require("lspconfig")
+
 require("mason").setup({})
 require("mason-lspconfig").setup({
 	ensure_installed = {
@@ -339,7 +355,6 @@ lspconfig.pyright.setup({
 })
 
 ----------------------------------------------suggestion setup--------------------------------------------------
-local cmp = require("cmp")
 local ls = require("luasnip")
 
 require("luasnip.loaders.from_vscode").lazy_load() -- friendly snipp
@@ -348,6 +363,7 @@ ls.filetype_extend("markdown", { "plaintext", "mdx", "latex" })
 
 require("nvim-highlight-colors").setup({})
 
+local cmp = require("cmp")
 cmp.setup({
 	formatting = {
 		format = require("nvim-highlight-colors").format,
@@ -561,8 +577,7 @@ autopairs.setup({
 })
 
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-local cmp = require("cmp")
-cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
 function rule1(a1, ins, a2, lang)
 	autopairs.add_rule(Rule(ins, ins, lang)

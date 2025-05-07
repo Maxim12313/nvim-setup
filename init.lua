@@ -9,7 +9,6 @@ vim.o.number = true
 vim.o.scrolloff = 8
 vim.o.guifont = "Input Mono 13"
 vim.o.swapfile = false
-vim.o.cursorline = true
 vim.o.termguicolors = true
 vim.o.showmode = false
 vim.o.undofile = true
@@ -21,11 +20,11 @@ vim.o.winheight = 10
 vim.o.signcolumn = "yes"
 vim.o.showtabline = 2
 
-vim.g.mapleader = ","
-
 vim.o.list = false
 vim.o.listchars = "tab:> ,trail:·,nbsp:+"
 vim.opt.fillchars = { eob = " " }
+
+vim.o.cursorline = false
 
 -- vim.lsp.set_log_level("off")
 
@@ -72,10 +71,12 @@ vim.keymap.set("n", "_", ":e!<CR>", { noremap = true, silent = true })
 
 -- non overwrite registers
 vim.keymap.set("v", "P", '"_dP', { noremap = true, silent = true })
+vim.keymap.set("v", "C", '"_c', { noremap = true, silent = true })
+vim.keymap.set("v", "D", '"_d', { noremap = true, silent = true })
+
+vim.keymap.set("n", "<leader>p", '"_dP', { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>c", '"_c', { noremap = true, silent = true })
-vim.keymap.set("v", "<leader>c", '"_c', { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>d", '"_d', { noremap = true, silent = true })
-vim.keymap.set("v", "<leader>d", '"_d', { noremap = true, silent = true })
 
 --insert editing bindings
 vim.keymap.set("i", "<C-f>", "<Right>", { noremap = true, silent = true })
@@ -84,7 +85,9 @@ vim.keymap.set("i", "<C-n>", "<Down>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-p>", "<Up>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-a>", "<C-o>I", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-d>", "<Delete>", { noremap = true, silent = true })
+
+vim.keymap.set("i", "<C-h>", "<S-Left>")
+vim.keymap.set("i", "<C-d>", "<ESC>ea")
 
 -- for delete
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
@@ -98,20 +101,9 @@ vim.keymap.set("c", "<C-p>", "<Up>")
 vim.keymap.set("c", "<C-a>", "<C-o>I")
 vim.keymap.set("c", "<C-e>", "<End>")
 vim.keymap.set("c", "<A-BS>", "<C-w>")
-vim.keymap.set("c", "<M-b>", "<S-Left>")
-vim.keymap.set("c", "<C-d>", "<Delete>", { noremap = true, silent = true })
--- vim.keymap.set("c", "<C-d>", "<Delete>", { noremap = true, silent = true })
--- vim.keymap.set("c", "<M-d>", "<ESC>lcw", { noremap = true, silent = true })
 
--- for mac system
--- vim.keymap.set("i", "<A-Right>", "<ESC>ea", { noremap = true, silent = true })
--- vim.keymap.set("i", "<A-Left>", "<S-Left>", { noremap = true, silent = true })
-
--- for tmux system
--- vim.keymap.set("i", "<C-d>", "<ESC>ea", { noremap = true, silent = true })
--- vim.keymap.set("i", "<C-h>", "<S-Left>", { noremap = true, silent = true })
--- vim.keymap.set("c", "<C-d>", "<ESC>ea", { noremap = true, silent = true })
--- vim.keymap.set("c", "<C-h>", "<S-Left>", { noremap = true, silent = true })
+vim.keymap.set("c", "<C-h>", "<S-Left>")
+vim.keymap.set("c", "<C-d>", "<ESC>ea")
 
 -- vertical movement
 vim.keymap.set("n", "K", "5k", { noremap = true, silent = true })
@@ -206,8 +198,8 @@ local function themeChanges()
 		setBG("SignColumn", normal)
 		setBG("LineNr", normal)
 		setBG("NormalNC", normal)
-		setBG("DiagnosticSignError", normal)
-		setBG("DiagnosticSignWarn", normal)
+		vim.api.nvim_set_hl(0, "DiagnosticSignError", { bg = normal, fg = "#ff5f5f" })
+		vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { bg = normal, fg = "#e0af00" })
 		setBG("DiagnosticSignInfo", normal)
 		setBG("DiagnosticSignHint", normal)
 
@@ -245,7 +237,12 @@ local function themeChanges()
 		sections = {
 			lualine_a = { "mode" },
 			lualine_b = { { "filename", path = 1 } },
-			lualine_c = { "diagnostics" },
+			lualine_c = {
+				{
+					"diagnostics",
+					sources = { "nvim_lsp" },
+				},
+			},
 			lualine_x = { "filetype" },
 			lualine_y = { "" },
 			lualine_z = { "" },
@@ -255,11 +252,12 @@ local function themeChanges()
 	-- set cursor to default terminal
 	vim.cmd("highlight Cursor guifg=NONE guibg=NONE")
 
-	-- Remove italic from all highlight groups
+	-- Remove italic and bold from all highlight groups
 	for _, group in ipairs(vim.fn.getcompletion("", "highlight")) do
 		local highlight = vim.api.nvim_get_hl_by_name(group, true)
-		if highlight and highlight.italic then
+		if highlight then
 			highlight.italic = nil
+			highlight.bold = nil
 			vim.api.nvim_set_hl(0, group, highlight)
 		end
 	end
@@ -279,4 +277,4 @@ vim.keymap.set("n", "<leader>wr", toggleLightDark)
 vim.api.nvim_create_autocmd("Colorscheme", {
 	callback = themeChanges,
 })
-vim.cmd.colorscheme("vscode")
+vim.cmd.colorscheme("gruvbox")
