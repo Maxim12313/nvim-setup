@@ -241,6 +241,9 @@ require("ibl").setup({
 	scope = {
 		enabled = false,
 	},
+	-- whitespace = {
+	-- 	remove_blankline_trail = false,
+	-- },
 })
 
 ----------------------------------------------lsp setup--------------------------------------------------
@@ -338,11 +341,11 @@ require("mason-lspconfig").setup({
 	},
 })
 
-lspconfig.clangd.setup({
-	init_options = {
-		fallbackFlags = { "--std=c++23" },
-	},
-})
+-- lspconfig.clangd.setup({
+-- 	init_options = {
+-- 		fallbackFlags = { "--std=c++23" },
+-- 	},
+-- })
 
 lspconfig.pyright.setup({
 	settings = {
@@ -437,7 +440,7 @@ conform.setup({
 		python = { "ruff_format" },
 		javascript = { "prettierd", "prettier" },
 		html = { "prettierd", "prettier" },
-		["_"] = { "trim_whitespace" },
+		-- ["_"] = { "trim_whitespace" },
 	},
 	default_format_opts = {
 		lsp_format = "fallback",

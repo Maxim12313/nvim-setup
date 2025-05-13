@@ -87,7 +87,7 @@ vim.keymap.set("i", "<C-a>", "<C-o>I", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-e>", "<End>", { noremap = true, silent = true })
 
 vim.keymap.set("i", "<C-h>", "<S-Left>")
-vim.keymap.set("i", "<C-d>", "<ESC>ea")
+vim.keymap.set("i", "<C-d>", "<S-Right>")
 
 -- for delete
 vim.keymap.set("i", "<A-BS>", "<C-w>", { noremap = true, silent = true })
@@ -103,7 +103,7 @@ vim.keymap.set("c", "<C-e>", "<End>")
 vim.keymap.set("c", "<A-BS>", "<C-w>")
 
 vim.keymap.set("c", "<C-h>", "<S-Left>")
-vim.keymap.set("c", "<C-d>", "<ESC>ea")
+vim.keymap.set("c", "<C-d>", "<S-Right>")
 
 -- vertical movement
 vim.keymap.set("n", "K", "5k", { noremap = true, silent = true })
@@ -173,9 +173,8 @@ local function themeChanges()
 		setBG("SignColumn", normal)
 		setBG("LineNr", normal)
 		setBG("NormalNC", normal)
-		setBG("DiagnosticSignError", normal)
-		setBG("DiagnosticSignWarn", normal)
-		setBG("DiagnosticSignInfo", normal)
+		vim.api.nvim_set_hl(0, "DiagnosticSignError", { bg = normal, fg = "#cc0000" })
+		vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { bg = normal, fg = "#e0af00" })
 		setBG("DiagnosticSignHint", normal)
 
 		local line = "#E7E7E7"
