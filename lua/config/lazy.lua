@@ -22,31 +22,46 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup({
 	spec = {
 		-- themes
-		{ "catppuccin/nvim", name = "catppuccin" },
-		{ "sainnhe/sonokai" },
-		{ "navarasu/onedark.nvim" },
-		{ "jacoborus/tender.vim" },
-		{ "tanvirtin/monokai.nvim" },
+		-- { "catppuccin/nvim", name = "catppuccin" },
+		-- { "sainnhe/sonokai" },
+		-- { "navarasu/onedark.nvim" },
+		-- { "jacoborus/tender.vim" },
+		-- { "tanvirtin/monokai.nvim" },
 		{ "morhetz/gruvbox" },
 		{ "neanias/everforest-nvim" },
 		{ "ishan9299/nvim-solarized-lua" },
-		{ "projekt0n/github-nvim-theme" },
+		-- { "projekt0n/github-nvim-theme" },
 		{ "Mofiqul/vscode.nvim" },
-		{ "folke/tokyonight.nvim" },
+		-- { "folke/tokyonight.nvim" },
+		{ "rose-pine/neovim", name = "rose-pine" },
 
+		-- marks
+		{
+			"chentoast/marks.nvim",
+			event = "VeryLazy",
+			opts = {},
+		},
+
+		-- doc generator
+		{
+			"danymat/neogen",
+			config = true,
+		},
+		-- find and replace
 		{
 			"nvim-pack/nvim-spectre",
 		},
 
+		-- install without yarn or npm
 		{
 			"iamcco/markdown-preview.nvim",
 			cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-			ft = { "markdown" },
-			build = function()
-				vim.fn["mkdp#util#install"]()
+			build = "cd app && yarn install",
+			init = function()
+				vim.g.mkdp_filetypes = { "markdown" }
 			end,
+			ft = { "markdown" },
 		},
-
 		{
 			"lukas-reineke/indent-blankline.nvim",
 			main = "ibl",
@@ -58,14 +73,6 @@ require("lazy").setup({
 		{
 			"Wansmer/treesj",
 			dependencies = { "nvim-treesitter/nvim-treesitter" }, -- if you install parsers with `nvim-treesitter`
-		},
-
-		{
-			"vhyrro/luarocks.nvim",
-			priority = 1001, -- this plugin needs to run before anything else
-			opts = {
-				rocks = { "magick" },
-			},
 		},
 
 		-- peak lines
@@ -127,10 +134,6 @@ require("lazy").setup({
 		-- icons
 		{ "nvim-tree/nvim-web-devicons" },
 
-		--scrolling
-		-- { "karb94/neoscroll.nvim" },
-		{ "petertriho/nvim-scrollbar" },
-
 		--auto pairs
 		{
 			"windwp/nvim-autopairs",
@@ -139,23 +142,8 @@ require("lazy").setup({
 		},
 		{ "windwp/nvim-ts-autotag", lazy = true },
 
-		-- file navigation harpoon
-		-- {
-		--     "ThePrimeagen/harpoon",
-		--     branch = "harpoon2",
-		-- },
-		{
-			"akinsho/bufferline.nvim",
-			version = "*",
-			dependencies = "nvim-tree/nvim-web-devicons",
-		},
-
 		-- surround editing
 		{ "kylechui/nvim-surround" },
-
-		-- debugger
-		-- { "mfussenegger/nvim-dap" },
-		-- { "rcarriga/nvim-dap-ui" },
 
 		-- persistence
 		{
@@ -167,13 +155,12 @@ require("lazy").setup({
 		},
 
 		{
-			"nvim-neo-tree/neo-tree.nvim",
-			branch = "v3.x",
+			"mikavilpas/yazi.nvim",
+			event = "VeryLazy",
 			dependencies = {
-				"nvim-lua/plenary.nvim",
-				"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-				"MunifTanjim/nui.nvim",
-				-- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+				-- check the installation instructions at
+				-- https://github.com/folke/snacks.nvim
+				"folke/snacks.nvim",
 			},
 		},
 
@@ -226,17 +213,20 @@ require("lazy").setup({
 		{ "lewis6991/gitsigns.nvim", lazy = true },
 		{ "akinsho/git-conflict.nvim", version = "*", config = true },
 		{ "tpope/vim-fugitive" },
-
-		-- off
-		-- { "rktjmp/lush.nvim" },
-		-- { "nvim-treesitter/playground" },
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
 })
 
+----------------------------------------------marks generator--------------------------------------------------
+require("marks").setup({})
+
+----------------------------------------------doc generator--------------------------------------------------
+vim.keymap.set("n", ";d", ':lua require("neogen").generate()<CR>', { noremap = true })
+
 ----------------------------------------------replacer setup--------------------------------------------------
 require("spectre").setup()
+vim.keymap.set("n", ";v", ":Spectre<CR>")
 
 ----------------------------------------------indent setup--------------------------------------------------
 -- vim.api.nvim_set_hl(0, "IndentBlanklineChar", { fg = "NONE", nocombine = true })
@@ -281,7 +271,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", ";r", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
 		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-		vim.keymap.set("n", "L", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+		vim.keymap.set("n", "<M-l>", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
 		vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
 		vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 	end,
@@ -327,12 +317,12 @@ require("tailwind-tools").setup({})
 ----------------------------------------------mason setup--------------------------------------------------
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 local lspconfig = require("lspconfig")
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 require("mason").setup({})
 require("mason-lspconfig").setup({
 	automatic_enable = true,
 })
-
 -- lspconfig.pyright.setup({
 -- 	settings = {
 -- 		python = {
@@ -341,11 +331,7 @@ require("mason-lspconfig").setup({
 -- 			},
 -- 		},
 -- 	},
--- })
--- lspconfig.asm_lsp.setup({
--- 	settings = {
--- 		cmd = { "asm-lsp" },
--- 	},
+-- 	capabilities = capabilities,
 -- })
 
 ----------------------------------------------suggestion setup--------------------------------------------------
@@ -515,41 +501,6 @@ end, { desc = "Previous todo comment" })
 
 vim.keymap.set("n", ";t", "<CMD>TodoTelescope<CR>")
 
--------------------------------------------scrolling setup--------------------------------------------
-
-require("scrollbar").setup({
-	show_in_active_only = true,
-	handle = {
-		text = " ",
-		blend = 0,
-		color = "#FFFFFF",
-		highlight = "CursorColumn",
-		hide_if_all_visible = true,
-	},
-	excluded_filetypes = {
-		"dropbar_menu",
-		"dropbar_menu_fzf",
-		"DressingInput",
-		"cmp_docs",
-		"cmp_menu",
-		"noice",
-		"prompt",
-		"TelescopePrompt",
-		"leetcode.nvim",
-	},
-	handlers = {
-		cursor = false,
-		diagnostic = true,
-		gitsigns = true, -- Requires gitsigns
-		handle = true,
-		search = false, -- Requires hlslens
-		ale = false, -- Requires ALE
-	},
-})
-
-vim.keymap.set("n", "<C-u>", "10<C-y>")
-vim.keymap.set("n", "<C-d>", "10<C-e>")
-
 -------------------------------------------autopairs setup--------------------------------------------
 local autopairs = require("nvim-autopairs")
 local Rule = require("nvim-autopairs.rule")
@@ -602,100 +553,6 @@ require("nvim-ts-autotag").setup({
 	},
 })
 
--------------------------------------------file navigation setup--------------------------------------------
-
-require("bufferline").setup({
-	options = {
-		-- Custom sorting, most recent on the left
-		tab_size = 18,
-		sort_by = "insert_after_current",
-		show_buffer_icons = true,
-		diagnostics = "nvim_lsp",
-		color_icons = true,
-		-- always_show_bufferline = true,
-		-- auto_toggle_bufferline = true,
-		diagnostics_indicator = function(count, level, diagnostics_dict, context)
-			local icon = level:match("error") and " " or " "
-			return " " .. icon .. count
-		end,
-	},
-})
-
-vim.keymap.set("n", ";w", function()
-	local bufferline = require("bufferline.groups")
-
-	-- Get a list of all open buffers
-	local buffers = vim.fn.getbufinfo({ buflisted = 1 })
-	print(vim.inspect(buffers))
-end)
-
--- vim.keymap.set("n", ";d", "<CMD>bd<CR>")
-vim.keymap.set("n", ";w", "<CMD>BufferLineCloseOthers<CR>")
-vim.keymap.set("n", ";a", "<CMD>BufferLineCyclePrev<CR>")
-vim.keymap.set("n", ";d", "<CMD>BufferLineCycleNext<CR>")
-
-for i = 1, 9 do
-	local str = tostring(i)
-	vim.keymap.set("n", ";" .. str, "<CMD>BufferLineGoToBuffer " .. str .. "<CR>")
-end
-
--- local harpoon = require("harpoon")
---
--- harpoon.setup({
---     settings = {
---         -- sync_on_ui_close = true,
---         save_on_toggle = true,
---     },
--- })
---
--- vim.keymap.set("n", ";e", function()
---     harpoon:list():add()
--- end)
--- vim.keymap.set("n", ";w", function()
---     harpoon.ui:toggle_quick_menu(harpoon:list())
--- end)
---
--- vim.keymap.set("n", ";1", function()
---     harpoon:list():select(1)
--- end)
--- vim.keymap.set("n", ";2", function()
---     harpoon:list():select(2)
--- end)
--- vim.keymap.set("n", ";3", function()
---     harpoon:list():select(3)
--- end)
--- vim.keymap.set("n", ";4", function()
---     harpoon:list():select(4)
--- end)
---
---
--- local harpoon_extensions = require("harpoon.extensions")
--- harpoon:extend(harpoon_extensions.builtins.highlight_current_file())
---
--- -- basic telescope configuration
--- local conf = require("telescope.config").values
--- local function toggle_telescope(harpoon_files)
---     local file_paths = {}
---     for _, item in ipairs(harpoon_files.items) do
---         table.insert(file_paths, item.value)
---     end
---
---     require("telescope.pickers")
---         .new({}, {
---             prompt_title = "Harpoon",
---             finder = require("telescope.finders").new_table({
---                 results = file_paths,
---             }),
---             previewer = conf.file_previewer({}),
---             sorter = conf.generic_sorter({}),
---         })
---         :find()
--- end
---
--- vim.keymap.set("n", ";d", function()
---     toggle_telescope(harpoon:list())
--- end, { desc = "Open harpoon window" })
-
 -------------------------------------------surround setup--------------------------------------------
 require("nvim-surround").setup({
 	move_cursor = false,
@@ -711,54 +568,6 @@ require("nvim-surround").setup({
 		change_line = "cS",
 	},
 })
-
--------------------------------------------debugger setup--------------------------------------------
--- local dap = require("dap")
--- dap.adapters.gdb = {
--- 	type = "executable",
--- 	command = "gdb",
--- 	args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
--- }
---
--- vim.keymap.set("n", "<C-l>w", function()
--- 	dap.continue()
--- end)
--- vim.keymap.set("n", "<C-l>q", function()
--- 	dap.step_over()
--- end)
--- vim.keymap.set("n", "<C-l>i", function()
--- 	dap.step_into()
--- end)
--- vim.keymap.set("n", "<C-l>o", function()
--- 	dap.step_out()
--- end)
--- vim.keymap.set("n", "<C-l>k", function()
--- 	dap.toggle_breakpoint()
--- end)
--- vim.keymap.set("n", "<C-l>j", function()
--- 	dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
--- end)
--- vim.keymap.set("n", "<C-l>r", function()
--- 	dap.repl.open()
--- end)
--- vim.keymap.set("n", "<C-l>l", function()
--- 	dap.run_last()
--- end)
--- vim.keymap.set({ "n", "v" }, "<C-l>n", function()
--- 	require("dap.ui.widgets").hover()
--- end)
--- vim.keymap.set({ "n", "v" }, "<C-l>m", function()
--- 	require("dap.ui.widgets").preview()
--- end)
--- vim.keymap.set("n", "<Leader>df", function()
--- 	local widgets = require("dap.ui.widgets")
--- 	widgets.centered_float(widgets.frames)
--- end)
--- vim.keymap.set("n", "<Leader>ds", function()
--- 	local widgets = require("dap.ui.widgets")
--- 	widgets.centered_float(widgets.scopes)
--- end)
-
 -------------------------------------------persistence setup--------------------------------------------
 -- load the session for the current directory
 vim.keymap.set("n", ";s", function()
@@ -766,26 +575,15 @@ vim.keymap.set("n", ";s", function()
 end)
 
 -------------------------------------------file manager setup--------------------------------------------
-local neotree = require("neo-tree")
-neotree.setup({
-	filesystem = {
-		hijack_netrw_behavior = "open_current",
-		follow_current_file = {
-			enabled = true,
-		},
-		use_libuv_file_watcher = true, -- Auto-refresh
-		filtered_items = {
-			visible = true,
-		},
-	},
-	buffers = {
-		follow_current_file = {
-			enabled = true,
-		},
-	},
+local yazi = require("yazi")
+yazi.setup({
+	open_for_directories = true,
 })
-vim.keymap.set("n", "-", ":Neotree toggle float reveal<CR>", { silent = true })
--- vim.keymap.set("n", "-", ":Neotree toggle current reveal<CR>", { silent = true })
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+vim.keymap.set("n", "-", ":Yazi toggle<CR>", { silent = true })
+
 -------------------------------------------cpp setup--------------------------------------------
 local args = {
 	"-std=c++23",
@@ -874,7 +672,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 
 -------------------------------------------git setup--------------------------------------------
-vim.keymap.set("n", ";z", ":Git<CR><C-w>T", { noremap = true, silent = true })
+vim.keymap.set("n", ";z", ":Git<CR>", { noremap = true, silent = true })
 require("gitsigns").setup({
 	current_line_blame = true,
 })

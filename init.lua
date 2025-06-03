@@ -13,10 +13,10 @@ vim.o.undofile = true
 vim.o.wrap = false
 vim.o.ignorecase = true
 -- vim.g.python3_host_prog = "/Users/maximkim/.config/nvim/env/bin/python3"
-vim.o.numberwidth = 12
+vim.o.numberwidth = 4
 vim.o.winheight = 10
 vim.o.signcolumn = "yes"
-vim.o.showtabline = 2
+vim.o.showtabline = 0
 
 vim.o.list = false
 vim.o.listchars = "tab:> ,trail:·,nbsp:+"
@@ -62,9 +62,23 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- scrolling
+vim.keymap.set("n", "<C-u>", "10<C-y>")
+vim.keymap.set("n", "<C-d>", "10<C-e>")
+
 -- windows
 vim.o.splitbelow = true
 vim.o.splitright = true
+
+vim.keymap.set("n", "<M-J>", ":resize -5<CR>")
+vim.keymap.set("n", "<M-K>", ":resize +5<CR>")
+vim.keymap.set("n", "<M-H>", ":vertical resize -5<CR>")
+vim.keymap.set("n", "<M-L>", ":vertical resize +5<CR>")
+
+vim.keymap.set("n", "<M-j>", "<C-w>j")
+vim.keymap.set("n", "<M-k>", "<C-w>k")
+vim.keymap.set("n", "H", "<C-w>h")
+vim.keymap.set("n", "L", "<C-w>l")
 
 -- work on this
 
@@ -187,6 +201,8 @@ local function themeChanges()
 		setBG("SignColumn", normal)
 		setBG("LineNr", normal)
 		setBG("NormalNC", normal)
+		setBG("MarkSignNumHL", normal)
+
 		vim.api.nvim_set_hl(0, "DiagnosticSignError", { bg = normal, fg = "#cc0000" })
 		vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { bg = normal, fg = "#e0af00" })
 		setBG("DiagnosticSignHint", normal)
@@ -211,6 +227,8 @@ local function themeChanges()
 		setBG("SignColumn", normal)
 		setBG("LineNr", normal)
 		setBG("NormalNC", normal)
+		setBG("MarkSignNumHL", normal)
+
 		vim.api.nvim_set_hl(0, "DiagnosticSignError", { bg = normal, fg = "#ff5f5f" })
 		vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { bg = normal, fg = "#e0af00" })
 		setBG("DiagnosticSignInfo", normal)
@@ -219,7 +237,7 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "Search", { bg = "#FFD700", fg = "#000000", bold = true }) -- Normal search highlight
 		vim.api.nvim_set_hl(0, "IncSearch", { bg = "#ffb86c", fg = "#282a36", bold = true }) -- While typing in search mode
 
-		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#335E5E" })
+		vim.api.nvim_set_hl(0, "MatchParen", { fg = "#FFD700", bg = "#3F3F3F" })
 
 		vim.api.nvim_set_hl(0, "leetcode_dyn_p", { fg = "#B0B0B0" })
 		vim.api.nvim_set_hl(0, "leetcode_dyn_pre", { fg = "#B0B0B0" })
@@ -248,17 +266,19 @@ local function themeChanges()
 			section_separators = "",
 		},
 		sections = {
-			lualine_a = { "mode" },
-			lualine_b = { { "filename", path = 1 } },
+			lualine_a = {},
+			lualine_b = { "branch" },
 			lualine_c = {
+				{ "filename", path = 1 },
+			},
+			lualine_x = {
 				{
 					"diagnostics",
 					sources = { "nvim_lsp" },
 				},
 			},
-			lualine_x = { "filetype" },
-			lualine_y = { "" },
-			lualine_z = { "" },
+			lualine_y = { "filetype" },
+			lualine_z = {},
 		},
 	})
 
@@ -290,4 +310,4 @@ vim.keymap.set("n", "<leader>wr", toggleLightDark)
 vim.api.nvim_create_autocmd("Colorscheme", {
 	callback = themeChanges,
 })
-vim.cmd.colorscheme("vscode")
+vim.cmd.colorscheme("rose-pine-moon")
