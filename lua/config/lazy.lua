@@ -35,12 +35,8 @@ require("lazy").setup({
 		-- { "folke/tokyonight.nvim" },
 		{ "rose-pine/neovim", name = "rose-pine" },
 
-		-- marks
-		{
-			"chentoast/marks.nvim",
-			event = "VeryLazy",
-			opts = {},
-		},
+		-- remote
+		{ "jamestthompson3/nvim-remote-containers" },
 
 		-- doc generator
 		{
@@ -101,7 +97,10 @@ require("lazy").setup({
 			-- install jsregexp (optional!).
 			build = "make install_jsregexp",
 		},
-		{ "ray-x/lsp_signature.nvim" },
+		{
+			"ray-x/lsp_signature.nvim",
+			event = "InsertEnter",
+		},
 		{ "luckasRanarison/tailwind-tools.nvim", lazy = true },
 		{ "brenoprata10/nvim-highlight-colors", lazy = true },
 
@@ -218,9 +217,6 @@ require("lazy").setup({
 	checker = { enabled = false },
 })
 
-----------------------------------------------marks generator--------------------------------------------------
-require("marks").setup({})
-
 ----------------------------------------------doc generator--------------------------------------------------
 vim.keymap.set("n", ";d", ':lua require("neogen").generate()<CR>', { noremap = true })
 
@@ -320,19 +316,25 @@ local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 require("mason").setup({})
-require("mason-lspconfig").setup({
-	automatic_enable = true,
-})
--- lspconfig.pyright.setup({
--- 	settings = {
--- 		python = {
--- 			analysis = {
--- 				typeCheckingMode = "off",
--- 			},
--- 		},
--- 	},
--- 	capabilities = capabilities,
+-- require("mason-lspconfig").setup({
+-- 	automatic_enable = true,
 -- })
+--
+
+lspconfig.pyright.setup({
+	settings = {
+		python = {
+			analysis = {
+				typeCheckingMode = "off",
+				autoSearchPaths = true,
+				useLibraryCodeForTypes = true,
+				diagnosticMode = "openFilesOnly",
+			},
+		},
+	},
+	capabilities = capabilities,
+})
+lspconfig.clangd.setup({})
 
 ----------------------------------------------suggestion setup--------------------------------------------------
 local ls = require("luasnip")
@@ -582,6 +584,7 @@ yazi.setup({
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+vim.keymap.set("n", "<M-->", ":Yazi cwd<CR>", { silent = true })
 vim.keymap.set("n", "-", ":Yazi toggle<CR>", { silent = true })
 
 -------------------------------------------cpp setup--------------------------------------------

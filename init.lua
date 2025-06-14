@@ -201,7 +201,6 @@ local function themeChanges()
 		setBG("SignColumn", normal)
 		setBG("LineNr", normal)
 		setBG("NormalNC", normal)
-		setBG("MarkSignNumHL", normal)
 
 		vim.api.nvim_set_hl(0, "DiagnosticSignError", { bg = normal, fg = "#cc0000" })
 		vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { bg = normal, fg = "#e0af00" })
@@ -227,7 +226,6 @@ local function themeChanges()
 		setBG("SignColumn", normal)
 		setBG("LineNr", normal)
 		setBG("NormalNC", normal)
-		setBG("MarkSignNumHL", normal)
 
 		vim.api.nvim_set_hl(0, "DiagnosticSignError", { bg = normal, fg = "#ff5f5f" })
 		vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { bg = normal, fg = "#e0af00" })
@@ -267,9 +265,10 @@ local function themeChanges()
 		},
 		sections = {
 			lualine_a = {},
-			lualine_b = { "branch" },
+			lualine_b = {},
 			lualine_c = {
-				{ "filename", path = 1 },
+				"filename",
+				-- { "filename", path = 1 },
 			},
 			lualine_x = {
 				{
@@ -277,7 +276,9 @@ local function themeChanges()
 					sources = { "nvim_lsp" },
 				},
 			},
-			lualine_y = { "filetype" },
+			lualine_y = {
+				"filetype",
+			},
 			lualine_z = {},
 		},
 	})
@@ -310,4 +311,4 @@ vim.keymap.set("n", "<leader>wr", toggleLightDark)
 vim.api.nvim_create_autocmd("Colorscheme", {
 	callback = themeChanges,
 })
-vim.cmd.colorscheme("rose-pine-moon")
+vim.cmd.colorscheme("vscode")
