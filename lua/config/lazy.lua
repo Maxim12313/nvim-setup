@@ -90,12 +90,13 @@ require("lazy").setup({
 		-- completion and suggestions
 		{ "hrsh7th/cmp-nvim-lsp" },
 		{ "hrsh7th/nvim-cmp" },
+		{ "saadparwaiz1/cmp_luasnip" },
 		{
 			"L3MON4D3/LuaSnip",
-			-- follow latest release.
 			version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
 			-- install jsregexp (optional!).
 			build = "make install_jsregexp",
+			dependencies = { "rafamadriz/friendly-snippets" },
 		},
 		{
 			"ray-x/lsp_signature.nvim",
@@ -309,39 +310,10 @@ vim.diagnostic.config({
 })
 
 require("tailwind-tools").setup({})
-
-----------------------------------------------mason setup--------------------------------------------------
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-local lspconfig = require("lspconfig")
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-require("mason").setup({})
--- require("mason-lspconfig").setup({
--- 	automatic_enable = true,
--- })
---
-
-lspconfig.pyright.setup({
-	settings = {
-		python = {
-			analysis = {
-				typeCheckingMode = "off",
-				autoSearchPaths = true,
-				useLibraryCodeForTypes = true,
-				diagnosticMode = "openFilesOnly",
-			},
-		},
-	},
-	capabilities = capabilities,
-})
-lspconfig.clangd.setup({})
-
-----------------------------------------------suggestion setup--------------------------------------------------
+-----------------------------------------------suggestion setup--------------------------------------------------
 local ls = require("luasnip")
 
-require("luasnip.loaders.from_vscode").lazy_load() -- friendly snipp
-ls.filetype_extend("javascript", { "javascriptreact", "html", "css" }) -- Extending for CSS
-ls.filetype_extend("markdown", { "plaintext", "mdx", "latex" })
+require("luasnip.loaders.from_vscode").lazy_load()
 
 require("nvim-highlight-colors").setup({})
 
@@ -352,16 +324,17 @@ cmp.setup({
 	},
 	snippet = {
 		expand = function(args)
-			ls.lsp_expand(args.body) -- For `luasnip` users.
+			ls.lsp_expand(args.body)
 		end,
 	},
 	mapping = {
-		["<C-n>"] = cmp.config.disable,
-		["<C-p>"] = cmp.config.disable,
+		-- ["<C-n>"] = cmp.config.disable,
+		-- ["<C-p>"] = cmp.config.disable,
 		["<C-e>"] = cmp.config.disable,
 		["<Tab>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
 		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-l>"] = cmp.mapping.select_next_item(),
+		["<C-n>"] = cmp.mapping.select_next_item(),
+		["<C-p>"] = cmp.mapping.select_prev_item(),
 	},
 	window = {
 		completion = cmp.config.window.bordered(),
@@ -376,7 +349,7 @@ cmp.setup({
 	sources = cmp.config.sources({
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
-	}, {
+		{ name = "path" },
 		{ name = "buffer" },
 	}),
 })
@@ -387,6 +360,39 @@ require("lsp_signature").setup({
 	max_height = 3,
 	hint_enable = false,
 })
+
+----------------------------------------------mason setup--------------------------------------------------
+local lspconfig = require("lspconfig")
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+require("mason").setup({})
+-- require("mason-lspconfig").setup({
+-- 	automatic_enable = true,
+-- })
+
+vim.lsp.config("*", {
+	capabilities = capabilities,
+	root_markers = { ".git" },
+})
+
+vim.lsp.config("pyright", {
+	settings = {
+		["python"] = {
+			analysis = {
+				typeCheckingMode = "off",
+				autoSearchPaths = true,
+				useLibraryCodeForTypes = true,
+				diagnosticMode = "openFilesOnly",
+				extraPaths = { "." }, -- optional but reinforces absolute path support
+			},
+		},
+	},
+})
+
+local ls_to_setup = { "pyright", "clangd", "lua_ls", "html" }
+for _, server in ipairs(ls_to_setup) do
+	vim.lsp.enable(server)
+end
 
 -------------------------------------------tree-sitter setup--------------------------------------------
 require("nvim-treesitter.configs").setup({
