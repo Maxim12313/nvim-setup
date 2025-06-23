@@ -35,6 +35,11 @@ require("lazy").setup({
 		-- { "folke/tokyonight.nvim" },
 		{ "rose-pine/neovim", name = "rose-pine" },
 
+		-- debugger
+		-- { "jay-babu/mason-nvim-dap.nvim" },
+		{ "mfussenegger/nvim-dap" },
+		{ "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
+
 		-- remote
 		{ "jamestthompson3/nvim-remote-containers" },
 
@@ -218,6 +223,87 @@ require("lazy").setup({
 	checker = { enabled = false },
 })
 
+----------------------------------------------debugger--------------------------------------------------
+-- require("mason-nvim-dap").setup()
+local dap = require("dap")
+
+local dapui = require("dapui")
+dapui.setup()
+
+vim.fn.sign_define("DapBreakpoint", { text = "▲", texthl = "DapBreakpointColor", linehl = "", numhl = "" })
+
+dap.adapters.cppdbg = {
+	id = "cppdbg",
+	type = "executable",
+	command = vim.fn.stdpath("data") .. "/mason/packages/cpptools/extension/debugAdapters/bin/OpenDebugAD7",
+}
+
+dap.configurations.cpp = {
+	{
+		name = "Launch file",
+		type = "cppdbg",
+		request = "launch",
+		program = function()
+			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+		end,
+		cwd = "${workspaceFolder}",
+		stopAtEntry = true,
+	},
+	{
+		name = "Attach to gdbserver :1234",
+		type = "cppdbg",
+		request = "launch",
+		MIMode = "gdb",
+		miDebuggerServerAddress = "localhost:1234",
+		miDebuggerPath = "/usr/bin/gdb",
+		cwd = "${workspaceFolder}",
+		program = function()
+			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+		end,
+	},
+}
+
+vim.keymap.set("n", "\\t", function()
+	dap.terminate()
+	dapui.close()
+end)
+vim.keymap.set("n", "\\c", function()
+	dap.continue()
+end)
+vim.keymap.set("n", "\\r", function()
+	dap.restart()
+end)
+vim.keymap.set("n", "\\w", function()
+	dap.step_over()
+end)
+vim.keymap.set("n", "\\s", function()
+	dap.step_into()
+end)
+vim.keymap.set("n", "\\o", function()
+	dap.step_out()
+end)
+vim.keymap.set("n", "\\q", function()
+	dap.toggle_breakpoint()
+end)
+
+dap.listeners.before.attach.dapui_config = function()
+	dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+	dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+	dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+	dapui.close()
+end
+
+vim.keymap.set("n", "\\e", function()
+	local widgets = require("dap.ui.widgets")
+	widgets.centered_float(widgets.scopes)
+end)
+
 ----------------------------------------------doc generator--------------------------------------------------
 vim.keymap.set("n", ";d", ':lua require("neogen").generate()<CR>', { noremap = true })
 
@@ -389,7 +475,7 @@ vim.lsp.config("pyright", {
 	},
 })
 
-local ls_to_setup = { "pyright", "clangd", "lua_ls", "html" }
+local ls_to_setup = { "pyright", "clangd", "lua_ls", "html", "ts_ls" }
 for _, server in ipairs(ls_to_setup) do
 	vim.lsp.enable(server)
 end

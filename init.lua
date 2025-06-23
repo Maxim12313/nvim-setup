@@ -100,10 +100,6 @@ vim.keymap.set("v", "P", '"_dP', { noremap = true, silent = true })
 vim.keymap.set("v", "C", '"_c', { noremap = true, silent = true })
 vim.keymap.set("v", "D", '"_d', { noremap = true, silent = true })
 
-vim.keymap.set("n", "<leader>p", '"_dP', { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>c", '"_c', { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>d", '"_d', { noremap = true, silent = true })
-
 --insert editing bindings
 vim.keymap.set("i", "<C-f>", "<Right>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-b>", "<Left>", { noremap = true, silent = true })
@@ -286,7 +282,7 @@ local function themeChanges()
 	-- set cursor to default terminal
 	vim.cmd("highlight Cursor guifg=NONE guibg=NONE")
 
-	-- Remove italic and bold from all highlight groups
+	-- Remove italic and bold from all highlight groupsinit
 	for _, group in ipairs(vim.fn.getcompletion("", "highlight")) do
 		local highlight = vim.api.nvim_get_hl_by_name(group, true)
 		if highlight then
