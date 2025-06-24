@@ -35,6 +35,8 @@ require("lazy").setup({
 		-- { "folke/tokyonight.nvim" },
 		{ "rose-pine/neovim", name = "rose-pine" },
 
+		{ "stevearc/oil.nvim" },
+
 		-- debugger
 		-- { "jay-babu/mason-nvim-dap.nvim" },
 		{ "mfussenegger/nvim-dap" },
@@ -159,16 +161,6 @@ require("lazy").setup({
 			},
 		},
 
-		{
-			"mikavilpas/yazi.nvim",
-			event = "VeryLazy",
-			dependencies = {
-				-- check the installation instructions at
-				-- https://github.com/folke/snacks.nvim
-				"folke/snacks.nvim",
-			},
-		},
-
 		-- status line
 		{ "nvim-lualine/lualine.nvim" },
 
@@ -228,7 +220,42 @@ require("lazy").setup({
 local dap = require("dap")
 
 local dapui = require("dapui")
-dapui.setup()
+dapui.setup({
+	layouts = {
+		{
+			elements = {
+				{
+					id = "scopes",
+					size = 0.33,
+				},
+				{
+					id = "breakpoints",
+					size = 0.33,
+				},
+				{
+					id = "watches",
+					size = 0.33,
+				},
+			},
+			position = "left",
+			size = 40,
+		},
+		{
+			elements = {
+				{
+					id = "repl",
+					size = 0.5,
+				},
+				{
+					id = "console",
+					size = 0.5,
+				},
+			},
+			position = "bottom",
+			size = 10,
+		},
+	},
+})
 
 vim.fn.sign_define("DapBreakpoint", { text = "▲", texthl = "DapBreakpointColor", linehl = "", numhl = "" })
 
@@ -669,15 +696,16 @@ vim.keymap.set("n", ";s", function()
 end)
 
 -------------------------------------------file manager setup--------------------------------------------
-local yazi = require("yazi")
-yazi.setup({
-	open_for_directories = true,
+require("oil").setup({
+	view_options = {
+		show_hidden = true,
+	},
+	keymaps = {
+		["<C-c>"] = { "", mode = "n" },
+	},
 })
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
 
-vim.keymap.set("n", "<M-->", ":Yazi cwd<CR>", { silent = true })
-vim.keymap.set("n", "-", ":Yazi toggle<CR>", { silent = true })
+vim.keymap.set("n", "-", ":Oil<CR>")
 
 -------------------------------------------cpp setup--------------------------------------------
 local args = {
