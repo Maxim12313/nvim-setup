@@ -22,11 +22,11 @@ vim.g.maplocalleader = "\\"
 require("lazy").setup({
 	spec = {
 		-- themes
-		-- { "catppuccin/nvim", name = "catppuccin" },
-		-- { "sainnhe/sonokai" },
-		-- { "navarasu/onedark.nvim" },
-		-- { "jacoborus/tender.vim" },
-		-- { "tanvirtin/monokai.nvim" },
+		{ "catppuccin/nvim", name = "catppuccin" },
+		{ "sainnhe/sonokai" },
+		{ "navarasu/onedark.nvim" },
+		{ "jacoborus/tender.vim" },
+		{ "tanvirtin/monokai.nvim" },
 		{ "morhetz/gruvbox" },
 		{ "neanias/everforest-nvim" },
 		{ "ishan9299/nvim-solarized-lua" },
@@ -34,6 +34,8 @@ require("lazy").setup({
 		{ "Mofiqul/vscode.nvim" },
 		-- { "folke/tokyonight.nvim" },
 		{ "rose-pine/neovim", name = "rose-pine" },
+
+		{ "junegunn/vim-easy-align" },
 
 		{ "stevearc/oil.nvim" },
 
@@ -215,6 +217,18 @@ require("lazy").setup({
 	checker = { enabled = false },
 })
 
+----------------------------------------------alignment--------------------------------------------------
+vim.keymap.set("n", "ga", ":EasyAlign<CR>*")
+vim.keymap.set("v", "ga", ":EasyAlign<CR>*")
+
+vim.keymap.set("v", "gj", function()
+	vim.cmd([[execute "normal! \<ESC>"]])
+	local top = vim.fn.getpos("'<")[2]
+	local bottom = vim.fn.getpos("'>")[2]
+	vim.fn.append(top - 1, "\t// clang-format off")
+	vim.fn.append(bottom + 1, "\t// clang-format on")
+end)
+
 ----------------------------------------------debugger--------------------------------------------------
 -- require("mason-nvim-dap").setup()
 local dap = require("dap")
@@ -225,16 +239,16 @@ dapui.setup({
 		{
 			elements = {
 				{
-					id = "scopes",
-					size = 0.33,
+					id = "watches",
+					size = 0.2,
+				},
+				{
+					id = "console",
+					size = 0.6,
 				},
 				{
 					id = "breakpoints",
-					size = 0.33,
-				},
-				{
-					id = "watches",
-					size = 0.33,
+					size = 0.2,
 				},
 			},
 			position = "left",
@@ -247,7 +261,7 @@ dapui.setup({
 					size = 0.5,
 				},
 				{
-					id = "console",
+					id = "scopes",
 					size = 0.5,
 				},
 			},
@@ -502,7 +516,7 @@ vim.lsp.config("pyright", {
 	},
 })
 
-local ls_to_setup = { "pyright", "clangd", "lua_ls", "html", "ts_ls" }
+local ls_to_setup = { "pyright", "clangd", "lua_ls", "html", "ts_ls", "cmake" }
 for _, server in ipairs(ls_to_setup) do
 	vim.lsp.enable(server)
 end
@@ -796,6 +810,8 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 -------------------------------------------git setup--------------------------------------------
 vim.keymap.set("n", ";z", ":Git<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", ";y", ":Gvdiffsplit<CR>")
+
 require("gitsigns").setup({
 	current_line_blame = true,
 })

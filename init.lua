@@ -39,6 +39,9 @@ vim.o.expandtab = true
 vim.o.smartindent = true
 vim.o.autoindent = true
 
+-- close all other buffers
+vim.keymap.set("n", ";w", ":%bd|e#<CR>")
+
 -- Use 2 spaces per tab for HTML, CSS, and JavaScript
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = {
@@ -282,12 +285,13 @@ local function themeChanges()
 	-- set cursor to default terminal
 	vim.cmd("highlight Cursor guifg=NONE guibg=NONE")
 
-	-- Remove italic and bold from all highlight groupsinit
+	-- Remove italic, bold, underlinefrom all highlight groups
 	for _, group in ipairs(vim.fn.getcompletion("", "highlight")) do
 		local highlight = vim.api.nvim_get_hl_by_name(group, true)
 		if highlight then
 			highlight.italic = nil
 			highlight.bold = nil
+			highlight.underline = nil
 			vim.api.nvim_set_hl(0, group, highlight)
 		end
 	end
@@ -307,4 +311,4 @@ vim.keymap.set("n", "<leader>wr", toggleLightDark)
 vim.api.nvim_create_autocmd("Colorscheme", {
 	callback = themeChanges,
 })
-vim.cmd.colorscheme("vscode")
+vim.cmd.colorscheme("catppuccin-mocha")
