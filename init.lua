@@ -22,7 +22,7 @@ vim.o.list = false
 vim.o.listchars = "tab:> ,trail:·,nbsp:+"
 vim.opt.fillchars = { eob = " " }
 
-vim.o.cursorline = false
+vim.o.cursorline = true
 
 -- vim.lsp.set_log_level("off")
 
@@ -40,7 +40,7 @@ vim.o.smartindent = true
 vim.o.autoindent = true
 
 -- close all other buffers
-vim.keymap.set("n", ";w", ":%bd|e#<CR>")
+vim.keymap.set("n", ";d", ":%bd|e#<CR>")
 
 -- Use 2 spaces per tab for HTML, CSS, and JavaScript
 vim.api.nvim_create_autocmd("FileType", {
@@ -64,6 +64,10 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.cinwords = "if,else,switch,case,for,while,do"
 	end,
 })
+
+-- navigate funcs
+vim.keymap.set("n", ";w", "[m")
+vim.keymap.set("n", ";s", "]m")
 
 -- scrolling
 vim.keymap.set("n", "<C-u>", "10<C-y>")
@@ -242,10 +246,16 @@ local function themeChanges()
 		vim.api.nvim_set_hl(0, "leetcode_case_ok", { fg = "#228B22" })
 		vim.api.nvim_set_hl(0, "leetcode_case_focus_ok", { bg = "#228B22", fg = "#FFFFFF" })
 
-		setBG("CursorLine", "#2f323b")
-		setBG("CursorLineNr", "#2f323b")
+		-- local line = "#2f323b"
+		local line = "#30313b"
+		setBG("CursorLine", line)
+		setBG("CursorLineNr", line)
+
 		setBG("TelescopeSelection", "#3a3d45")
 		theme = "iceberg_dark"
+
+		vim.api.nvim_set_hl(0, "IblIndent", { fg = "#555555" }) -- change to your desired color
+		vim.api.nvim_set_hl(0, "IblScope", { fg = "#555555" }) -- change to your desired color
 	end
 
 	vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
@@ -311,4 +321,4 @@ vim.keymap.set("n", "<leader>wr", toggleLightDark)
 vim.api.nvim_create_autocmd("Colorscheme", {
 	callback = themeChanges,
 })
-vim.cmd.colorscheme("catppuccin-mocha")
+vim.cmd.colorscheme("vscode")

@@ -43,15 +43,7 @@ require("lazy").setup({
 		-- { "jay-babu/mason-nvim-dap.nvim" },
 		{ "mfussenegger/nvim-dap" },
 		{ "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
-
-		-- remote
-		{ "jamestthompson3/nvim-remote-containers" },
-
-		-- doc generator
-		{
-			"danymat/neogen",
-			config = true,
-		},
+		{ "neogen", config = true },
 		-- find and replace
 		{
 			"nvim-pack/nvim-spectre",
@@ -138,7 +130,26 @@ require("lazy").setup({
 		{ "folke/trouble.nvim" },
 
 		-- todo comments
-		{ "folke/todo-comments.nvim" },
+		{
+			"folke/todo-comments.nvim",
+			opts = {
+				signs = false,
+				keywords = {
+					FIX = {
+						icon = " ", -- icon used for the sign, and in search results
+						color = "error", -- can be a hex color, or a named color (see below)
+						alt = { "FIXME", "BUG", "FIXIT", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
+						-- signs = false, -- configure signs for some keywords individually
+					},
+					TODO = { icon = " ", color = "test" },
+					HACK = { icon = " ", color = "warning" },
+					WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
+					PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+					NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
+					TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
+				},
+			},
+		},
 
 		-- icons
 		{ "nvim-tree/nvim-web-devicons" },
@@ -184,18 +195,13 @@ require("lazy").setup({
 			},
 			opts = {
 				-- image_support = true,
-				lang = "cpp",
+				lang = "python3",
 				injector = {
 					python3 = {
-						before = {
-							"from typing import List, Dict, Optional",
-							-- "from collections import defaultdict",
-							-- "from sortedcontainers import SortedDict, SortedSet",
-							-- "from bisect import bisect_left, bisect_right",
-						},
+						before = {},
 					},
 					cpp = {
-						before = { '#include "headers.hpp"' },
+						before = {},
 					},
 					java = {
 						before = "import java.util.*;",
@@ -215,6 +221,19 @@ require("lazy").setup({
 	},
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
+})
+
+----------------------------------------------icons--------------------------------------------------
+
+local devicons = require("nvim-web-devicons")
+local hpp_icon, _ = devicons.get_icon_color("file.hpp", "hpp")
+
+devicons.set_icon({
+	inl = {
+		icon = hpp_icon,
+		color = "#6cb6ff", -- lighter blue
+		name = "Inl",
+	},
 })
 
 ----------------------------------------------alignment--------------------------------------------------
@@ -243,7 +262,7 @@ dapui.setup({
 					size = 0.2,
 				},
 				{
-					id = "console",
+					id = "scopes",
 					size = 0.6,
 				},
 				{
@@ -261,7 +280,7 @@ dapui.setup({
 					size = 0.5,
 				},
 				{
-					id = "scopes",
+					id = "console",
 					size = 0.5,
 				},
 			},
@@ -287,26 +306,22 @@ dap.configurations.cpp = {
 		program = function()
 			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
 		end,
+		args = function()
+			local input = vim.fn.input("Arguments: ")
+			return vim.split(input, " ", { trimempty = true })
+		end,
 		cwd = "${workspaceFolder}",
 		stopAtEntry = true,
 	},
-	{
-		name = "Attach to gdbserver :1234",
-		type = "cppdbg",
-		request = "launch",
-		MIMode = "gdb",
-		miDebuggerServerAddress = "localhost:1234",
-		miDebuggerPath = "/usr/bin/gdb",
-		cwd = "${workspaceFolder}",
-		program = function()
-			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-		end,
-	},
 }
-
+--
 vim.keymap.set("n", "\\t", function()
 	dap.terminate()
 	dapui.close()
+end)
+
+vim.keymap.set("n", "\\q", function()
+	dapui.toggle()
 end)
 vim.keymap.set("n", "\\c", function()
 	dap.continue()
@@ -323,7 +338,7 @@ end)
 vim.keymap.set("n", "\\o", function()
 	dap.step_out()
 end)
-vim.keymap.set("n", "\\q", function()
+vim.keymap.set("n", "\\b", function()
 	dap.toggle_breakpoint()
 end)
 
@@ -340,13 +355,9 @@ dap.listeners.before.event_exited.dapui_config = function()
 	dapui.close()
 end
 
-vim.keymap.set("n", "\\e", function()
-	local widgets = require("dap.ui.widgets")
-	widgets.centered_float(widgets.scopes)
-end)
-
 ----------------------------------------------doc generator--------------------------------------------------
-vim.keymap.set("n", ";d", ':lua require("neogen").generate()<CR>', { noremap = true })
+
+vim.keymap.set("n", ";e", ':lua require("neogen").generate()<CR>', { noremap = true })
 
 ----------------------------------------------replacer setup--------------------------------------------------
 require("spectre").setup()
@@ -394,7 +405,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gr", "<cmd>cexpr []<cr><cmd>lua vim.lsp.buf.references()<cr>", opts)
 		vim.keymap.set("n", ";r", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
 		-- vim.keymap.set({ "n", "x" }, "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", opts)
-		-- vim.keymap.set("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+		vim.keymap.set("n", "ge", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
 		vim.keymap.set("n", "<M-l>", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
 		vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
 		vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
@@ -595,13 +606,21 @@ telescope.setup({
 			"%.o",
 			"%.out",
 			"%.dSYM/",
+			"__pycache__",
+			"build",
+			"venv",
+			".venv",
+			"env",
+			".env",
 		},
 	},
 })
 
 local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
-vim.keymap.set("n", ";f", builtin.find_files)
+vim.keymap.set("n", ";f", builtin.buffers)
+
+vim.keymap.set("n", ";l", builtin.find_files)
 vim.keymap.set("n", ";c", function()
 	builtin.diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
 end)
@@ -622,9 +641,6 @@ require("trouble").setup({
 
 -- vim.keymap.set("n", ";t", "<CMD>Trouble diagnostics toggle<CR>")
 -------------------------------------------todo setup--------------------------------------------
-local todo = require("todo-comments").setup({
-	signs = false,
-})
 
 vim.keymap.set("n", "]t", function()
 	require("todo-comments").jump_next()
@@ -705,7 +721,7 @@ require("nvim-surround").setup({
 })
 -------------------------------------------persistence setup--------------------------------------------
 -- load the session for the current directory
-vim.keymap.set("n", ";s", function()
+vim.keymap.set("n", ";a", function()
 	require("persistence").load()
 end)
 
@@ -763,8 +779,8 @@ require("competitest").setup({
 		cpp = "~/cpp/template/setup.cpp",
 		py = "~/cpp/template/setup.py",
 	},
-	received_contests_directory = "contest",
-	received_problems_path = "contest",
+	received_contests_directory = "$(HOME)/cpp/contest/$(CONTEST)",
+	received_problems_path = "$(HOME)/cpp/problems/$(PROBLEM).$(FEXT)",
 	evaluate_template_modifiers = true,
 })
 
@@ -791,7 +807,8 @@ local function set_competi_keymaps()
 	end
 	once = false
 	vim.keymap.set("n", "<leader>le", ":CompetiTest run<CR>")
-	vim.keymap.set("n", "<leader>lw", ":CompetiTest receive contest<CR>")
+	vim.keymap.set("n", "<leader>lw", ":CompetiTest receive problem<CR>")
+	vim.keymap.set("n", "<leader>lc", ":CompetiTest receive contest<CR>")
 	vim.keymap.set("n", "<leader>lq", ":CompetiTest show_ui<CR>")
 end
 
@@ -809,6 +826,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 
 -------------------------------------------git setup--------------------------------------------
+vim.keymap.set("n", "+", ":Gread<CR>")
 vim.keymap.set("n", ";z", ":Git<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", ";y", ":Gvdiffsplit<CR>")
 
@@ -838,10 +856,6 @@ vim.api.nvim_create_autocmd("User", {
 	pattern = "GitConflictDetected",
 	callback = function()
 		vim.notify("Conflict detected in " .. vim.fn.expand("<afile>"))
-		vim.keymap.set("n", "cww", function()
-			engage.conflict_buster()
-			create_buffer_local_mappings()
-		end)
 	end,
 })
 -------------------------------------------theme setup--------------------------------------------
