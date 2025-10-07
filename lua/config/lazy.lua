@@ -292,6 +292,8 @@ dapui.setup({
 
 vim.fn.sign_define("DapBreakpoint", { text = "▲", texthl = "DapBreakpointColor", linehl = "", numhl = "" })
 
+require("dap.ext.vscode").load_launchjs(nil, {})
+
 dap.adapters.cppdbg = {
 	id = "cppdbg",
 	type = "executable",
@@ -522,6 +524,20 @@ vim.lsp.config("pyright", {
 				useLibraryCodeForTypes = true,
 				diagnosticMode = "openFilesOnly",
 				extraPaths = { "." }, -- optional but reinforces absolute path support
+			},
+		},
+	},
+})
+
+vim.lsp.config("lua_ls", {
+	settings = {
+		Lua = {
+			diagnostics = {
+				globals = { "vim" },
+			},
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true), -- make it aware of Neovim's runtime
+				checkThirdParty = false,
 			},
 		},
 	},
