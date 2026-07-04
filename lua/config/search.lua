@@ -41,23 +41,6 @@ function telescope_setup()
 
 	-------------------------------------------------------------- trouble / todo
 
-	vim.keymap.set("n", ";c", function()
-		builtin.diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
-	end)
-
-	require("trouble").setup({
-		win = {
-			size = 5,
-		},
-		filter = {
-			severity = {
-				min = vim.diagnostic.severity.ERROR,
-				max = vim.diagnostic.severity.ERROR,
-			},
-		},
-		update_in_insert = true,
-	})
-
 	require("todo-comments").setup({
 		signs = false,
 		highlight = {
@@ -106,7 +89,7 @@ function telescope_keys()
 			desc = "Search Todo",
 		},
 		{
-			";c",
+			";C",
 			function()
 				require("telescope.builtin").diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
 			end,

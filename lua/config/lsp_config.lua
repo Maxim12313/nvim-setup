@@ -3,6 +3,28 @@ vim.g.lsp_disable_default_keymaps = true
 function lsp_setup_config()
 	require("mason").setup({})
 
+	vim.keymap.set("n", ";c", "<cmd>Trouble diagnostics toggle<cr>", { silent = true })
+
+	require("trouble").setup({
+		win = {
+			size = 5,
+		},
+		filter = {
+			severity = {
+				min = vim.diagnostic.severity.ERROR,
+				max = vim.diagnostic.severity.ERROR,
+			},
+		},
+		update_in_insert = true,
+		modes = {
+			diagnostics = {
+				auto_close = true,
+				position = "bottom",
+				height = 10,
+			},
+		},
+	})
+
 	-- python
 	vim.lsp.config("pyright", {
 		settings = {
@@ -184,7 +206,7 @@ function lsp_setup_config()
 		virtual_text = false,
 		severity_sort = true,
 		signs = {
-			severity = { min = vim.diagnostic.severity.WARN },
+			severity = { min = vim.diagnostic.severity.WARN, max = vim.diagnostic.severity.INFO },
 			text = {
 				[vim.diagnostic.severity.ERROR] = "●",
 				[vim.diagnostic.severity.WARN] = "●",
@@ -194,7 +216,7 @@ function lsp_setup_config()
 		},
 		virtual_lines = false,
 		underline = false,
-		update_in_insert = false,
+		update_in_insert = true,
 		float = { border = "rounded" },
 	})
 end

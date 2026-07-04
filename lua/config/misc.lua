@@ -234,7 +234,7 @@ function treesitter_setup()
 	})
 
 	require("treesitter-context").setup({
-		max_lines = 1,
+		max_lines = 0,
 	})
 
 	vim.keymap.set("n", "<C-[>", function()
