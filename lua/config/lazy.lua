@@ -35,6 +35,7 @@ require("lazy").setup({
 		{ "yorickpeterse/vim-paper" },
 		{ "NLKNguyen/papercolor-theme" },
 		{ "Mofiqul/vscode.nvim" },
+		{ "maxmx03/solarized.nvim" },
 
 		-- fold
 		{
@@ -121,7 +122,7 @@ require("lazy").setup({
 			"nvim-treesitter/nvim-treesitter",
 			branch = "main",
 			build = ":TSUpdate",
-			event = "BufreadPre",
+			event = "BufReadPre",
 			dependencies = { "nvim-treesitter/nvim-treesitter-context" },
 			config = treesitter_setup,
 			keys = telescope_keys,

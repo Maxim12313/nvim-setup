@@ -55,7 +55,7 @@ local function dark()
 	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#335E5E", blend = 80 })
 
 	local normal = "#212229"
-	setBG("Normal", normal)
+	-- setBG("Normal", normal)
 
 	local line = "#30313b"
 	setBG("CursorLine", line)
@@ -89,9 +89,10 @@ local function light()
 	})
 
 	-- local normal = "#F2EEDE"
-	-- local normal = "#eff1f5"
-	local normal = "#FFFFFF"
-	vim.api.nvim_set_hl(0, "Normal", { fg = "#000000", bg = "#eff1f5", blend = 80 })
+	local normal = "#eff1f5"
+	-- local normal = "#FFFFFF"
+	-- local normal = "#fdf6e3"
+	vim.api.nvim_set_hl(0, "Normal", { fg = "#000000", bg = normal, blend = 80 })
 
 	vim.api.nvim_set_hl(0, "Visual", { bg = "#D0D0D0", blend = 30 })
 	vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#D0D0D0", blend = 30 })
@@ -103,8 +104,8 @@ local function light()
 
 	-- set comment
 	-- local col = "#D2691E"
-	local col = "#34C22C"
-	-- local col = "#6A9955"
+	-- local col = "#34C22C"
+	local col = "#6A9955"
 	vim.api.nvim_set_hl(0, "Comment", { bg = nil, fg = col })
 
 	-- member vars etc
@@ -112,8 +113,12 @@ local function light()
 
 	-- types
 	vim.api.nvim_set_hl(0, "Keyword", { fg = "#007373" })
-
 	vim.api.nvim_set_hl(0, "@lsp.typemod.variable.defaultLibrary", { fg = "#CC52A3" })
+
+	vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#cce8cc", fg = "#155724" }) -- Richer mint green background + Dark green text
+	vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#f8d7da", fg = "#721c24" }) -- Saturated rose background + Dark crimson text
+	vim.api.nvim_set_hl(0, "DiffChange", { bg = "#e2e3e5", fg = "#383d41" }) -- Noticeable steel gray background + Dark charcoal text
+	vim.api.nvim_set_hl(0, "DiffText", { bg = "#b8daff", fg = "#004085", bold = true, underline = true }) -- Vivid sky blue + Deep navy text + Bold/Underline
 end
 
 local function clean_groups()
@@ -134,7 +139,7 @@ local function link_groups(match, other)
 	vim.api.nvim_create_autocmd("ColorScheme", {
 		callback = function()
 			for _, group in ipairs(vim.fn.getcompletion(match, "highlight")) do
-				vim.api.nvim_set_hl(0, group, { link = other })
+				vim.api.nvim_set_hl(0, group, { link = other, force = true })
 			end
 		end,
 	})
@@ -143,9 +148,11 @@ end
 local function link_treesitter_groups()
 	link_groups("@variable", "Normal")
 	link_groups("@comment", "Comment")
+	link_groups("@keyword", "Keyword")
 end
 
 function adjust_colors()
+	print("ran")
 	if vim.o.background == "dark" then
 		dark()
 	else
@@ -183,7 +190,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
-vim.api.nvim_create_autocmd("colorscheme", {
+vim.api.nvim_create_autocmd({ "Colorscheme" }, {
 	callback = adjust_colors,
 })
 
@@ -197,5 +204,11 @@ vim.keymap.set("n", "<leader>=", function()
 	end
 end)
 
-vim.o.background = "dark"
+-- require("solarized").setup({
+-- 	plugins = {
+-- 		telescope = false,
+-- 	},
+-- })
+
+vim.o.background = "light"
 vim.cmd.colorscheme("vscode")
