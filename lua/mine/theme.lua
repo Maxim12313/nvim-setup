@@ -84,7 +84,8 @@ local function light()
 	})
 
 	-- local normal = "#F2EEDE"
-	local normal = "#eff1f5"
+	-- local normal = "#eff1f5"
+	local normal = "#FFFFFF"
 	vim.api.nvim_set_hl(0, "Normal", { fg = "#000000", bg = "#eff1f5", blend = 80 })
 
 	vim.api.nvim_set_hl(0, "Visual", { bg = "#D0D0D0", blend = 30 })
@@ -191,5 +192,5 @@ vim.keymap.set("n", "<leader>=", function()
 	end
 end)
 
-vim.o.background = "light"
+vim.o.background = "dark"
 vim.cmd.colorscheme("vscode")

@@ -182,29 +182,25 @@ function git_setup()
 	-- overload this will all exiting binds run
 	vim.keymap.set("n", "<leader>q", ":DiffviewClose<CR>", { silent = true })
 
+	function toggle(func)
+		if exists_file_type("DiffviewFileHistory") or exists_file_type("DiffviewFiles") then
+			vim.cmd("DiffviewClose")
+		else
+			func()
+		end
+	end
+
 	-- toggle open
 	vim.keymap.set("n", "<leader>d", function()
-		if exists_file_type("DiffviewFileHistory") then
-			vim.cmd("DiffviewClose")
-		end
-
-		if exists_file_type("DiffviewFiles") then
-			vim.cmd("DiffviewClose")
-		else
-			vim.cmd("DiffviewOpen")
-		end
+		toggle(function()
+			vim.cmd("DiffviewOpen -uno")
+		end)
 	end, { noremap = true, silent = true })
 
-	vim.keymap.set("n", "<leader>f", function()
-		if exists_file_type("DiffviewFiles") then
-			vim.cmd("DiffviewClose")
-		end
-
-		if exists_file_type("DiffviewFileHistory") then
-			vim.cmd("DiffviewClose")
-		else
-			vim.cmd("DiffviewFileHistory %")
-		end
+	vim.keymap.set("n", "<leader>D", function()
+		toggle(function()
+			vim.cmd("DiffviewOpen -uno HEAD~1")
+		end)
 	end, { noremap = true, silent = true })
 
 	local neogit = require("neogit")
