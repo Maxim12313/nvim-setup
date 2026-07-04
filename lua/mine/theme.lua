@@ -73,6 +73,11 @@ local function dark()
 	vim.api.nvim_set_hl(0, "Identifier", { fg = "#999999" })
 
 	vim.api.nvim_set_hl(0, "@lsp.typemod.variable.defaultLibrary", { fg = "#FF66CC" })
+
+	vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#2c3e26", fg = "none" }) -- Subtle dark olive green
+	vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#492324", fg = "#75715e" }) -- Subtle dark wine red / Muted gray text
+	vim.api.nvim_set_hl(0, "DiffChange", { bg = "#233745", fg = "none" }) -- Subtle dark navy blue
+	vim.api.nvim_set_hl(0, "DiffText", { bg = "#1d4f73", fg = "none", bold = true, underline = true }) -- Intenser blue + Bold & Underlined words
 end
 
 local function light()

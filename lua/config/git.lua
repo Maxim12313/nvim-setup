@@ -1,10 +1,10 @@
--- require("octo").setup({})
--- vim.keymap.set(";w", ":Octo", "")
-
 function git_setup()
-	local function gitsign_maps(bufnr)
-		local gitsigns = require("gitsigns")
+	local function has_conflict()
+		return vim.fn.search([[^\(<<<<<<<\|=======\|>>>>>>>\)]], "nw") > 0
+	end
 
+	local gitsigns = require("gitsigns")
+	local function gitsign_maps(bufnr)
 		local function map(mode, l, r, opts)
 			opts = opts or {}
 			opts.buffer = bufnr
@@ -29,52 +29,39 @@ function git_setup()
 		end)
 
 		-- Actions
-		map("n", ";A", gitsigns.stage_hunk)
 		map("n", ";a", gitsigns.reset_hunk)
-
-		map("v", ";A", function()
-			gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-		end)
-
-		map("v", ";a", function()
-			gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-		end)
-
-		-- map("n", "<leader>hp", gitsigns.preview_hunk)
-		-- map("n", "<leader>hi", gitsigns.preview_hunk_inline)
-
-		map("n", "<leader>hb", function()
+		map("n", ";s", function()
 			gitsigns.blame_line({ full = true })
 		end)
 
 		map("n", ";d", function()
-			-- toggle diff
 			if vim.wo.diff then
-				vim.cmd("wincmd h")
-				vim.cmd("close")
+				vim.cmd("wincmd o")
 			else
 				gitsigns.diffthis()
 			end
 		end)
-
 		map("n", ";D", function()
-			gitsigns.diffthis("~")
+			if vim.wo.diff then
+				vim.cmd("wincmd o")
+			else
+				gitsigns.diffthis("~")
+			end
 		end)
-
-		map("n", "<leader>hQ", function()
-			gitsigns.setqflist("all")
-		end)
-		map("n", "<leader>hq", gitsigns.setqflist)
-
-		-- Toggles
-		map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
-		map("n", "<leader>tw", gitsigns.toggle_word_diff)
 
 		-- Text object
 		map({ "o", "x" }, "ih", gitsigns.select_hunk)
 	end
 
-	require("gitsigns").setup({
+	gitsigns.setup({
+		preview_config = {
+			-- Options passed to nvim_open_win
+			style = "minimal",
+			border = "rounded",
+			relative = "cursor",
+			row = 0,
+			col = 1,
+		},
 		current_line_blame = true,
 		on_attach = gitsign_maps,
 	})
@@ -87,7 +74,7 @@ function git_setup()
 				winbar_info = true,
 			},
 			merge_tool = {
-				layout = "diff3_mixed",
+				layout = "diff3_horizontal",
 				winbar_info = true,
 			},
 			file_history = {
@@ -109,57 +96,9 @@ function git_setup()
 				win_opts = {},
 			},
 		},
-		keymaps = {
-			view = {
-				{
-					"n",
-					";1",
-					actions.conflict_choose("ours"),
-				},
-				{
-					"n",
-					";2",
-					actions.conflict_choose("theirs"),
-				},
-				{
-					"n",
-					";3",
-					actions.conflict_choose("all"),
-				},
-				{ "n", ";4", actions.conflict_choose("none") },
-			},
-			file_history_panel = {
-				{
-					"n",
-					"f",
-					actions.select_entry,
-				},
-				{ "n", "L", false },
-				{ "n", "l", actions.open_commit_log },
-			},
-			file_panel = {
-				{
-					"n",
-					"f",
-					actions.select_entry,
-				},
-				{ "n", "L", false },
-				{ "n", "l", actions.open_commit_log },
-			},
-		},
 	})
 
-	-- restart session
-	function reset()
-		vim.api.nvim_command("%bd|e#")
-		vim.api.nvim_command("LspRestart")
-	end
-
 	vim.opt.diffopt:append("vertical")
-
-	-- vim.keymap.set("n", "+", ":Gread<CR>")
-
-	vim.keymap.set("n", ";x", reset)
 
 	function exists_file_type(filetype)
 		local exists = false
@@ -178,51 +117,44 @@ function git_setup()
 		return exists
 	end
 
-	-- TODO:
-	-- overload this will all exiting binds run
-	vim.keymap.set("n", "<leader>q", ":DiffviewClose<CR>", { silent = true })
-
+	-- toggle open
 	function toggle(func)
 		if exists_file_type("DiffviewFileHistory") or exists_file_type("DiffviewFiles") then
 			vim.cmd("DiffviewClose")
+		elseif vim.b.jj_diff_conflicts_running then
+			vim.cmd("wincmd o")
+			vim.cmd("e!")
+			vim.b.jj_diff_conflicts_running = false
 		else
 			func()
 		end
 	end
 
-	-- toggle open
 	vim.keymap.set("n", "<leader>d", function()
 		toggle(function()
-			vim.cmd("DiffviewOpen -uno")
+			if has_conflict() then
+				vim.cmd("JJDiffConflicts")
+			else
+				vim.cmd("DiffviewOpen -uno")
+			end
 		end)
 	end, { noremap = true, silent = true })
 
 	vim.keymap.set("n", "<leader>D", function()
 		toggle(function()
-			vim.cmd("DiffviewOpen -uno HEAD~1")
+			if has_conflict() then
+				vim.cmd("JJDiffConflicts")
+			else
+				vim.cmd("DiffviewOpen -uno HEAD~1")
+			end
 		end)
 	end, { noremap = true, silent = true })
 
-	local neogit = require("neogit")
-	neogit.setup({
-		mappings = {
-			status = {
-				["K"] = false,
-				["f"] = "Toggle",
-				["h"] = "Untrack",
-				["L"] = false,
-				["I"] = false,
-			},
-			popup = {
-				["f"] = false,
-				["Z"] = false,
-				["i"] = "StashPopup",
-				["I"] = "IgnorePopup",
-			},
-		},
+	vim.g.jj_diffconflicts_show_usage_message = false
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "JJDiffConflictsReady",
+		callback = function()
+			vim.b.jj_diff_conflicts_running = true
+		end,
 	})
-
-	vim.keymap.set("n", "<leader>s", function()
-		neogit.open({ kind = "replace" })
-	end)
 end

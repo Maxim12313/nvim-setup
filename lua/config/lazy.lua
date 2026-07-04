@@ -103,7 +103,6 @@ require("lazy").setup({
 				"L3MON4D3/LuaSnip",
 				"rafamadriz/friendly-snippets",
 				"ray-x/lsp_signature.nvim",
-				"github/copilot.vim",
 			},
 			config = suggestion_setup,
 		},
@@ -158,15 +157,15 @@ require("lazy").setup({
 			init = cpp_setup,
 		},
 
-		-- git
+		-- vcs
 		{
-			"NeogitOrg/neogit",
+			"lewis6991/gitsigns.nvim",
 			event = "VeryLazy",
 			dependencies = {
+				"rafikdraoui/jj-diffconflicts",
 				"nvim-lua/plenary.nvim",
 				"sindrets/diffview.nvim",
 				"nvim-telescope/telescope.nvim",
-				"lewis6991/gitsigns.nvim",
 			},
 			config = git_setup,
 		},

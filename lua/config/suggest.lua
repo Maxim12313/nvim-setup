@@ -1,30 +1,5 @@
 -----------------------------------------------suggestion setup--------------------------------------------------
 function suggestion_setup()
-	function pilot_toggle()
-		if vim.b.copilot_enabled == nil or vim.b.copilot_enabled == false then
-			vim.cmd("Copilot enable")
-			vim.b.copilot_enabled = true
-			-- vim.notify("Copilot: enabled", vim.log.levels.INFO)
-		else
-			vim.cmd("Copilot disable")
-			vim.b.copilot_enabled = false
-			-- vim.notify("Copilot: disabled", vim.log.levels.INFO)
-		end
-	end
-
-	vim.keymap.set("n", "<leader>c", function()
-		vim.cmd("Copilot panel")
-	end)
-
-	-- vim.g.copilot_no_tab_map = true
-	-- vim.keymap.set("i", "<C-tab>", 'copilot#Accept("")', {
-	-- 	expr = true,
-	-- 	silent = true,
-	-- 	replace_keycodes = false,
-	-- })
-
-	vim.g.copilot_enabled = false
-
 	-- cmp
 	local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -54,12 +29,10 @@ function suggestion_setup()
 					ls.expand_or_jump()
 				else
 					if cmp.visible() then
-						-- swap to copilot
+						-- disable
 						cmp.abort()
-						vim.api.nvim_feedkeys(vim.keycode("<Plug>(copilot-suggest)"), "i", true)
 					else
 						-- show completion
-						vim.api.nvim_feedkeys(vim.keycode("<Plug>(copilot-dismiss)"), "i", true)
 						cmp.complete()
 					end
 				end
