@@ -40,8 +40,9 @@ require("lazy").setup({
 		{
 			"kevinhwang91/nvim-ufo",
 			dependencies = "kevinhwang91/promise-async",
-			config = ufo_setup,
+			init = ufo_init,
 			event = "BufReadPost",
+			config = ufo_setup,
 		},
 
 		-- rainbow coded params etc
@@ -65,7 +66,6 @@ require("lazy").setup({
 			event = "VeryLazy",
 			config = harpoon_setup,
 		},
-		{ "folke/persistence.nvim", event = "BufReadPost", config = persistence_setup },
 		{ "rcarriga/nvim-notify", event = "VeryLazy", config = notify_setup },
 
 		-- hub + icons

@@ -78,15 +78,6 @@ function treejs_setup()
 	end)
 end
 
-----------------------------------------------persistence--------------------------------------------------
-function persistence_setup()
-	require("persistence").setup()
-end
-
-vim.keymap.set("n", ";z", function()
-	require("persistence").load()
-end)
-
 ----------------------------------------------notify--------------------------------------------------
 function notify_setup()
 	vim.notify = require("notify")
@@ -221,6 +212,7 @@ function treesitter_setup()
 	require("nvim-treesitter").setup({
 		install_dir = vim.fn.stdpath("data") .. "/site",
 	})
+
 	require("nvim-treesitter").install({
 		"c",
 		"cpp",

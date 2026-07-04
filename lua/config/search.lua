@@ -111,5 +111,11 @@ function telescope_keys()
 				require("telescope.builtin").diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
 			end,
 		},
+		{
+			";z",
+			function()
+				require("telescope.builtin").oldfiles({ only_cwd = true })
+			end,
+		},
 	}
 end
