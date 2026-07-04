@@ -12,6 +12,7 @@ vim.keymap.set("n", "V", "v", { noremap = true })
 
 -- reset
 vim.keymap.set("n", "_", ":e!<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "+", "za", { desc = "Toggle fold" })
 
 -- indent
 vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })

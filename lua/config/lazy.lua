@@ -25,6 +25,7 @@ require("config.search")
 require("config.lsp_config")
 require("config.conform")
 require("config.suggest")
+require("config.ufo")
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -34,6 +35,14 @@ require("lazy").setup({
 		{ "yorickpeterse/vim-paper" },
 		{ "NLKNguyen/papercolor-theme" },
 		{ "Mofiqul/vscode.nvim" },
+
+		-- fold
+		{
+			"kevinhwang91/nvim-ufo",
+			dependencies = "kevinhwang91/promise-async",
+			config = ufo_setup,
+			event = "BufReadPost",
+		},
 
 		-- rainbow coded params etc
 		{ "hiphish/rainbow-delimiters.nvim", event = "BufReadPost", config = rainbow_setup },
