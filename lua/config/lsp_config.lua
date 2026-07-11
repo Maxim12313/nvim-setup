@@ -30,11 +30,12 @@ function lsp_setup_config()
 		settings = {
 			["python"] = {
 				analysis = {
-					typeCheckingMode = "off",
+					typeCheckingMode = "basic",
 					autoSearchPaths = true,
 					useLibraryCodeForTypes = true,
-					diagnosticMode = "openFilesOnly",
+					diagnosticMode = "workspace",
 					extraPaths = { "." },
+					venvPath = ".",
 				},
 			},
 		},

@@ -16,6 +16,9 @@ local function lualine_setup()
 			lualine_b = {},
 			lualine_c = {
 				"filename",
+			},
+			lualine_x = {},
+			lualine_y = {
 				{
 					"diagnostics",
 					update_in_insert = false,
@@ -23,9 +26,8 @@ local function lualine_setup()
 						error = "████████",
 					},
 				},
+				"filetype",
 			},
-			lualine_x = {},
-			lualine_y = { "filetype" },
 			lualine_z = {},
 		},
 	})
