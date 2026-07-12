@@ -23,8 +23,6 @@ vim.opt.fillchars = { eob = " " }
 
 vim.o.cursorline = true
 
--- vim.lsp.set_log_level("off")
-
 -- cursor
 -- vim.o.guicursor = "n-c-i-ve-ci-v:block,r-cr-o:hor20"
 -- vim.o.guicursor = "n-c-i-ve-ci-v:blinkon10"

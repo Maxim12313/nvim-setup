@@ -41,7 +41,29 @@ function lsp_setup_config()
 		},
 	})
 
-	-- lua
+	vim.lsp.config("pyright", {
+		settings = {
+			python = {
+				analysis = {
+					typeCheckingMode = "basic",
+					autoSearchPaths = true,
+					useLibraryCodeForTypes = true,
+					diagnosticMode = "workspace",
+					extraPaths = { "." },
+					venvPath = ".",
+				},
+			},
+		},
+	})
+
+	vim.lsp.config("protobuf_language_server", {
+		cmd = { "protobuf-language-server" },
+		filetypes = { "proto", "cpp" },
+		root_dir = vim.fs.root(0, { ".jj", ".git" }),
+		single_file_support = true,
+		settings = {},
+	})
+
 	vim.lsp.config("lua_ls", {
 		settings = {
 			Lua = {
@@ -52,59 +74,34 @@ function lsp_setup_config()
 		},
 	})
 
-	-- rust
 	vim.lsp.config("rust-analyzer", {
 		cmd = { "rust-analyzer" },
 		filetypes = { "rust" },
 		settings = {
 			["rust-analyzer"] = {
 				imports = {
-					granularity = {
-						group = "module",
-					},
+					granularity = { group = "module" },
 					prefix = "self",
 				},
 				cargo = {
-					buildScripts = {
-						enable = true,
-					},
+					buildScripts = { enable = true },
 				},
-				procMacro = {
-					enable = true,
-				},
+				procMacro = { enable = true },
 			},
 		},
 	})
 
-	-- md
-	vim.lsp.config("marksman", {})
-
-	-- bash
 	vim.lsp.config("bashls", {
 		cmd = { "bash-language-server", "start" },
 		filetypes = { "bash", "sh", "zsh" },
 	})
 
-	-- c#
-	vim.lsp.config("csharp-lsp", {
-		cmd = { "csharp-ls" },
-		settings = {
-			useMetadataUris = true,
-			analyzersEnabled = true,
-			applyFormattingOptions = true,
-		},
-		root_markers = {
-			"*.csproj",
-			".git",
-		},
-	})
-	require("csharpls_extended").buf_read_cmd_bind()
-
-	-- go
+	vim.lsp.config("marksman", {})
 	vim.lsp.config("gopls", {})
+	vim.lsp.config("clangd", {})
+	vim.lsp.config("cmake", {})
 
 	local ls_to_setup = {
-		"csharp-lsp",
 		"pyright",
 		"clangd",
 		"lua_ls",
@@ -113,12 +110,14 @@ function lsp_setup_config()
 		"gopls",
 		"bashls",
 		"marksman",
+		"protobuf_language_server",
 	}
 
 	for _, server in ipairs(ls_to_setup) do
 		vim.lsp.enable(server)
 	end
 
+	-- vim.lsp.set_log_level("off")
 	vim.lsp.set_log_level("WARN")
 
 	function hoverLook()
