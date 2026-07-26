@@ -27,7 +27,7 @@ vim.o.cursorline = true
 -- vim.o.guicursor = "n-c-i-ve-ci-v:block,r-cr-o:hor20"
 -- vim.o.guicursor = "n-c-i-ve-ci-v:blinkon10"
 -- vim.opt.guicursor = "n-v-c:block,i:ver25,r:hor50"
-vim.opt.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50"
+vim.opt.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,t:ver25"
 
 -- indent
 -- Default to 4 spaces per tab
