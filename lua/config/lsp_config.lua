@@ -16,9 +16,13 @@ function lsp_setup_config()
 			},
 		},
 		update_in_insert = true,
+		warn_no_results = false,
+		auto_close = true,
+		open_no_results = false,
+		focus = true,
 		modes = {
 			diagnostics = {
-				auto_close = true,
+				group = false,
 				position = "bottom",
 				height = 10,
 			},
