@@ -11,26 +11,28 @@ vim.keymap.set("n", "<leader>l", function()
 	vim.o.number = not vim.o.number
 end)
 
--- create a long line of -- title --
+local function make_large_title(title, width)
+	width = width or 72
+	local content = title:upper()
+	local border = string.rep("=", width)
+	local pre = "// "
 
--- returns the length
-function make_title(title, width)
-	-- round down
-	local side_length = math.floor((width - #title) / 2)
-	local side = string.rep("-", side_length)
-	local res = "/* " .. side .. " " .. title .. " " .. side .. " */"
-	return res
+	return {
+		pre .. border,
+		pre .. content,
+		pre .. border,
+	}
 end
 
 vim.keymap.set("n", "<leader>-", function()
 	local ok, title = pcall(vim.fn.input, "Title: ")
-	if not ok then
+	if not ok or title == "" then
 		return
 	end
 
-	local text = make_title(title, 72)
-	-- put the text at curr line
-	vim.api.nvim_set_current_line(text)
+	local lines = make_large_title(title, 72)
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	vim.api.nvim_buf_set_lines(0, row - 1, row, false, lines)
 end)
 
 function use_path(path)
