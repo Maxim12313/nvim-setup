@@ -1,38 +1,3 @@
--- ----------------------------------------lualine--------------------------------------------------
-local function lualine_setup()
-	local theme = vim.o.background == "dark" and "iceberg_dark" or "iceberg_light"
-
-	require("lualine").setup({
-		options = {
-			theme = theme,
-			component_separators = "",
-			section_separators = "",
-			refresh = {
-				statusline = 10,
-			},
-		},
-		sections = {
-			lualine_a = {},
-			lualine_b = {},
-			lualine_c = {
-				"filename",
-			},
-			lualine_x = {},
-			lualine_y = {
-				{
-					"diagnostics",
-					update_in_insert = false,
-					symbols = {
-						error = "████████",
-					},
-				},
-				"filetype",
-			},
-			lualine_z = {},
-		},
-	})
-end
-
 local function setup_native_statusline()
 	local function get_diagnostics()
 		if not vim.diagnostic.is_enabled() then
