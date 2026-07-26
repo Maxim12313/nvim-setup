@@ -12,15 +12,18 @@ vim.keymap.set("n", "<leader>l", function()
 end)
 
 local function make_large_title(title, width)
-	width = width or 72
+	local cs = vim.bo.commentstring
+	if cs == "" or not cs:find("%%s") then
+		cs = "-- %s"
+	end
+
 	local content = title:upper()
 	local border = string.rep("=", width)
-	local pre = "// "
 
 	return {
-		pre .. border,
-		pre .. content,
-		pre .. border,
+		string.format(cs, border),
+		string.format(cs, content),
+		string.format(cs, border),
 	}
 end
 
