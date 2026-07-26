@@ -33,8 +33,40 @@ local function lualine_setup()
 	})
 end
 
+local function setup_native_statusline()
+	local function get_diagnostics()
+		if not vim.diagnostic.is_enabled() then
+			return ""
 		end
+
+		local counts = vim.diagnostic.count(0)
+		local err_count = counts[vim.diagnostic.severity.ERROR] or 0
+
+		if err_count > 0 then
+			-- Uses native DiagnosticError highlight group from solarized
+			return string.format("%%#DiagnosticError#█████████████(%d)%%*", err_count)
 		end
+		return ""
+	end
+
+	-- Assemble statusline segments dynamically
+	_G.custom_statusline = function()
+		local is_focused = (vim.g.statusline_winid == vim.api.nvim_get_current_win())
+
+		local file_name = "%f %m%r"
+		local diag = is_focused and get_diagnostics() or ""
+		local filetype = is_focused and "%Y" or ""
+
+		-- Combine left (c) and right (y) sections separated by %= (pushes rest to right side)
+		return string.format(" %s  %%= %s %s ", file_name, diag, filetype)
+	end
+
+	-- Apply custom statusline to Neovim
+	vim.opt.statusline = "%!v:lua.custom_statusline()"
+	vim.opt.laststatus = 2
+end
+
+setup_native_statusline()
 
 vim.keymap.set("n", "<leader>=", function()
 	if vim.o.background == "dark" then
@@ -42,7 +74,7 @@ vim.keymap.set("n", "<leader>=", function()
 	else
 		vim.o.background = "dark"
 	end
-	vim.cmd.colorscheme("vscode")
+	vim.cmd.colorscheme("solarized")
 end)
 
 vim.opt.fillchars:append({ diff = "·" })

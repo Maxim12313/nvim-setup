@@ -150,9 +150,6 @@ require("lazy").setup({
 		{ "windwp/nvim-ts-autotag", event = "InsertEnter", config = autotag_setup },
 		{ "kylechui/nvim-surround", event = "InsertEnter", config = surround_setup },
 
-		-- status line
-		{ "nvim-lualine/lualine.nvim" },
-
 		-- cpp / contest
 		{
 			"kawre/leetcode.nvim",
