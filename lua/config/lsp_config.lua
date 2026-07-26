@@ -3,17 +3,22 @@ vim.g.lsp_disable_default_keymaps = true
 function lsp_setup_config()
 	require("mason").setup({})
 
-	vim.keymap.set("n", ";c", "<cmd>Trouble diagnostics toggle<cr>", { silent = true })
+	vim.keymap.set(
+		"n",
+		";C",
+		"<cmd>Trouble diagnostics toggle filter.severity=vim.diagnostic.severity.ERROR<cr>",
+		{ silent = true }
+	)
+	vim.keymap.set(
+		"n",
+		";C",
+		"<cmd>Trouble diagnostics toggle filter.severity=vim.diagnostic.severity.WARN<cr>",
+		{ silent = true }
+	)
 
 	require("trouble").setup({
 		win = {
 			size = 5,
-		},
-		filter = {
-			severity = {
-				min = vim.diagnostic.severity.ERROR,
-				max = vim.diagnostic.severity.ERROR,
-			},
 		},
 		update_in_insert = true,
 		warn_no_results = false,
@@ -22,7 +27,6 @@ function lsp_setup_config()
 		focus = true,
 		modes = {
 			diagnostics = {
-				group = false,
 				position = "bottom",
 				height = 10,
 			},

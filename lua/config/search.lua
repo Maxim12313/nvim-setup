@@ -89,12 +89,6 @@ function telescope_keys()
 			desc = "Search Todo",
 		},
 		{
-			";C",
-			function()
-				require("telescope.builtin").diagnostics({ severity_limit = vim.diagnostic.severity.ERROR })
-			end,
-		},
-		{
 			";z",
 			function()
 				require("telescope.builtin").oldfiles({ only_cwd = true })
