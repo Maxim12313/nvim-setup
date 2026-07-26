@@ -29,7 +29,8 @@ function git_setup()
 		end)
 
 		-- Actions
-		map("n", ";a", gitsigns.reset_hunk)
+		map("n", ";t", gitsigns.reset_hunk)
+		map("n", "+", gitsigns.reset_buffer)
 		map("n", ";s", function()
 			gitsigns.blame_line({ full = true })
 		end)

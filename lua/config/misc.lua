@@ -1,6 +1,6 @@
 ------------------------------ toggle term ------------------------------
 local term_buf = nil
-vim.keymap.set("n", ";t", function()
+vim.keymap.set("n", ";a", function()
 	-- If terminal buffer doesn't exist or was wiped, create a new one in current window
 	if not term_buf or not vim.api.nvim_buf_is_valid(term_buf) then
 		vim.cmd("terminal")
@@ -15,6 +15,15 @@ vim.keymap.set("n", ";t", function()
 		end
 	end
 end, { desc = "Toggle persistent terminal in current buffer" })
+
+vim.api.nvim_create_autocmd("ExitPre", {
+	group = vim.api.nvim_create_augroup("KillTermOnExit", { clear = true }),
+	callback = function()
+		if term_buf and vim.api.nvim_buf_is_valid(term_buf) then
+			vim.api.nvim_buf_delete(term_buf, { force = true })
+		end
+	end,
+})
 
 vim.keymap.set("t", "<C-j>", [[<C-\><C-n>]])
 
