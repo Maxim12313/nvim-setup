@@ -45,7 +45,6 @@ require("lazy").setup({
 			event = "BufReadPost",
 			config = ufo_setup,
 		},
-
 		-- rainbow coded params etc
 		{ "hiphish/rainbow-delimiters.nvim", event = "BufReadPost", config = rainbow_setup },
 
@@ -59,7 +58,7 @@ require("lazy").setup({
 			config = treejs_setup,
 		},
 
-		-- utilities
+		--
 		{
 			"ThePrimeagen/harpoon",
 			branch = "harpoon2",

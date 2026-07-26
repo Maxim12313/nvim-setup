@@ -84,7 +84,7 @@ function telescope_keys()
 			desc = "Search Recent",
 		},
 		{
-			";t",
+			";y",
 			":TodoTelescope<CR>",
 			desc = "Search Todo",
 		},
